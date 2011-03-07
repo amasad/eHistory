@@ -1122,6 +1122,9 @@ function checkboxClicked(event) {
  */
 function historyResult(info, results) {
   historyModel.addResults(info, results);
+  //ehistory
+	//renew the history model to free memeory	
+	eHistory = new EHistory();
 }
  
 /**

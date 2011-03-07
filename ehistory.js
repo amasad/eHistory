@@ -48,7 +48,7 @@ EHistory.prototype.doSearch = function(query, options) {//@FIXME make one argume
 	delete searchSettings['regex'];
 	function test(results){
 		self.processResults_(results)
-		}
+	}
 	chrome.history.search(searchSettings,test);
 }
 
