@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+	<script type="text/javascript" src="lib/jquery.js"></script>
+	<script type="text/javascript" src="ehistory.js"></script>
+	
+	<script type="text/javascript">
+	chrome.browserAction.onClicked.addListener(function(tab){
+	    var theChromeURL="chrome://history/"
+	    chrome.tabs.getAllInWindow(null,function(tabs){
+	        for (var i=0;i<tabs.length;i++){
+	            if (tabs[i].url == theChromeURL){
+	                chrome.tabs.update(tabs[i].id, {selected:true})
+	                return;
+	            }
+	        }
+	        chrome.tabs.create({url:theChromeURL,selected:true})
+	    })
+	})
+	</script>
+	</head>
+<body></body>
+</html>

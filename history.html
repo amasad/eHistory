@@ -1,0 +1,1478 @@
+
+<!DOCTYPE HTML> 
+<html i18n-values="dir:textdirection;"> 
+<head> 
+<link rel="stylesheet" href="styles/history.css" type="text/css" media="screen" />
+<script src="lib/jquery.js"></script>
+<script src="ehistory.js"></script>
+<script src="init.js"></script>
+<meta charset="utf-8"> 
+<title i18n-content="title"></title> 
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACxUlEQVQ4y2WSTWgdVRSAvzn3zryZecbaaJpaoYlPRWil+IvaCiJKwY1YQVDBqgsRQfxZKLgS1IWCFFoX4g8xYhX/QHeCYHXnpq0lirZUXUgbtWh4yWuSyZs557h4L9FQuJfLvfB955x7TrLlqvvubLUveClNs+skRCQBB9wdBgvw/+7umOrhur/4/O9Hpw/FVnv03aIsx/OiIM0iIJgpZg1uCmY4CZ4IkgScBDO7vl4p33f3yRjTdDwvC8p2mxAiu66dYO+enVw2uRkzw8w5MvMrUx8fYubELBJbkAgSwmagIyEIaZoiIfLcY7t58Zl76EyMo2q8euAgas6ObZPse+ERbrupQ1MvAU4IkX6/f76s1rXrmgl237IdMx9u4823p1A1VI1GjWcfv5ctF6bU1VnMGuq6FnHATHlwz82YGWoDQG3wffr/NzXuuuMGVpa6NPUy3W43CBimDZ2t46j5OgBYi642OHfeeDUrSwvU/Yq5ubkobudGWYUAfjrx2zpJWRY0/WW0run1ekHcwfVcWFU5OLWfBx5+gp+HElXj1Ok/MWswa6iqSsTdgITDM7+spbkqubwzyfRb+3jo0afXBEe+/wGG85DnuYkPZ236k2/W1boKdC6d4NuvPkPNmF84y/QHnyOxQCRlZGRExQ0cYeb4LK8c+GjYgaHIBt1QNeYXerz+xjR/z1fErE0iOaOjoxrNDQeSkPL1dyc5fvI17r/7VnZsv4KiLJn94y+OHvuR9z78gn+6FVm5kdAaIZHI2NhYK7raaXO/xJOApAWnzizx8v5P6S/3aJpl3JQkCUjMaZ23iZiNILEgL7L5LMsuihdv2vBkr9J3mn6zUWLApUVobSCVFqHpgzuOkEhEYgsPGXmRLT619/YvgZi4+5XANmCrqpbunlRVJYuLi6GqKmmaJknT1PM8t7IsNc9ziTECnAGO/QuYgs28GHSMDAAAAABJRU5ErkJggg=="> 
+<script>// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+ 
+// TODO(arv): Namespace
+ 
+/**
+ * The local strings get injected into the page usig a variable named
+ * {@code templateData}. This class provides a simpler interface to access those
+ * strings.
+ * @constructor
+ */
+function LocalStrings() {
+}
+ 
+// Start of anonymous namespace.
+(function() {
+ 
+/**
+ * Returns a formatted string where $1 to $9 are replaced by the second to the
+ * tenth argument.
+ * @param {string} s The format string.
+ * @param {...string} The extra values to include in the formatted output.
+ * @return {string} The string after format substitution.
+ */
+function replaceArgs(s, args) {
+  return s.replace(/\$[$1-9]/g, function(m) {
+    return (m == '$$') ? '$' : args[m[1]];
+  });
+}
+ 
+/**
+ * Returns a string after removing Windows-style accelerators.
+ * @param {string} s The input string that may contain accelerators.
+ * @return {string} The resulting string with accelerators removed.
+ */
+function trimAccelerators(s) {
+  return s.replace(/&{1,2}/g, function(m) {
+    return (m == '&&') ? '&' : '';
+  });
+}
+ 
+LocalStrings.prototype = {
+  /**
+   * The template data object.
+   * @type {Object}
+   */
+  templateData: null,
+ 
+  /**
+   * Gets a localized string by its id.
+   * @param {string} s The ID of the string we want.
+   * @return {string} The localized string.
+   */
+  getString: function(id) {
+    // TODO(arv): We should not rely on a global variable here.
+    return (this.templateData || window.templateData)[id] || '';
+  },
+ 
+  /**
+   * Returns a formatted localized string where $1 to $9 are replaced by the
+   * second to the tenth argument.
+   * @param {string} id The ID of the string we want.
+   * @param {...string} The extra values to include in the formatted output.
+   * @return {string} The formatted string.
+   */
+  getStringF: function(id, var_args) {
+    return replaceArgs(this.getString(id), arguments);
+  },
+ 
+  /**
+   * Gets a localized string (stripped of Windows-style accelerators) by its id.
+   * @param {string} s The ID of the string we want.
+   * @return {string} The localized string.
+   */
+  getStringWithoutAccelerator: function(id) {
+    return trimAccelerators(this.getString(id));
+  },
+ 
+  /**
+   * Returns a formatted localized string (stripped of Windows-style
+   * accelerators) where $1 to $9 are replaced by the second to the tenth
+   * argument.
+   * @param {string} id The ID of the string we want.
+   * @param {...string} The extra values to include in the formatted output.
+   * @return {string} The formatted string.
+   */
+  getStringWithoutAcceleratorF: function(id, var_args) {
+    return replaceArgs(this.getStringWithoutAccelerator(id), arguments);
+  }
+};
+ 
+// End of anonymous namespace.
+})();
+</script> 
+<script> 
+///////////////////////////////////////////////////////////////////////////////
+// Globals:
+var RESULTS_PER_PAGE = 150;
+var MAX_SEARCH_DEPTH_MONTHS = 18;
+ 
+// Amount of time between pageviews that we consider a 'break' in browsing,
+// measured in milliseconds.
+var BROWSING_GAP_TIME = 15 * 60 * 1000;
+ 
+function $(o) {return document.getElementById(o);}
+ 
+function createElementWithClassName(type, className) {
+  var elm = document.createElement(type);
+  elm.className = className;
+  return elm;
+}
+ 
+// Escapes a URI as appropriate for CSS.
+function encodeURIForCSS(uri) {
+  // CSS uris need to have '(' and ')' escaped.
+  return uri.replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+ 
+// TODO(glen): Get rid of these global references, replace with a controller
+//     or just make the classes own more of the page.
+var eHistory;
+var historyModel;
+var historyView;
+var localStrings;
+var pageState;
+var deleteQueue = [];
+var deleteInFlight = false;
+var selectionAnchor = -1;
+var id2checkbox = [];
+ 
+ 
+///////////////////////////////////////////////////////////////////////////////
+// Page:
+/**
+ * Class to hold all the information about an entry in our model.
+ * @param {Object} result An object containing the page's data.
+ * @param {boolean} continued Whether this page is on the same day as the
+ *     page before it
+ */
+function Page(result, continued, model, id) {
+  this.model_ = model;
+  this.title_ = result.title;
+  this.url_ = result.url;
+  this.starred_ = result.starred;
+  this.snippet_ = result.snippet || "";
+  this.id_ = id;
+	//ehistory
+  this.transition = result.transition || "";
+  this.referer = result.referringVisitId;
+//ehistory
+  this.changed = false;
+ 
+  this.isRendered = false;
+ 
+  // All the date information is public so that owners can compare properties of
+  // two items easily.
+ 
+  // We get the time in seconds, but we want it in milliseconds.
+  this.time = new Date(result.time * 1000);
+ 
+  // See comment in BrowsingHistoryHandler::QueryComplete - we won't always
+  // get all of these.
+  this.dateRelativeDay = result.dateRelativeDay || "";
+  this.dateTimeOfDay = result.dateTimeOfDay || "";
+  this.dateShort = result.dateShort || "";
+ 
+  // Whether this is the continuation of a previous day.
+  this.continued = continued;
+}
+ 
+// Page, Public: --------------------------------------------------------------
+/**
+ * @return {DOMObject} Gets the DOM representation of the page
+ *     for use in browse results.
+ */
+Page.prototype.getBrowseResultDOM = function() {
+  var node = createElementWithClassName('div', 'entry');
+  var time = createElementWithClassName('div', 'time');
+  if (this.model_.getEditMode()) {
+    var checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.name = this.id_;
+    checkbox.time = this.time.toString();
+    checkbox.addEventListener("click", checkboxClicked, false);
+    id2checkbox[this.id_] = checkbox;
+    time.appendChild(checkbox);
+  }
+  time.appendChild(document.createTextNode(this.dateTimeOfDay));
+  node.appendChild(time);
+  node.appendChild(this.getTitleDOM_());
+//ehistroy
+  var gotHere="Got Here from ";
+  // if(localStorage[this.referer]){
+  // //	// var referer  = JSON.parse(localStorage[this.referer]);
+  // 	// var title = referer.title || referer.url;
+  // 	// gotHere += '<a href="' + referer.url + '">'+ title +'</a>';
+  // 	//   	node.appendChild(jQuery('<div class="gothere">' + gotHere + '</div>').get(0));
+  // }
+//ehistory
+  return node;
+};
+ 
+/**
+ * @return {DOMObject} Gets the DOM representation of the page for
+ *     use in search results.
+ */
+Page.prototype.getSearchResultDOM = function() {
+  var row = createElementWithClassName('tr', 'entry');
+  var datecell = createElementWithClassName('td', 'time');
+  datecell.appendChild(document.createTextNode(this.dateShort));
+  row.appendChild(datecell);
+ 
+  var titleCell = document.createElement('td');
+  titleCell.valign = 'top';
+  titleCell.appendChild(this.getTitleDOM_());
+  var snippet = createElementWithClassName('div', 'snippet');
+  this.addHighlightedText_(snippet,
+                           this.snippet_,
+                           this.model_.getSearchText());
+  titleCell.appendChild(snippet);
+  row.appendChild(titleCell);
+ 
+  return row;
+};
+ 
+// Page, private: -------------------------------------------------------------
+/**
+ * Add child text nodes to a node such that occurrences of the spcified text is
+ * highligted.
+ * @param {Node} node The node under which new text nodes will be made as
+ *     children.
+ * @param {string} content Text to be added beneath |node| as one or more
+ *     text nodes.
+ * @param {string} highlightText Occurences of this text inside |content| will
+ *     be highlighted.
+ */
+Page.prototype.addHighlightedText_ = function(node, content, highlightText) {
+  var i = 0;
+  if (highlightText) {
+    var re = new RegExp(Page.pregQuote_(highlightText), 'gim');
+    var match;
+    while (match = re.exec(content)) {
+      if (match.index > i)
+        node.appendChild(document.createTextNode(content.slice(i,
+                                                               match.index)));
+      i = re.lastIndex;
+      // Mark the highlighted text in bold.
+      var b = document.createElement('b');
+      b.textContent = content.substring(match.index, i);
+      node.appendChild(b);
+    }
+  }
+  if (i < content.length)
+    node.appendChild(document.createTextNode(content.slice(i)));
+};
+ 
+/**
+ * @return {DOMObject} DOM representation for the title block.
+ */
+Page.prototype.getTitleDOM_ = function() {
+  var node = document.createElement('div');
+  node.className = 'title';
+  var link = document.createElement('a');
+  link.href = this.url_;
+  link.style.backgroundImage =
+      'url(chrome://favicon/' + encodeURIForCSS(this.url_) + ')';
+  link.id = "id-" + this.id_;
+  this.addHighlightedText_(link, this.title_, this.model_.getSearchText());
+ 
+  node.appendChild(link);
+ 
+  if (this.starred_) {
+    node.className += ' starred';
+    node.appendChild(createElementWithClassName('div', 'starred'));
+  }
+ 
+  return node;
+};
+ 
+// Page, private, static: -----------------------------------------------------
+ 
+/**
+ * Quote a string so it can be used in a regular expression.
+ * @param {string} str The source string
+ * @return {string} The escaped string
+ */
+Page.pregQuote_ = function(str) {
+  return str.replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+};
+ 
+///////////////////////////////////////////////////////////////////////////////
+// HistoryModel:
+/**
+ * Global container for history data. Future optimizations might include
+ * allowing the creation of a HistoryModel for each search string, allowing
+ * quick flips back and forth between results.
+ *
+ * The history model is based around pages, and only fetching the data to
+ * fill the currently requested page. This is somewhat dependent on the view,
+ * and so future work may wish to change history model to operate on
+ * timeframe (day or week) based containers.
+ */
+function HistoryModel() {
+  this.clearModel_();
+  this.setEditMode(false);
+  this.view_;
+}
+ 
+// HistoryModel, Public: ------------------------------------------------------
+/**
+ * Sets our current view that is called when the history model changes.
+ * @param {HistoryView} view The view to set our current view to.
+ */
+HistoryModel.prototype.setView = function(view) {
+  this.view_ = view;
+};
+ 
+/**
+ * Start a new search - this will clear out our model.
+ * @param {String} searchText The text to search for
+ * @param {Number} opt_page The page to view - this is mostly used when setting
+ *     up an initial view, use #requestPage otherwise.
+ */
+HistoryModel.prototype.setSearchText = function(searchText, opt_page) {
+  this.clearModel_();
+  this.searchText_ = searchText;
+  this.requestedPage_ = opt_page ? opt_page : 0;
+  this.getSearchResults_();
+};
+ 
+/**
+ * Reload our model with the current parameters.
+ */
+HistoryModel.prototype.reload = function() {
+  var search = this.searchText_;
+  var page = this.requestedPage_;
+  this.clearModel_();
+  this.searchText_ = search;
+  this.requestedPage_ = page;
+  this.getSearchResults_();
+};
+ 
+/**
+ * @return {String} The current search text.
+ */
+HistoryModel.prototype.getSearchText = function() {
+  return this.searchText_;
+};
+ 
+/**
+ * Tell the model that the view will want to see the current page. When
+ * the data becomes available, the model will call the view back.
+ * @page {Number} page The page we want to view.
+ */
+HistoryModel.prototype.requestPage = function(page) {
+  this.requestedPage_ = page;
+  this.changed = true;
+  this.updateSearch_(false);
+};
+ 
+/**
+ * Receiver for history query.
+ * @param {String} term The search term that the results are for.
+ * @param {Array} results A list of results
+ */
+HistoryModel.prototype.addResults = function(info, results) {
+  this.inFlight_ = false;
+  if (info.term != this.searchText_) {
+    // If our results aren't for our current search term, they're rubbish.
+    return;
+  }
+ 
+  // Currently we assume we're getting things in date order. This needs to
+  // be updated if that ever changes.
+  if (results) {
+    var lastURL, lastDay;
+    var oldLength = this.pages_.length;
+    if (oldLength) {
+      var oldPage = this.pages_[oldLength - 1];
+      lastURL = oldPage.url;
+      lastDay = oldPage.dateRelativeDay;
+    }
+ 
+    for (var i = 0, thisResult; thisResult = results[i]; i++) {
+      var thisURL = thisResult.url;
+      var thisDay = thisResult.dateRelativeDay;
+ 
+      // Remove adjacent duplicates.
+      if (!lastURL || lastURL != thisURL) {
+        // Figure out if this page is in the same day as the previous page,
+        // this is used to determine how day headers should be drawn.
+        this.pages_.push(new Page(thisResult, thisDay == lastDay, this,
+            this.last_id_++));
+        lastDay = thisDay;
+        lastURL = thisURL;
+      }
+    }
+    if (results.length)
+      this.changed = true;
+  }
+ 
+  this.updateSearch_(info.finished);
+};
+ 
+/**
+ * @return {Number} The number of pages in the model.
+ */
+HistoryModel.prototype.getSize = function() {
+  return this.pages_.length;
+};
+ 
+/**
+ * @return {boolean} Whether our history query has covered all of
+ *     the user's history
+ */
+HistoryModel.prototype.isComplete = function() {
+  return this.complete_;
+};
+ 
+/**
+ * Get a list of pages between specified index positions.
+ * @param {Number} start The start index
+ * @param {Number} end The end index
+ * @return {Array} A list of pages
+ */
+HistoryModel.prototype.getNumberedRange = function(start, end) {
+  if (start >= this.getSize())
+    return [];
+ 
+  var end = end > this.getSize() ? this.getSize() : end;
+  return this.pages_.slice(start, end);
+};
+ 
+/**
+ * @return {boolean} Whether we are in edit mode where history items can be
+ *    deleted
+ */
+HistoryModel.prototype.getEditMode = function() {
+  return this.editMode_;
+};
+ 
+/**
+ * @param {boolean} edit_mode Control whether we are in edit mode.
+ */
+HistoryModel.prototype.setEditMode = function(edit_mode) {
+  this.editMode_ = edit_mode;
+};
+ 
+// HistoryModel, Private: -----------------------------------------------------
+HistoryModel.prototype.clearModel_ = function() {
+  this.inFlight_ = false; // Whether a query is inflight.
+  this.searchText_ = '';
+  this.searchDepth_ = 0;
+  this.pages_ = []; // Date-sorted list of pages.
+  this.last_id_ = 0;
+  selectionAnchor = -1;
+  id2checkbox = [];
+ 
+  // The page that the view wants to see - we only fetch slightly past this
+  // point. If the view requests a page that we don't have data for, we try
+  // to fetch it and call back when we're done.
+  this.requestedPage_ = 0;
+ 
+  this.complete_ = false;
+ 
+  if (this.view_) {
+    this.view_.clear_();
+  }
+};
+ 
+/**
+ * Figure out if we need to do more searches to fill the currently requested
+ * page. If we think we can fill the page, call the view and let it know
+ * we're ready to show something.
+ */
+HistoryModel.prototype.updateSearch_ = function(finished) {
+  if ((this.searchText_ && this.searchDepth_ >= MAX_SEARCH_DEPTH_MONTHS) ||
+      finished) {
+    // We have maxed out. There will be no more data.
+    this.complete_ = true;
+    this.view_.onModelReady();
+    this.changed = false;
+  } else {
+    // If we can't fill the requested page, ask for more data unless a request
+    // is still in-flight.
+    //eHistory for searchdepth functionality
+    //if (!this.canFillPage_(this.requestedPage_) && !this.inFlight_) {
+      //this.getSearchResults_(this.searchDepth_ + 1);
+    //}
+ 
+    // If we have any data for the requested page, show it.
+    if (this.changed && this.haveDataForPage_(this.requestedPage_)) {
+      this.view_.onModelReady();
+      this.changed = false;
+    }
+  }
+};
+ 
+/**
+ * Get search results for a selected depth. Our history system is optimized
+ * for queries that don't cross month boundaries, but an entire month's
+ * worth of data is huge. When we're in browse mode (searchText is empty)
+ * we request the data a day at a time. When we're searching, a month is
+ * used.
+ *
+ * TODO: Fix this for when the user's clock goes across month boundaries.
+ * @param {number} opt_day How many days back to do the search.
+ */
+HistoryModel.prototype.getSearchResults_ = function(depth) {
+  this.searchDepth_ = depth || 0;
+ 
+  if (this.searchText_ == "") {
+    eHistory.doSearch(this.searchText_); //eHistory
+  } else {
+    eHistory.doSearch(this.searchText_); //eHistory
+  }
+ 
+  this.inFlight_ = true;
+};
+ 
+/**
+ * Check to see if we have data for a given page.
+ * @param {number} page The page number
+ * @return {boolean} Whether we have any data for the given page.
+ */
+HistoryModel.prototype.haveDataForPage_ = function(page) {
+  return (page * RESULTS_PER_PAGE < this.getSize());
+};
+ 
+/**
+ * Check to see if we have data to fill a page.
+ * @param {number} page The page number.
+ * @return {boolean} Whether we have data to fill the page.
+ */
+HistoryModel.prototype.canFillPage_ = function(page) {
+  return ((page + 1) * RESULTS_PER_PAGE <= this.getSize());
+};
+ 
+///////////////////////////////////////////////////////////////////////////////
+// HistoryView:
+/**
+ * Functions and state for populating the page with HTML. This should one-day
+ * contain the view and use event handlers, rather than pushing HTML out and
+ * getting called externally.
+ * @param {HistoryModel} model The model backing this view.
+ */
+function HistoryView(model) {
+  this.summaryTd_ = $('results-summary');
+  this.summaryTd_.textContent = localStrings.getString('loading');
+  this.editButtonTd_ = $('edit-button');
+  this.editingControlsDiv_ = $('editing-controls');
+  this.resultDiv_ = $('results-display');
+  this.pageDiv_ = $('results-pagination');
+  this.model_ = model
+  this.pageIndex_ = 0;
+  this.lastDisplayed_ = [];
+ 
+  this.model_.setView(this);
+ 
+  this.currentPages_ = [];
+ 
+  var self = this;
+  window.onresize = function() {
+    self.updateEntryAnchorWidth_();
+  };
+  self.updateEditControls_();
+ 
+  this.boundUpdateRemoveButton_ = function(e) {
+    return self.updateRemoveButton_(e);
+  };
+}
+ 
+// HistoryView, public: -------------------------------------------------------
+/**
+ * Do a search and optionally view a certain page.
+ * @param {string} term The string to search for.
+ * @param {number} opt_page The page we wish to view, only use this for
+ *     setting up initial views, as this triggers a search.
+ */
+HistoryView.prototype.setSearch = function(term, opt_page) {
+  this.pageIndex_ = parseInt(opt_page || 0, 10);
+  window.scrollTo(0, 0);
+  this.model_.setSearchText(term, this.pageIndex_);
+  if (term) {
+    this.setEditMode(false);
+  }
+  this.updateEditControls_();
+  pageState.setUIState(this.model_.getEditMode(), term, this.pageIndex_);
+};
+ 
+/**
+ * Controls edit mode where history can be deleted.
+ * @param {boolean} edit_mode Whether to enable edit mode.
+ */
+HistoryView.prototype.setEditMode = function(edit_mode) {
+  this.model_.setEditMode(edit_mode);
+  pageState.setUIState(this.model_.getEditMode(), this.model_.getSearchText(),
+                       this.pageIndex_);
+};
+ 
+/**
+ * Toggles the edit mode and triggers UI update.
+ */
+HistoryView.prototype.toggleEditMode = function() {
+  var editMode = !this.model_.getEditMode();
+  this.setEditMode(editMode);
+  this.updateEditControls_();
+};
+ 
+/**
+ * Reload the current view.
+ */
+HistoryView.prototype.reload = function() {
+  this.model_.reload();
+};
+ 
+/**
+ * Switch to a specified page.
+ * @param {number} page The page we wish to view.
+ */
+HistoryView.prototype.setPage = function(page) {
+  this.clear_();
+  this.pageIndex_ = parseInt(page, 10);
+  window.scrollTo(0, 0);
+  this.model_.requestPage(page);
+  pageState.setUIState(this.model_.getEditMode(), this.model_.getSearchText(),
+      this.pageIndex_);
+};
+ 
+/**
+ * @return {number} The page number being viewed.
+ */
+HistoryView.prototype.getPage = function() {
+  return this.pageIndex_;
+};
+ 
+/**
+ * Callback for the history model to let it know that it has data ready for us
+ * to view.
+ */
+HistoryView.prototype.onModelReady = function() {
+  this.displayResults_();
+};
+ 
+// HistoryView, private: ------------------------------------------------------
+/**
+ * Clear the results in the view.  Since we add results piecemeal, we need
+ * to clear them out when we switch to a new page or reload.
+ */
+HistoryView.prototype.clear_ = function() {
+  this.resultDiv_.textContent = '';
+ 
+  var pages = this.currentPages_;
+  for (var i = 0; i < pages.length; i++) {
+    pages[i].isRendered = false;
+  }
+  this.currentPages_ = [];
+};
+ 
+HistoryView.prototype.setPageRendered_ = function(page) {
+  page.isRendered = true;
+  this.currentPages_.push(page);
+};
+ 
+/**
+ * Update the page with results.
+ */
+HistoryView.prototype.displayResults_ = function() {
+  var results = this.model_.getNumberedRange(
+      this.pageIndex_ * RESULTS_PER_PAGE,
+      this.pageIndex_ * RESULTS_PER_PAGE + RESULTS_PER_PAGE);
+ 
+  if (false) {//ehistory
+    var resultTable = createElementWithClassName('table', 'results');
+    resultTable.cellSpacing = 0;
+    resultTable.cellPadding = 0;
+    resultTable.border = 0;
+ 
+    for (var i = 0, page; page = results[i]; i++) {
+      if (!page.isRendered) {
+        resultTable.appendChild(page.getSearchResultDOM());
+        this.setPageRendered_(page);
+      }
+    }
+    this.resultDiv_.appendChild(resultTable);
+  } else {
+    var lastTime = Math.infinity;
+    for (var i = 0, page; page = results[i]; i++) {
+      if (page.isRendered) {
+        continue;
+      }
+      // Break across day boundaries and insert gaps for browsing pauses.
+      var thisTime = page.time.getTime();
+ 
+      if ((i == 0 && page.continued) || !page.continued) {
+        var day = createElementWithClassName('div', 'day');
+        day.appendChild(document.createTextNode(page.dateRelativeDay));
+ 
+        if (i == 0 && page.continued) {
+          day.appendChild(document.createTextNode(' ' +
+              localStrings.getString('cont')));
+        }
+ 
+        this.resultDiv_.appendChild(day);
+      } else if (lastTime - thisTime > BROWSING_GAP_TIME) {
+        this.resultDiv_.appendChild(createElementWithClassName('div', 'gap'));
+      }
+      lastTime = thisTime;
+ 
+      // Add entry.
+      this.resultDiv_.appendChild(page.getBrowseResultDOM());
+      this.setPageRendered_(page);
+    }
+  }
+ 
+  this.displaySummaryBar_();
+  this.displayNavBar_();
+  this.updateEntryAnchorWidth_();
+};
+ 
+/**
+ * Update the summary bar with descriptive text.
+ */
+HistoryView.prototype.displaySummaryBar_ = function() {
+  var searchText = this.model_.getSearchText();
+  if (searchText != '') {
+    this.summaryTd_.textContent = localStrings.getStringF('searchresultsfor',
+        searchText);
+  } else {
+    this.summaryTd_.textContent = localStrings.getString('history');
+  }
+};
+ 
+/**
+ * Update the widgets related to edit mode.
+ */
+HistoryView.prototype.updateEditControls_ = function() {
+  // Display a button (looking like a link) to enable/disable edit mode.
+  var oldButton = this.editButtonTd_.firstChild;
+  /*if (this.model_.getSearchText()) {
+    this.editButtonTd_.replaceChild(document.createElement('p'), oldButton);
+    this.editingControlsDiv_.textContent = '';
+    return;
+  }*///ehistory
+ 
+  var editMode = this.model_.getEditMode();
+  var button = createElementWithClassName('button', 'edit-button');
+  button.onclick = toggleEditMode;
+  button.textContent = localStrings.getString(editMode ?
+                                              'doneediting' : 'edithistory');
+  this.editButtonTd_.replaceChild(button, oldButton);
+ 
+  this.editingControlsDiv_.textContent = '';
+ 
+  if (editMode) {
+    // Button to delete the selected items.
+    button = document.createElement('button');
+    button.onclick = removeItems;
+    button.textContent = localStrings.getString('removeselected');
+    button.disabled = true;
+    this.editingControlsDiv_.appendChild(button);
+    this.removeButton_ = button;
+ 
+    // Button that opens up the clear browsing data dialog.
+    button = document.createElement('button');
+    button.onclick = openClearBrowsingData;
+    button.textContent = localStrings.getString('clearallhistory');
+    this.editingControlsDiv_.appendChild(button);
+ 
+    // Listen for clicks in the page to sync the disabled state.
+    document.addEventListener('click', this.boundUpdateRemoveButton_);
+  } else {
+    this.removeButton_ = null;
+    document.removeEventListener('click', this.boundUpdateRemoveButton_);
+  }
+};
+ 
+/**
+ * Updates the disabled state of the remove button when in editing mode.
+ * @param {!Event} e The click event object.
+ * @private
+ */
+HistoryView.prototype.updateRemoveButton_ = function(e) {
+  if (e.target.tagName != 'INPUT')
+    return;
+ 
+  var anyChecked = document.querySelector('.entry input:checked') != null;
+  if (this.removeButton_)
+    this.removeButton_.disabled = !anyChecked;
+};
+ 
+/**
+ * Update the pagination tools.
+ */
+HistoryView.prototype.displayNavBar_ = function() {
+  this.pageDiv_.textContent = '';
+ 
+  if (this.pageIndex_ > 0) {
+    this.pageDiv_.appendChild(
+        this.createPageNav_(0, localStrings.getString('newest')));
+    this.pageDiv_.appendChild(
+        this.createPageNav_(this.pageIndex_ - 1,
+                            localStrings.getString('newer')));
+  }
+ 
+  // TODO(feldstein): this causes the navbar to not show up when your first
+  // page has the exact amount of results as RESULTS_PER_PAGE.
+  if (this.model_.getSize() > (this.pageIndex_ + 1) * RESULTS_PER_PAGE) {
+    this.pageDiv_.appendChild(
+        this.createPageNav_(this.pageIndex_ + 1,
+                            localStrings.getString('older')));
+  }
+};
+ 
+/**
+ * Make a DOM object representation of a page navigation link.
+ * @param {number} page The page index the navigation element should link to
+ * @param {string} name The text content of the link
+ * @return {HTMLAnchorElement} the pagination link
+ */
+HistoryView.prototype.createPageNav_ = function(page, name) {
+  anchor = document.createElement('a');
+  anchor.className = 'page-navigation';
+  anchor.textContent = name;
+  var hashString = PageState.getHashString(this.model_.getEditMode(),
+                                           this.model_.getSearchText(), page);
+  var link = 'chrome://history/' + (hashString ? '#' + hashString : '');
+  anchor.href = link;
+  anchor.onclick = function() {
+    setPage(page);
+    return false;
+  };
+  return anchor;
+};
+ 
+/**
+ * Updates the CSS rule for the entry anchor.
+ * @private
+ */
+HistoryView.prototype.updateEntryAnchorWidth_ = function() {
+  // We need to have at least on .title div to be able to calculate the
+  // desired width of the anchor.
+  var titleElement = document.querySelector('.entry .title');
+  if (!titleElement)
+    return;
+ 
+  // Create new CSS rules and add them last to the last stylesheet.
+  if (!this.entryAnchorRule_) {
+     var styleSheets = document.styleSheets;
+     var styleSheet = styleSheets[styleSheets.length - 1];
+     var rules = styleSheet.cssRules;
+     var createRule = function(selector) {
+       styleSheet.insertRule(selector + '{}', rules.length);
+       return rules[rules.length - 1];
+     };
+     this.entryAnchorRule_ = createRule('.entry .title > a');
+     // The following rule needs to be more specific to have higher priority.
+     this.entryAnchorStarredRule_ = createRule('.entry .title.starred > a');
+   }
+ 
+   var anchorMaxWith = titleElement.offsetWidth;
+   this.entryAnchorRule_.style.maxWidth = anchorMaxWith + 'px';
+   // Adjust by the width of star plus its margin.
+   this.entryAnchorStarredRule_.style.maxWidth = anchorMaxWith - 23 + 'px';
+};
+ 
+///////////////////////////////////////////////////////////////////////////////
+// State object:
+/**
+ * An 'AJAX-history' implementation.
+ * @param {HistoryModel} model The model we're representing
+ * @param {HistoryView} view The view we're representing
+ */
+function PageState(model, view) {
+  // Enforce a singleton.
+  if (PageState.instance) {
+    return PageState.instance;
+  }
+ 
+  this.model = model;
+  this.view = view;
+ 
+  if (typeof this.checker_ != 'undefined' && this.checker_) {
+    clearInterval(this.checker_);
+  }
+ 
+  // TODO(glen): Replace this with a bound method so we don't need
+  //     public model and view.
+  this.checker_ = setInterval((function(state_obj) {
+    var hashData = state_obj.getHashData();
+ 
+    if (hashData.q != state_obj.model.getSearchText(term)) {
+      state_obj.view.setSearch(hashData.q, parseInt(hashData.p, 10));
+    } else if (parseInt(hashData.p, 10) != state_obj.view.getPage()) {
+      state_obj.view.setPage(hashData.p);
+    }
+  }), 50, this);
+}
+ 
+PageState.instance = null;
+ 
+/**
+ * @return {Object} An object containing parameters from our window hash.
+ */
+PageState.prototype.getHashData = function() {
+  var result = {
+    e : 0,
+    q : '',
+    p : 0
+  };
+ 
+  if (!window.location.hash) {
+    return result;
+  }
+ 
+  var hashSplit = window.location.hash.substr(1).split('&');
+  for (var i = 0; i < hashSplit.length; i++) {
+    var pair = hashSplit[i].split('=');
+    if (pair.length > 1) {
+      result[pair[0]] = decodeURIComponent(pair[1].replace(/\+/g, ' '));
+    }
+  }
+ 
+  return result;
+};
+ 
+/**
+ * Set the hash to a specified state, this will create an entry in the
+ * session history so the back button cycles through hash states, which
+ * are then picked up by our listener.
+ * @param {string} term The current search string.
+ * @param {string} page The page currently being viewed.
+ */
+PageState.prototype.setUIState = function(editMode, term, page) {
+  // Make sure the form looks pretty.
+  document.forms[0].term.value = term;
+  var currentHash = this.getHashData();
+  if (Boolean(currentHash.e) != editMode || currentHash.q != term ||
+      currentHash.p != page) {
+    window.location.hash = PageState.getHashString(editMode, term, page);
+  }
+};
+ 
+/**
+ * Static method to get the hash string for a specified state
+ * @param {string} term The current search string.
+ * @param {string} page The page currently being viewed.
+ * @return {string} The string to be used in a hash.
+ */
+PageState.getHashString = function(editMode, term, page) {
+  var newHash = [];
+  if (editMode) {
+    newHash.push('e=1');
+  }
+  if (term) {
+    newHash.push('q=' + encodeURIComponent(term));
+  }
+  if (page != undefined) {
+    newHash.push('p=' + page);
+  }
+ 
+  return newHash.join('&');
+};
+ 
+///////////////////////////////////////////////////////////////////////////////
+// Document Functions:
+/**
+ * Window onload handler, sets up the page.
+ */
+function load() {
+  $('term').focus();
+  eHistory = new EHistory();
+  localStrings = new LocalStrings();
+  historyModel = new HistoryModel();
+  historyView = new HistoryView(historyModel);
+  pageState = new PageState(historyModel, historyView);
+ 
+  // Create default view.
+  var hashData = pageState.getHashData();
+  if (Boolean(hashData.e)) {
+    historyView.toggleEditMode();
+  }
+  historyView.setSearch(hashData.q, hashData.p);
+}
+ 
+/**
+ * TODO(glen): Get rid of this function.
+ * Set the history view to a specified page.
+ * @param {String} term The string to search for
+ */
+function setSearch(term) {
+  if (historyView) {
+    historyView.setSearch(term);
+  }
+}
+ 
+/**
+ * TODO(glen): Get rid of this function.
+ * Set the history view to a specified page.
+ * @param {number} page The page to set the view to.
+ */
+function setPage(page) {
+  if (historyView) {
+    historyView.setPage(page);
+  }
+}
+ 
+/**
+ * TODO(glen): Get rid of this function.
+ * Toggles edit mode.
+ */
+function toggleEditMode() {
+  if (historyView) {
+    historyView.toggleEditMode();
+    historyView.reload();
+  }
+}
+ 
+/**
+ * Delete the next item in our deletion queue.
+ */
+function deleteNextInQueue() {
+  if (!deleteInFlight && deleteQueue.length) {
+    deleteInFlight = true;
+    eHistory.removeURLsOnOneDay(            [deleteQueue[0],deleteQueue[1]]);
+  }
+}
+ 
+/**
+ * Open the clear browsing data dialog.
+ */
+function openClearBrowsingData() {
+  chrome.send('clearBrowsingData', []);
+  return false;
+}
+ 
+/**
+ * Collect IDs from checked checkboxes and send to Chrome for deletion.
+ */
+function removeItems() {
+  var checkboxes = document.getElementsByTagName('input');
+  var ids = [];
+  var disabledItems = [];
+  var queue = [];
+  var date = new Date();
+  for (var i = 0; i < checkboxes.length; i++) {
+    if (checkboxes[i].type == 'checkbox' && checkboxes[i].checked &&
+        !checkboxes[i].disabled) {
+      var cbDate = new Date(checkboxes[i].time);
+      if (date.getFullYear() != cbDate.getFullYear() ||
+          date.getMonth() != cbDate.getMonth() ||
+          date.getDate() != cbDate.getDate()) {
+        if (ids.length > 0) {
+          queue.push(date.valueOf() / 1000);
+          queue.push(ids);
+        }
+        ids = [];
+        date = cbDate;
+      }
+      var link = $('id-' + checkboxes[i].name);
+      checkboxes[i].disabled = true;
+      link.style.textDecoration = 'line-through';
+      disabledItems.push(checkboxes[i]);
+      ids.push(link.href);
+    }
+  }
+  if (ids.length > 0) {
+    queue.push(date.valueOf() / 1000);
+    queue.push(ids);
+  }
+  if (queue.length > 0) {
+    if (confirm(localStrings.getString('deletewarning'))) {
+      deleteQueue = deleteQueue.concat(queue);
+      deleteNextInQueue();
+    } else {
+      // If the remove is cancelled, return the checkboxes to their
+      // enabled, non-line-through state.
+      for (var i = 0; i < disabledItems.length; i++) {
+        var link = $('id-' + disabledItems[i].name);
+        disabledItems[i].disabled = false;
+        link.style.textDecoration = '';
+      }
+    }
+  }
+  return false;
+}
+ 
+/**
+ * Toggle state of checkbox and handle Shift modifier.
+ */
+function checkboxClicked(event) {
+  if (event.shiftKey && (selectionAnchor != -1)) {
+    var checked = this.checked;
+    // Set all checkboxes from the anchor up to the clicked checkbox to the
+    // state of the clicked one.
+    var begin = Math.min(this.name, selectionAnchor);
+    var end = Math.max(this.name, selectionAnchor);
+    for (var i = begin; i <= end; i++) {
+      id2checkbox[i].checked = checked;
+    }
+  }
+  selectionAnchor = this.name;
+  this.focus();
+}
+ 
+///////////////////////////////////////////////////////////////////////////////
+// Chrome callbacks:
+/**
+ * Our history system calls this function with results from searches.
+ */
+function historyResult(info, results) {
+  historyModel.addResults(info, results);
+}
+ 
+/**
+ * Our history system calls this function when a deletion has finished.
+ */
+function deleteComplete() {
+  window.console.log('Delete complete');
+  deleteInFlight = false;
+  if (deleteQueue.length > 1) {
+    deleteQueue = deleteQueue.slice(2);
+    deleteNextInQueue();
+  } else {
+    deleteQueue = [];
+  }
+}
+ 
+/**
+ * Our history system calls this function if a delete is not ready (e.g.
+ * another delete is in-progress).
+ */
+function deleteFailed() {
+  window.console.log('Delete failed');
+  // The deletion failed - try again later.
+  deleteInFlight = false;
+  setTimeout(deleteNextInQueue, 500);
+}
+ 
+/**
+ * We're called when something is deleted (either by us or by someone
+ * else).
+ */
+function historyDeleted() {
+  window.console.log('History deleted');
+  historyView.reload();
+}
+</script> 
+<style>body {
+
+  background-color:white;
+
+  color:black;
+
+  margin:10px;
+
+}
+
+.header {
+
+  overflow:auto;
+
+  clear:both;
+
+}
+
+.header .logo {
+
+  float:left;
+
+}
+
+.header .form {
+
+  float:left;
+
+  margin-top:22px;
+
+  margin-left:12px;
+
+}
+
+html[dir='rtl'] .logo {
+
+  float:right;
+
+}
+
+html[dir='rtl'] .form {
+
+  float:right;
+
+  margin-right:12px;
+
+}
+
+.page-navigation {
+
+  padding:8px;
+
+  background-color:#ebeff9;
+
+  margin-right:4px;
+
+}
+
+.footer {
+
+  height:24px;
+
+}</style> 
+<style> 
+#results-separator {
+  margin-top:12px;
+  border-top:1px solid #9cc2ef;
+  background-color:#ebeff9;
+  font-weight:bold;
+  padding:3px;
+  margin-bottom:-8px;
+}
+#results-separator table {
+  width: 100%;
+}
+#results-summary {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 50%;
+}
+#edit-button {
+  text-align: right;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 50%;
+}
+#editing-controls button {
+  margin-top: 18px;
+  margin-bottom: -8px;
+}
+#results-display {
+  max-width:740px;
+}
+.day {
+  margin-top:18px;
+  padding:0px 3px;
+  display:inline-block;
+}
+.edit-button {
+  display: inline;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  color: blue; /* -webkit-link makes it purple :'( */
+  cursor: pointer;
+  text-decoration: underline;
+  padding:0px 9px;
+  display:inline-block;
+  font:inherit;
+}
+.gap {
+  margin-left:18px;
+  width:15px;
+  border-right:1px solid #ddd;
+  height:14px;
+}
+.entry {
+  margin-left:18px;
+  margin-top:6px;
+  overflow:auto;
+}
+table.results {
+  margin-left:4px;
+}
+.entry .time {
+  color:#888;
+  float:left;
+  min-width:56px;
+  margin-right:5px;
+  padding-top:1px;
+  white-space:nowrap;
+}
+html[dir='rtl'] .time {
+  margin-right:0px;
+  margin-left:5px;
+  float:right;
+}
+.entry .title {
+  max-width:600px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.results .time, .results .title {
+  margin-top:18px;
+}
+.title > .starred {
+  background:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAB80lEQVQYGQXBXUhTYQAG4Pf7znfO/qJpHklBcw4SdTS3tF8wN2q2BiVMZxgkJMHqIugiCEy8sBkE3XUxiJRJUXQzSsWUEEsjdZBJFtWG28IuVq4azra5nbPT87DzPWHYTurx66cExhEkk8V783M/rtbU7vWLIndDrSFoNKkwN5sCAwBFAXQ6iooKoSG6nnB4+x5pJ2c6HYbaAw28IH1RFAUAwCgFBJ6W53mCb2HSJpbGzR7PONY+G8yxuKXNZEJSpSKgFJsslyO3wuGCT8rLiERkdJxZREl5AsbqEILTnX6dlvdLEsF2mgywT2ubvtYjARw8vA4puxsW6yqUPMPF3mU0mvshaIuYDEr4sHLFx5yuqo35t7pqU/0y2s9+B/IaFAsCysQkHPZnmJrW4GukD05X5QZrP73LtrR0+eYlb5N7jN4WTzk/ghYBQMbIqBEDQ9eTXT3dwdYT7C5Tq0m05RDnXV2ps/7dqhEVOYTU7yz0pQSUctgjHo/V7SfezD8ZLLejQKsVBsWyLeux5vcIPKzE+Es7zrne4GhLFPuqQlaOGQdTqZ0hNvE8DUClz2xPsQcjBDOvh1GQ7cHA05B7YXEYKv4dm3jh0gM5sCaLGjxPs2OjzZl0xoYLvfX3Z1/96e/qdt558thwLR5LwO3hspKkwX/RB7soMZzqHQAAAABJRU5ErkJggg==");
+  background-repeat:no-repeat;
+  display:inline-block;
+  margin-left:12px;
+  margin-right:0;
+  width:11px;
+  height:11px;
+}
+html[dir='rtl'] .title > .starred {
+  margin-left:0;
+  margin-right:12px;
+}
+.entry .title > a {
+  -webkit-box-sizing: border-box;
+  background-repeat:no-repeat;
+  background-size:16px;
+  background-position:0px 1px;
+  padding:1px 0px 4px 22px;
+  display:inline-block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+html[dir='rtl'] .entry .title > a {
+  background-position-x:right;
+  padding-left:0px;
+  padding-right:22px;
+}
+#results-pagination {
+  padding-top:24px;
+  margin-left:18px;
+}
+
+</style> 
+</head> 
+<body onload="load();" i18n-values=".style.fontFamily:fontfamily;.style.fontSize:fontsize"> 
+<div class="header"> 
+  <a href="" onclick="setSearch(''); return false;"> 
+    <img src="data:image/png;base64,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"
+         width="67" height="67" class="logo" border="0"></a> 
+  <form method="post" action=""
+      onsubmit="setSearch(this.term.value); return false;"
+      class="form"> 
+    <input type="text" name="term" id="term"> 
+    <input type="submit" name="submit" i18n-values="value:searchbutton">
+  </form> 
+</div> 
+<div class="main"> 
+  <div id="results-separator"> 
+    <table border="0" cellPadding="0" cellSpacing="0"> 
+      <tr><td id="results-summary"></td><td id="edit-button"><p></p></td></tr> 
+    </table> 
+  </div> 
+  <div id="editing-controls"></div> 
+  <div id="results-display"></div> 
+  <div id="results-pagination"></div> 
+</div> 
+<div class="footer"> 
+</div> 
+</body> 
+</html> 
+<script>var templateData = {"clearallhistory":"Clear all browsing data...","cont":"(Cont.)","deletewarning":"Are you sure you want to delete these pages from your history?","doneediting":"Done removing items","edithistory":"Edit items...","fontfamily":"Arial, sans-serif","fontsize":"84%","history":"History","loading":"Loading...","newer":"Newer","newest":"Newest","noitems":"All the pages you visit will appear here unless you open them in an incognito window. You can use the Search button on this page to search all the pages in your history.","noresults":"No search results found.","older":"Older","removeselected":"Remove selected items","searchbutton":"Search history","searchresultsfor":"Search results for '$1'","textdirection":"ltr","title":"History"};</script><script>// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+ 
+/**
+ * @fileoverview This is a simple template engine inspired by JsTemplates
+ * optimized for i18n.
+ *
+ * It currently supports two handlers:
+ *
+ *   * i18n-content which sets the textContent of the element
+ *
+ *     <span i18n-content="myContent"></span>
+ *     i18nTemplate.process(element, {'myContent': 'Content'});
+ *
+ *   * i18n-values is a list of attribute-value or property-value pairs.
+ *     Properties are prefixed with a '.' and can contain nested properties.
+ *
+ *     <span i18n-values="title:myTitle;.style.fontSize:fontSize"></span>
+ *     i18nTemplate.process(element, {
+ *       'myTitle': 'Title',
+ *       'fontSize': '13px'
+ *     });
+ */
+ 
+var i18nTemplate = (function() {
+  /**
+   * This provides the handlers for the templating engine. The key is used as
+   * the attribute name and the value is the function that gets called for every
+   * single node that has this attribute.
+   * @type {Object}
+   */
+  var handlers = {
+    /**
+     * This handler sets the textContent of the element.
+     */
+    'i18n-content': function(element, attributeValue, obj) {
+      element.textContent = obj[attributeValue];
+    },
+ 
+    /**
+     * This is used to set HTML attributes and DOM properties,. The syntax is:
+     *   attributename:key;
+     *   .domProperty:key;
+     *   .nested.dom.property:key
+     */
+    'i18n-values': function(element, attributeValue, obj) {
+      var parts = attributeValue.replace(/\s/g, '').split(/;/);
+      for (var j = 0; j < parts.length; j++) {
+        var a = parts[j].match(/^([^:]+):(.+)$/);
+        if (a) {
+          var propName = a[1];
+          var propExpr = a[2];
+ 
+          // Ignore missing properties
+          if (propExpr in obj) {
+            var value = obj[propExpr];
+            if (propName.charAt(0) == '.') {
+              var path = propName.slice(1).split('.');
+              var object = element;
+              while (object && path.length > 1) {
+                object = object[path.shift()];
+              }
+              if (object) {
+                object[path] = value;
+                // In case we set innerHTML (ignoring others) we need to
+                // recursively check the content
+                if (path == 'innerHTML') {
+                  process(element, obj);
+                }
+              }
+            } else {
+              element.setAttribute(propName, value);
+            }
+          } else {
+            console.warn('i18n-values: Missing value for "' + propExpr + '"');
+          }
+        }
+      }
+    }
+  };
+ 
+  var attributeNames = [];
+  for (var key in handlers) {
+    attributeNames.push(key);
+  }
+  var selector = '[' + attributeNames.join('],[') + ']';
+ 
+  /**
+   * Processes a DOM tree with the {@code obj} map.
+   */
+  function process(node, obj) {
+    var elements = node.querySelectorAll(selector);
+    for (var element, i = 0; element = elements[i]; i++) {
+      for (var j = 0; j < attributeNames.length; j++) {
+        var name = attributeNames[j];
+        var att = element.getAttribute(name);
+        if (att != null) {
+          handlers[name](element, att, obj);
+        }
+      }
+    }
+  }
+ 
+  return {
+    process: process
+  };
+})();
+</script><script>i18nTemplate.process(document, templateData);</script>
