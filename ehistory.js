@@ -11,12 +11,13 @@ function EHistory(){
  *
 */
 (function ($){
+	var MAX = 2147483647;
 	EHistory.prototype.doSearch = function(query, options) {//@FIXME make one argument
 		this.settings = {
 			'text': '',
 			'startTime' : 0,
 			'endTime' : (new Date).getTime(),
-			'maxResults' : Infinity,
+			'maxResults' : MAX,
 			'regex': 0
 		};
 
@@ -82,7 +83,7 @@ function EHistory(){
 			text:'',
 			startTime:0, 
 			endTime: (new Date).getTime(),
-			maxResults:Infinity
+			maxResults:MAX
 			}, getVisits);
 	}
 		//chrome.history.deleteRange({startTime: time,
@@ -252,7 +253,7 @@ function EHistory(){
 	      path = url.replace(hostName+"/", "");
 	      return {'hostName' : hostName, 'path' : path};	
 	}
-	function takeAndReturn(pairs, query, callback){
+	takeAndReturn = function(pairs, query, callback){
 		var words = query.split(' ');
 
 		var rString = "";
