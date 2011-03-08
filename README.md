@@ -10,7 +10,7 @@ Will maybe thats just me, but when it happens I find that the current chrome his
 For example you remember you once read an article on a pakistani website that had some information you currently need, but thats about as much 
 as you remember so you could go to your history and type in the search box:
 
-site:.pk
+	:site:.pk
 
 ##Operators
 * inurl: eHistory will restrict results coming from your history search to documents containing that word in the url.
