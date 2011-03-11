@@ -20,7 +20,6 @@ function EHistory(){
 			'maxResults' : MAX,
 			'regex': 0
 		};
-
 		var options = {};
 		this.searchText_ = query;
 		this.filters_ = [];
@@ -54,14 +53,14 @@ function EHistory(){
 	}
 
 	EHistory.prototype.removeURLsOnOneDay = function (obj){
+		var day,nextDay,
+			self = this;
 		for(var i = 0; i<obj.length; i+=2){
 			day = new Date(new Date(obj[i] * 1000).toDateString()).getTime();	
 			nextDay = day + 24 * 60 * 60 * 1000;
-			var self = this;
 			for (var j = 0; j < obj[i+1].length; j++){
 				chrome.history.getVisits({url:obj[i+1][j]}, function(visits){self.filterAndRemove_(visits,day,nextDay)});
 			}
-
 		}
 		}
 	//public static:
@@ -132,10 +131,11 @@ function EHistory(){
 	}
 
 	EHistory.prototype.filterOutResults_ = function(results){
-		var results__ = [];
+		var results__ = [],
+			add;
 		for (var i=0; i < results.length; i++)
 		{
-			var add = true;
+			add = true;
 			for (var j = 0; j < this.filters_.length; j++)
 			{
 				$.extend(results[i], this.settings);
@@ -153,8 +153,10 @@ function EHistory(){
 	}
 
 	EHistory.prototype.fixAndSendBack_ = function(visits){
-
-		var historyItem = this.results_[visits[0].id];
+		if (!visits || visits.length < 1) return;
+		var historyItem = this.results_[visits[0].id],
+			now,date,dif,difInDays,timeStr,dateStr,visitItem,finished,min;
+			
 		delete this.results_[visits[0].id];
 		this.results_.length_--;
 		if (!historyItem) return;
@@ -164,21 +166,22 @@ function EHistory(){
 
 		for(var i = 0; i < visits.length; i++){
 			this.count++;
-			var visitItem = visits[i];
+			visitItem = visits[i];
 			visitItem.time = visitItem.visitTime /1000;
 			visitItem.url = historyItem.url;
 			visitItem.title = historyItem.title;
-			var now = new Date();
-			var date = new Date(visitItem.visitTime);
-			var dif = now.getTime() - date.getTime();
-			var difInDays = Math.floor(dif / 1000 / 60 / 60 / 24);
-			var timeStr = date.getHours() % 12;
-			var dateStr = "";
+			now = new Date();
+			date = new Date(visitItem.visitTime);
+			dif = now.getTime() - date.getTime();
+			difInDays = Math.floor(dif / 1000 / 60 / 60 / 24);
+			timeStr = String(date.getHours() % 12);
+			dateStr = "";
 
 			if (timeStr.length < 2)
 				timeStr = "0" + timeStr;
-
-			timeStr += ":" + date.getMinutes(); 
+			
+			min = String(date.getMinutes());
+			timeStr += ":" + (min.length < 2 ? "0" + min : min); 
 			timeStr += date.getHours() > 11 ? " P.M" : " A.M";
 			//if (difInDays == 0) dateStr += "Today - ";
 			//if (difInDays == 1) dateStr += "Yesterday - ";
@@ -194,13 +197,9 @@ function EHistory(){
 		//	historyResult({'term': this.searchText_, 'finished': true}, [visitItem]);
 		}
 
-		if (this.results_.length_ == 0)
-			{
-				this.sendBack_();
-			}
-
-
-		var finished = this.results_.length_ == 0 ? true : false;
+		if (this.results_.length_ == 0) this.sendBack_();
+			
+		finished = this.results_.length_ == 0 ? true : false;
 
 	}
 
@@ -221,13 +220,12 @@ function EHistory(){
 			return 1;
 		});
 		this.results_ = finalResults;
-		console.log(this.count);
 		historyResult({'term': this.searchText_, 'finished': true}, finalResults);
 	}
 
 	EHistory.prototype.filterAndRemove_ = function(visits, day, next){
-		for (var i = 0; i < visits.length; i++){
-			var time = visits[i].visitTime;
+		for (var i = 0, time; i < visits.length; i++){
+			time = visits[i].visitTime;
 			if (time > day && time < next){
 				//a hack to delete one item, unless one can visit multiple urls in the same .1 milliseconds
 				//chrome history system does not know any less.
@@ -244,23 +242,21 @@ function EHistory(){
 	}
 
 	function parseUrl(url){
-		//@todo implement protocol parsing
-	      //@todo use regex
-	      //@todo implement port parsing
-	      url = url.replace("http://", "");
-	      //console.log(url.slice("/"));
+	      url = url.replace(/http(s)*:\/\//, "").replace(/:[0-9]+/,'');
 	      hostName = url.split("/")[0];
 	      path = url.replace(hostName+"/", "");
 	      return {'hostName' : hostName, 'path' : path};	
 	}
+	
 	takeAndReturn = function(pairs, query, callback){
-		var words = query.split(' ');
-
-		var rString = "";
+		var words = query.split(' '),
+			rString = "",
+			oneWord, key, value;
+			
 		for (var i=0; i < words.length; i++){
-			    var oneWord = words[i];		
-				var key = oneWord.split(":")[0];
-				var value = oneWord.split(":")[1] || "";
+			    oneWord = words[i];		
+				key = oneWord.split(":")[0];
+				value = oneWord.split(":")[1] || "";
 				if (typeof pairs[key] !== "undefined"){
 					callback(pairs[key], key, value);
 					continue;
@@ -279,7 +275,6 @@ function EHistory(){
 	  return true;
 	}
 	var Filters = {
-		//@todo implement validation on returned from parseUrl
 		   //@todo think about upper/lower case
 			'intitle': function(obj, txtMatch){
 				var isRegex = obj.regex && obj.regex == "1" && isValidRegex(txtMatch);
@@ -303,10 +298,9 @@ function EHistory(){
 		          //handle stuff like site:.jo or ..jo
 		          for (var x in host)
 		            if (host[x] == "") host.splice(x,1);
-
 		          //j is where to start comparing in the hostname of the url in question
 		          var j = hostName.length - host.length;
-		          for(var i in host)
+		          for(var i=0; i < host.length; i++)
 		          {
 		              //if j is undefined or doesn't equal the hostname to match return false 
 		              if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase())

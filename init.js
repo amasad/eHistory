@@ -23,7 +23,6 @@
 	
 	var parseSettings = function(inputs){
 		inputs['searchBox'].val('');
-		console.log('here');
 		for (var j in inputs){
 			if (j == 'searchBox' || inputs[j].val() == "") continue;
 			//inputs[j].val(j);
