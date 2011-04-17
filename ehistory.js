@@ -45,78 +45,90 @@ var getPrevDay = function (day) {
 
 //methods
 EHistory.prototype = {
-  search: function(query, cb, st){
+  search: function (query, pageSize, cb) {
+    this.pageSize = pageSize;
     this.cb = cb;
     this.query = query;
-    this.day = dayStart(st || Date.now());
     this.settings = {
-				'text': query,
-				'startTime' : dayStart(st || Date.now()),
-				'endTime' : getNextDay(st || Date.now()),
-				'maxResults' : MAX,
-			};
+				text: query,
+        startTime: 0,
+        endTime: Date.now(),
+				maxResults : pageSize
+    };
     var that = this;
-    chrome.history.search(this.settings, function(res){
-      $.when(that.fingerPrint())
-          .then(function () {
-            that.getVisits(res);
-          });
-    });
+    this.getPage(1); 
   },
-  getDay: function(day, cb){
+  getPage: function(pageNo, cb){
     this.cb = cb || this.cb;
-    this.day = day;
-    this.settings.startTime = dayStart(day);
-    this.settings.endTime = getNextDay(day);
     var that = this;
-    chrome.history.search(this.settings, function(res){
-      $.when(that.fingerPrint())
-          .then(function () {
-            that.getVisits(res);
-          });
+    this.settings.maxResults = pageNo * this.pageSize;
+    chrome.history.search(this.settings, function (res){
+      res = res.slice(that.settings.maxResults - that.pageSize, that.settings.maxResults);
+      if (res.length < that.pageSize) {
+        $(that).trigger("finished");
+        that.getVisits(res);
+      } else {
+        $.when(that.fingerPrint(pageNo)).then(function(){
+          that.getVisits(res);
+        });
+      }
     });
   },
   getVisits: function (items) {
     this.items = items;
-    visits = this.visits = {};
+    var visits_day = {};
+    var visits = this.visits = [];
     var that = this;
     var visitItem;
     var items_length = items.length;
-    if (!items_length) 
-      that.cb({
-        items: [],
-        visits: {}
-      });
+    var day;
+    var days = [];
+    var id_map = {};
     for (var i = 0; i < items_length; i++){
       chrome.history.getVisits({url: items[i].url}, function (res_visits) {
         items_length--;
         for(var j = 0; j < res_visits.length; j++){ 
           visitItem = res_visits[j];
-          if (visitItem.visitTime >= that.settings.startTime && 
-                            visitItem.visitTime <= that.settings.endTime && 
-                            (!visits[visitItem.id] ||
-                                 visits[visitItem.id].visitTime > visitItem.visitTime))
-            visits[visitItem.id] = visitItem;
-        }                  
+          day = dayStart(visitItem.visitTime);
+          if (visitItem.id == 5256) console.log(day, visitItem);
+          // TODO check start/end time
+          if (days.indexOf(day) === -1) days.push(day);
+          if (!visits_day[day]) visits_day[day] = {};
+
+          if  (!visits_day[day][visitItem.id] ||
+                                 visits_day[day][visitItem.id].visitTime < visitItem.visitTime)
+            visits_day[day][visitItem.id] = visitItem;
+        }
+        far = visits_day;
         if (items_length === 0){
+          days.sort(function(a,b){return a < b ? 1: a===b ? 0 : -1});
+          for (var i = 0; i < days.length; i++){
+            if (visits.length >= that.pageSize) break;
+              for (var id in visits_day[days[i]]){
+                visits.push(visits_day[days[i]][id]);
+              }
+          }
           that.cb({
             items: that.items,
-            visits: that.visits
+            visits:     visits.sort(function (a, b){
+        a = a.visitTime;
+        b = b.visitTime;
+        return a < b ? 1: a===b ? 0 : -1
+      }).slice(0, that.pageSize)
           });
         }
  
       });
     }  
   },
-  fingerPrint: function () {
+  fingerPrint: function (pageNo) {
     var dfd = new $.Deferred();
-    var day = getPrevDay(this.day);
     var settings = $.extend(null, this.settings, {
-      startTime: 0,
-      endTime: day,
-    }); 
+      maxResults: pageNo * this.pageSize
+    });
     var that = this;
     chrome.history.search(settings, function (res) {
+      res = res.slice(settings.maxResults - that.pageSize, settings.maxResults);
       if (!res.length)
         $(that).trigger("finished");
       dfd.resolve();
