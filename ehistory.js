@@ -45,7 +45,7 @@ var getPrevDay = function (day) {
 
 //methods
 EHistory.prototype = {
-  search: function (query, pageSize, cb) {
+  search: function (settings, pageSize, cb) {
     this.pageSize = pageSize;
     this.cb = cb;
     this.query = query;
@@ -55,6 +55,7 @@ EHistory.prototype = {
         endTime: Date.now(),
 				maxResults : pageSize
     };
+    $.extend(this.settings, settings);
     var that = this;
     this.getPage(1); 
   },
@@ -75,22 +76,21 @@ EHistory.prototype = {
     });
   },
   getVisits: function (items) {
-    this.items = items;
-    var visits_day = {};
-    var visits = this.visits = [];
-    var that = this;
-    var visitItem;
-    var items_length = items.length;
-    var day;
-    var days = [];
-    var id_map = {};
+    var visits_day = {},
+      visits = [],
+      that = this,
+      items_length = items.length,
+      days = [],
+      visitItem, day;
+
     for (var i = 0; i < items_length; i++){
       chrome.history.getVisits({url: items[i].url}, function (res_visits) {
         items_length--;
         for(var j = 0; j < res_visits.length; j++){ 
           visitItem = res_visits[j];
-          day = dayStart(visitItem.visitTime);
-          if (visitItem.id == 5256) console.log(day, visitItem);
+          if (visitItem.visitTime > that.settings.endTime || visitItem.visitTime < that.settings.startTime)
+            continue;
+          visitItem.day = day = dayStart(visitItem.visitTime);
           // TODO check start/end time
           if (days.indexOf(day) === -1) days.push(day);
           if (!visits_day[day]) visits_day[day] = {};
@@ -99,7 +99,6 @@ EHistory.prototype = {
                                  visits_day[day][visitItem.id].visitTime < visitItem.visitTime)
             visits_day[day][visitItem.id] = visitItem;
         }
-        far = visits_day;
         if (items_length === 0){
           days.sort(function(a,b){return a < b ? 1: a===b ? 0 : -1});
           for (var i = 0; i < days.length; i++){
@@ -108,13 +107,15 @@ EHistory.prototype = {
                 visits.push(visits_day[days[i]][id]);
               }
           }
+         visits = visits.sort(function (a, b){
+           a = a.visitTime;
+           b = b.visitTime;
+           return a < b ? 1: a===b ? 0 : -1 
+         }).slice(0, that.pageSize);
+
           that.cb({
-            items: that.items,
-            visits:     visits.sort(function (a, b){
-        a = a.visitTime;
-        b = b.visitTime;
-        return a < b ? 1: a===b ? 0 : -1
-      }).slice(0, that.pageSize)
+            items: items,
+            visits: visits
           });
         }
  

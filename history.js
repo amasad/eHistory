@@ -6,22 +6,106 @@ function getPrevDay(day){
   day -= (24 * 60 * 60 * 1000);
   return day;
  }
-  
-//bind submist
+function parseQuery (input, callback) {
+  var options = (input.split(/\s/)),
+      filters = {},
+      searchSettings = {
+        startTime: null,
+        endTime: null,
+        text: ""
+      };
+
+  $.each(options, function (i, pair) {
+    pair = pair.split(":");
+    if (pair.length === 1)  searchSettings.text += " " + pair[0];
+    searchSettings[pair[0]] !== undefined ? searchSettings[pair[0]] = pair[1] :
+      filters[pair[0]] = pair[1];
+  });
+  searchSettings.text = $.trim(searchSettings.text);
+  callback({
+    searchSettings: searchSettings,
+    filters: filters  
+  });
+}
+
+function parseForm ($form, callback) {
+  var query = "",
+      text = "";
+  $form.children('input').each(function (i, elem) {
+    elem = $(elem);
+    if (elem.data("settings-item") === "text") {
+      text += elem.val();
+      return;
+    }
+    query += elem.val() ?  " " + elem.data("settings-item") + ":" + elem.val() : "";
+  });
+  callback($.trim(query + " " + text));
+}
+
+//Controller
 $(function(){
-  var $query = $('#query');
+  var $query = $('#query'),
+      $form = $('form'),
+      $pnlAdvanced = $('#pnl-advanced'); 
+
+  function fillForm (config) {
+    config = $.extend(config.searchSettings, config.filters);
+    $pnlAdvanced.children('input').each(function (i, elem) {
+      elem = $(elem);
+      elem.val(config[elem.data("settings-item")] || "");
+    });
+  }
+  function fillText (text) {
+    $query.val(text || "");
+  }
+
+  $("#chk-advanced").click(function(){
+      $this = $(this);
+			if ($pnlAdvanced.is(":visible")){
+				parseForm($pnlAdvanced, fillText);
+			}else{
+				parseQuery($query.val(), fillForm);
+			}
+			$pnlAdvanced.toggle();
+		//	options.toggle();	
+		});
+  
+  function search(config) {
+    var settings = config.searchSettings,
+             filters = config.filters;
+
+    EHistory.search({
+      text: settings.text || "",
+      startTime: new Date(settings.startTime || 0).getTime() ,
+      endTime: new Date(settings.endTime || Date.now()).getTime()
+    }, 150, function(results){
+      historyModel.append(results);
+    });
+  }
+
   $('#frm-search').submit(function(){
     historyModel.clear();
     historyView.clear();
-    EHistory.search($query.val(), 150, function(results){
-      historyModel.append(results);
-    });
-
+    historyView.disableControls();
+    if ($form.is(":visible")){
+      parseForm($pnlAdvanced, function (text) {
+        parseQuery(text, search);
+      });
+    } else {
+      parseQuery($query.val(), search);
+    }
     return false;
   });
-
+ 
+  $('#date-frm').datepicker();
+  $('#date-to').datepicker();
   //templates
-  $.template("row", "<tr><td>${date}-----</td><td>{{if title}} ${title} {{else}} ${url} {{/if}} </td><td></td></tr>")
+  $.template("row", "<tr>"+
+                      "<td><input type='checkbox'/></td>"+
+                      "<td>${date}</td>"+
+                      "<td>{{if title}} ${title} {{else}} ${url} {{/if}}</td>"+
+                    "</tr>");
+  $.template("day-row", "<tr><td><input type='checkbox'/></td><td>${date}</td> </tr>");
 });
 
 
@@ -36,28 +120,41 @@ var historyModel = (function(){
   var finished = false;
   function HistoryModel(){}
   HistoryModel.prototype = {
-
-    append: function(data){
+    append: function (data) {
       var visits= data.visits;
       var items = data.items;
       var item_map = {};
-        for (var j = 0, item; item = data.items[j]; j++){
+      for (var j = 0, item; item = data.items[j]; j++){
         item_map[item.id] = item;
       }
-      for (var i = 0, visit; visit = data.visits[i]; i++){ 
-        var resultItem = $.extend(null,item_map[visit.id]);
+      var visit, resultItem, timeStr, hours, which;
+      for (var i = 0; visit = data.visits[i]; i++){ 
+        resultItem = $.extend(null,item_map[visit.id]);
         resultItem.visitTime = visit.visitTime;
+        resultItem.day = visit.day;
         //fix dates and shit
-        resultItem.date = new Date(visit.visitTime);
+        timeStr = new Date(visit.visitTime).toLocaleTimeString().substr(0, 5);
+        hours = parseInt(timeStr.split(":")[0]);
+        which = "&nbsp;AM";
+        if (hours > 12) {
+          hours = hours % 12;
+          which = "&nbsp;PM";
+        } else if (hours == 0) {
+          hours = 12;
+        }
+        timeStr = hours + ":" + timeStr.split(":")[1] + which;
+        resultItem.date = timeStr;
         results.push(resultItem);
       };
       $(this).trigger("modelrefresh");
     },
+
     getPage: function (page) {
       page++;
       var uBound = page * pageSize;
       var lBound = uBound - pageSize;
       if (results.length < uBound && !finished){
+        historyView.disableControls();
         EHistory.getPage(page,$.proxy(this.append, this));
         return -1;
       }
@@ -108,12 +205,13 @@ var historyView = (function(){
       $(historyModel).trigger("modelrefresh");
     });
     $firstPage.click(function (){
-    
+      currentPage = 0;
+      $(historyModel).trigger("modelrefresh"); 
     });
     $lastPage.click(function (){
-    
+      
     });
-
+    $allNav.attr("disabled", true);
   });
 
   function updateControls(){
@@ -125,14 +223,23 @@ var historyView = (function(){
   $(historyModel).bind("modelrefresh", function(e, args){
     updateControls();
     var page = this.getPage(currentPage);
-    if (page === -1)
-      return;
-    $table.empty();
-    $.each(page, function(i, visit){
-      var row = $.tmpl('row', visit);
-      row.data('hid', visit.id);
-      $table.append(row);
+    if (page === -1)  return;
+    var results_day = {};
+    $.each(page, function (i, visit) {
+      if (!results_day[visit.day]) results_day[visit.day] = [];
+      results_day[visit.day].push(visit);
     });
+ $table.empty();
+    $.each(results_day, function (day, items) {
+      console.log(items);
+      console.log($.tmpl('day-row', {date: new Date(parseInt(day))}).appendTo($table));
+      $.each(items, function(i, visit){
+        var row = $.tmpl('row', visit);
+        row.data('hid', visit.id);
+        $table.append(row);
+      });
+    })
+   
   });
   
   $(historyModel).bind("lastPage", function(e, args){
@@ -142,6 +249,9 @@ var historyView = (function(){
   return {
     clear: function () {
       currentPage = 0;
+    },
+    disableControls: function () {
+      $allNav.attr("disabled", true);
     }
   };
 })();
