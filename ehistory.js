@@ -46,6 +46,8 @@ var getPrevDay = function (day) {
 //methods
 EHistory.prototype = {
   search: function (settings, pageSize, cb) {
+    this.visits_day = {};
+    this.latestDay;
     this.pageSize = pageSize;
     this.cb = cb;
     this.query = query;
@@ -65,6 +67,7 @@ EHistory.prototype = {
     this.settings.maxResults = pageNo * this.pageSize;
     chrome.history.search(this.settings, function (res){
       res = res.slice(that.settings.maxResults - that.pageSize, that.settings.maxResults);
+       console.log("$$", res.length, res);
       if (res.length < that.pageSize) {
         $(that).trigger("finished");
         that.getVisits(res);
@@ -76,23 +79,22 @@ EHistory.prototype = {
     });
   },
   getVisits: function (items) {
-    var visits_day = {},
-      visits = [],
+      var visits = [],
       that = this,
       items_length = items.length,
       days = [],
+      visits_day = this.visits_day,
       visitItem, day;
-
     for (var i = 0; i < items_length; i++){
-      chrome.history.getVisits({url: items[i].url}, function (res_visits) {
+      if (items[i].title=="amasad/yui3-gallery - GitHub") console.log("***", items[i]);
+      chrome.history.getVisits({url: items[i].url}, function (res_visits) { 
         items_length--;
         for(var j = 0; j < res_visits.length; j++){ 
-          visitItem = res_visits[j];
-          if (visitItem.visitTime > that.settings.endTime || visitItem.visitTime < that.settings.startTime)
-            continue;
+          visitItem = res_visits[j];       
           visitItem.day = day = dayStart(visitItem.visitTime);
+if (visitItem.id == 41097) 
+        console.log("^^^", visitItem);
           // TODO check start/end time
-          if (days.indexOf(day) === -1) days.push(day);
           if (!visits_day[day]) visits_day[day] = {};
 
           if  (!visits_day[day][visitItem.id] ||
@@ -100,19 +102,29 @@ EHistory.prototype = {
             visits_day[day][visitItem.id] = visitItem;
         }
         if (items_length === 0){
+          days = Object.keys(visits_day);
           days.sort(function(a,b){return a < b ? 1: a===b ? 0 : -1});
           for (var i = 0; i < days.length; i++){
             if (visits.length >= that.pageSize) break;
               for (var id in visits_day[days[i]]){
+                      visitItem = visits_day[days[i]][id];
+               if (visits.length >= that.pageSize || visitItem.visitTime > that.settings.endTime || visitItem.visitTime < that.settings.startTime || visitItem.visitTime > getNextDay(that.latestDay))
+            continue;
+                        if (days[i]== 1303160400000 && id == 41097)
+                  console.log("FAAACK");
+
                 visits.push(visits_day[days[i]][id]);
+                delete visits_day[days[i]][id];
+                
               }
           }
-         visits = visits.sort(function (a, b){
+          console.log(visits.length);//this is the bug
+            visits = visits.sort(function (a, b){
            a = a.visitTime;
            b = b.visitTime;
            return a < b ? 1: a===b ? 0 : -1 
          }).slice(0, that.pageSize);
-
+          that.latestDay = visits[visits.length - 1].day;
           that.cb({
             items: items,
             visits: visits
