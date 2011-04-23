@@ -28,7 +28,7 @@ function EHistory(){/*fdsfsd*/}
 // static methods
 
 var dayStart = function (ts) {
-  return new Date(new Date(ts).toDateString()).getTime();
+  return new Date(new Date(parseInt(ts)).toDateString()).getTime();
 };
 
 var msDay = (24 * 60 * 60 * 1000);
@@ -46,7 +46,7 @@ var getPrevDay = function (day) {
 //methods
 EHistory.prototype = {
   search: function (settings, pageSize, cb) {
-    this.visits_day = {};
+    this.visits_day = new VisitsByDay();
     this.latestDay;
     this.pageSize = pageSize;
     this.cb = cb;
@@ -67,7 +67,6 @@ EHistory.prototype = {
     this.settings.maxResults = pageNo * this.pageSize;
     chrome.history.search(this.settings, function (res){
       res = res.slice(that.settings.maxResults - that.pageSize, that.settings.maxResults);
-       console.log("$$", res.length, res);
       if (res.length < that.pageSize) {
         $(that).trigger("finished");
         that.getVisits(res);
@@ -86,54 +85,25 @@ EHistory.prototype = {
       visits_day = this.visits_day,
       visitItem, day;
     for (var i = 0; i < items_length; i++){
-      if (items[i].title=="amasad/yui3-gallery - GitHub") console.log("***", items[i]);
       chrome.history.getVisits({url: items[i].url}, function (res_visits) { 
         items_length--;
         for(var j = 0; j < res_visits.length; j++){ 
           visitItem = res_visits[j];       
           visitItem.day = day = dayStart(visitItem.visitTime);
-if (visitItem.id == 41097) 
-        console.log("^^^", visitItem);
-          // TODO check start/end time
-          if (!visits_day[day]) visits_day[day] = {};
-
-          if  (!visits_day[day][visitItem.id] ||
-                                 visits_day[day][visitItem.id].visitTime < visitItem.visitTime)
-            visits_day[day][visitItem.id] = visitItem;
+          visits_day.insert(visitItem);
         }
+        
         if (items_length === 0){
-          days = Object.keys(visits_day);
-          days.sort(function(a,b){return a < b ? 1: a===b ? 0 : -1});
-          for (var i = 0; i < days.length; i++){
-            if (visits.length >= that.pageSize) break;
-              for (var id in visits_day[days[i]]){
-                      visitItem = visits_day[days[i]][id];
-               if (visits.length >= that.pageSize || visitItem.visitTime > that.settings.endTime || visitItem.visitTime < that.settings.startTime || visitItem.visitTime > getNextDay(that.latestDay))
-            continue;
-                        if (days[i]== 1303160400000 && id == 41097)
-                  console.log("FAAACK");
-
-                visits.push(visits_day[days[i]][id]);
-                delete visits_day[days[i]][id];
-                
-              }
-          }
-          console.log(visits.length);//this is the bug
-            visits = visits.sort(function (a, b){
-           a = a.visitTime;
-           b = b.visitTime;
-           return a < b ? 1: a===b ? 0 : -1 
-         }).slice(0, that.pageSize);
-          that.latestDay = visits[visits.length - 1].day;
           that.cb({
             items: items,
-            visits: visits
+            visits: visits_day.sort().dequeue(that.pageSize)
           });
         }
- 
       });
     }  
   },
+
+
   fingerPrint: function (pageNo) {
     var dfd = new $.Deferred();
     var settings = $.extend(null, this.settings, {
@@ -147,7 +117,39 @@ if (visitItem.id == 41097)
       dfd.resolve();
     });
     return dfd.promise();
+  },
+
+  deleteUrlOnDay: function (url, day, callback) {
+    var nextDay = getNextDay(day);
+    var toDelete = [];
+    var that = this;
+    chrome.history.getVisits({url:url}, function (visits) {
+      var visitTime;
+      for (var i=0, visit; visit = visits[i]; i++) {
+        visitTime = visit.visitTime;
+        if (visitTime >= day && visitTime <= nextDay) {
+          toDelete.push(visitTime);
+        }
+      }
+      that.removeVisits(toDelete, callback);
+    });
+  },
+  
+  removeVisits: function (visitTimes, callback) {
+    var length = visitTimes.length;
+    for (var i = 0, visitTime; visitTime = visitTimes[i]; i++) {
+      chrome.history.deleteRange({
+        startTime: visitTime - 0.1,
+        endTime: visitTime + 0.1
+      }, function () {
+        length--;
+        if (length === 0) {
+          callback();
+        }
+      });
+    }              
   }
+
 };
 return $.extend(new EHistory(), {
   getNextDay: getNextDay,

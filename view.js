@@ -40,6 +40,7 @@ historyView = (function(){
   $(historyModel).bind("modelrefresh", function(e, args){
     updateControls();
     var page = this.getPage(currentPage);
+    console.log(page);
     if (page === -1)  return;
     var results_day = {};
     $.each(page, function (i, visit) {
@@ -48,11 +49,14 @@ historyView = (function(){
     });
  $table.empty();
     $.each(results_day, function (day, items) {
-      console.log(items);
-      console.log($.tmpl('day-row', {date: new Date(parseInt(day))}).appendTo($table));
+      $.tmpl('day-row', {date: new Date(parseInt(day)).toDateString()}).appendTo($table);
       $.each(items, function(i, visit){
         var row = $.tmpl('row', visit);
-        row.data('hid', visit.id);
+        row.data('id', visit.id);
+        row.data('day', visit.day);
+        if (historyModel.isSelected(visit.id, visit.day)) {
+          row.children().children("input").attr("checked", true);
+        }
         $table.append(row);
       });
     })

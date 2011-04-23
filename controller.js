@@ -46,7 +46,8 @@ function parseForm ($form, callback) {
 $(function(){
   var $query = $('#query'),
       $form = $('form'),
-      $pnlAdvanced = $('#pnl-advanced'); 
+      $pnlAdvanced = $('#pnl-advanced'),
+      $resultsTable = $('#tbl-main');
 
   function fillForm (config) {
     config = $.extend(config.searchSettings, config.filters);
@@ -55,10 +56,23 @@ $(function(){
       elem.val(config[elem.data("settings-item")] || "");
     });
   }
+
   function fillText (text) {
     $query.val(text || "");
   }
 
+  $resultsTable.delegate(".chk-day", "change", function () {
+    $(this).parents('tr').nextUntil('.hdr-day')
+        .children(':nth-child(1)').children()
+            .attr("checked",  $(this).attr("checked")).trigger("change");
+  });
+
+  $resultsTable.delegate(".chk-entry", "change", function () {
+    var val =  $(this).attr("checked");
+    var $row = $(this).parents("tr");
+    var fn = val ? $.proxy(historyModel.select, historyModel) : $.proxy(historyModel.unselect, historyModel);
+    fn($row.data("id"),$row.data("day"));
+  });
   $("#chk-advanced").click(function(){
       $this = $(this);
 			if ($pnlAdvanced.is(":visible")){
@@ -69,7 +83,10 @@ $(function(){
 			$pnlAdvanced.toggle();
 		//	options.toggle();	
 		});
-  
+ 
+  $("#btn-delete-selected").click(function () {
+    historyModel.removeSelected();
+  });
   function search(config) {
     var settings = config.searchSettings,
              filters = config.filters;
@@ -78,7 +95,7 @@ $(function(){
       text: settings.text || "",
       startTime: new Date(settings.startTime || 0).getTime() ,
       endTime: new Date(settings.endTime || Date.now()).getTime()
-    }, 150, function(results){
+    }, historyModel.pageSize, function(results){
       historyModel.append(results);
     });
   }
@@ -100,12 +117,12 @@ $(function(){
   $('#date-frm').datepicker();
   $('#date-to').datepicker();
   //templates
-  $.template("row", "<tr>"+
-                      "<td><input type='checkbox'/></td>"+
+  $.template("row", "<tr class='entry'>"+
+                      "<td><input type='checkbox'class='chk-entry'/></td>"+
                       "<td>${date}</td>"+
                       "<td>{{if title}} ${title} {{else}} ${url} {{/if}}</td>"+
                     "</tr>");
-  $.template("day-row", "<tr><td><input type='checkbox'/></td><td>${date}</td> </tr>");
+  $.template("day-row", "<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td>${date}</td> </tr>");
 });
 
 })(jQuery);
