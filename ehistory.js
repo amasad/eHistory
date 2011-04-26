@@ -45,25 +45,38 @@ var getPrevDay = function (day) {
 
 //methods
 EHistory.prototype = {
-  search: function (settings, pageSize, cb) {
+
+
+  search: function (settings, filters, combined, cb) {
+    this.filterOffset = 0;
+    this.pageOffset = 0;
+    this.filters = filters;
     this.visits_day = new VisitsByDay();
     this.latestDay;
-    this.pageSize = pageSize;
+    this.pageSize = settings.maxResults;
     this.cb = cb;
-    this.query = query;
+    this.query = settings.text;
     this.settings = {
-				text: query,
+				text: "",
         startTime: 0,
         endTime: Date.now(),
-				maxResults : pageSize
+				maxResults : 150
     };
     $.extend(this.settings, settings);
+    this.settings.text = combined;
     var that = this;
     this.getPage(1); 
+    //this.getFilteredPage(1);
   },
-  getPage: function(pageNo, cb){
+
+
+  getPage: function(pageNo, cb){ 
     this.cb = cb || this.cb;
     var that = this;
+    if (Object.keys(this.filters).length){
+      this.getFilteredPage(pageNo);
+      return;
+    }
     this.settings.maxResults = pageNo * this.pageSize;
     chrome.history.search(this.settings, function (res){
       res = res.slice(that.settings.maxResults - that.pageSize, that.settings.maxResults);
@@ -77,6 +90,7 @@ EHistory.prototype = {
       }
     });
   },
+
   getVisits: function (items) {
       var visits = [],
       that = this,
@@ -100,7 +114,7 @@ EHistory.prototype = {
           });
         }
       });
-    }  
+    }
   },
 
 
@@ -119,6 +133,7 @@ EHistory.prototype = {
     return dfd.promise();
   },
 
+
   deleteUrlOnDay: function (url, day, callback) {
     var nextDay = getNextDay(day);
     var toDelete = [];
@@ -135,6 +150,7 @@ EHistory.prototype = {
     });
   },
   
+
   removeVisits: function (visitTimes, callback) {
     var length = visitTimes.length;
     for (var i = 0, visitTime; visitTime = visitTimes[i]; i++) {
@@ -148,13 +164,118 @@ EHistory.prototype = {
         }
       });
     }              
+  },
+  
+  getFilteredPage: function (pageNo ,cb) {
+    var filtered = [];
+    var settings = $.extend(null, this.settings);
+    settings.maxResults = this.filterOffset + this._pageLimit(pageNo);
+    var that = this;
+
+    function search (left) {
+      settings.maxResults += left;
+      chrome.history.search(settings, function (result) {
+        result = result.slice(settings.maxResults - (left || that.pageSize), settings.maxResults);
+        if (!result.length) {
+          $(that).trigger("finished");
+          that.cb({
+            items: [],
+            visits: []
+          });
+        } else {
+          filtered = filtered.concat(that.filter(result));
+          if (filtered.length < that.pageSize) {
+            left = that.pageSize - filtered.length;
+            search(left);
+          } else {
+            that.filterOffset = settings.maxResults - that._pageLimit(pageNo);
+            that.getVisits(filtered, cb);
+          }
+        }
+      });
+    }
+    search(0);
+  },
+  
+  _pageLimit: function (pageNo) {
+    return pageNo * this.pageSize;            
+  },
+  filter: function (items) {
+    var operators = Object.keys(this.filters);
+    if (!operators.length) return items;
+    for (var i = 0, item; item = items[i]; i++) {
+      for (var j = 0; operators[j]; j++) {
+        if (!Filters[operators[j]]({
+          regex: this.filters.regex || 0,
+          text: this.filters[operators[j]]
+        }, item)) {
+          items.splice(i--, 1);
+          break;
+        }
+      }
+    }
+    return items;
   }
 
 };
+	function parseUrl(url){
+	  url = url.replace(/http(s)*:\/\//, "").replace(/:[0-9]+/,'');
+	  return {
+	    hostName: url.split('/')[0],
+	    path: url.replace(hostName + "/", "")
+	  };
+	}
+	
+	function isValidRegex(regex) {
+	  var ret;
+		try {
+			ret = new RegExp(regex);
+		} catch (e) {
+			return false;
+		}
+		return ret;
+	}
+	
+	var Filters = {
+		//@todo think about upper/lower case
+		'intitle': function(obj, item){
+		  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
+			if (regex) { 
+				return regex.test(item.title);
+			} else {
+				return (item.title.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
+			}	
+		},
+		'inurl': function(obj, item){
+			var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
+			if (regex) {
+				return (new RegExp(item.url)).test(obj.text);
+			} else {
+				return (item.url.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
+			}
+		},
+		'site' : function(obj, item){
+			var hostName = parseUrl(item.url).hostName.split("."),
+				//handle stuff like site:.jo or ..jo
+				host = $.map(obj.text.split('.'), function(v){return v || undefined;}),
+				//j is where to start comparing in the hostname of the url in question
+				j = hostName.length - host.length;
+			for (var i=0; i < host.length; i++){	  
+				//if j is undefined or doesn't equal the hostname to match return false 
+				if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase())
+					return false;
+				j++;
+			}
+			return true;
+		}
+	};
+	 
 return $.extend(new EHistory(), {
   getNextDay: getNextDay,
   dayStart: dayStart
 });
+
+
 })(jQuery);
 // move static methods from the constructor to the instancer
 //jQuery.extend(EHistory, EHistory.constructor);

@@ -13,18 +13,22 @@ function parseQuery (input, callback) {
         startTime: null,
         endTime: null,
         text: ""
-      };
+      },
+      combined = "";
 
   $.each(options, function (i, pair) {
     pair = pair.split(":");
+    if (!pair[0]) return;
     if (pair.length === 1)  searchSettings.text += " " + pair[0];
     searchSettings[pair[0]] !== undefined ? searchSettings[pair[0]] = pair[1] :
       filters[pair[0]] = pair[1];
+    combined += " " + (pair[1] || "");
   });
   searchSettings.text = $.trim(searchSettings.text);
   callback({
     searchSettings: searchSettings,
-    filters: filters  
+    filters: filters,
+    combined: $.trim($.trim(combined) + " " + searchSettings.text)
   });
 }
 
@@ -77,7 +81,7 @@ $(function(){
       $this = $(this);
 			if ($pnlAdvanced.is(":visible")){
 				parseForm($pnlAdvanced, fillText);
-			}else{
+			}else{ 
 				parseQuery($query.val(), fillForm);
 			}
 			$pnlAdvanced.toggle();
@@ -90,21 +94,23 @@ $(function(){
   function search(config) {
     var settings = config.searchSettings,
              filters = config.filters;
-
+    try{
     EHistory.search({
       text: settings.text || "",
       startTime: new Date(settings.startTime || 0).getTime() ,
-      endTime: new Date(settings.endTime || Date.now()).getTime()
-    }, historyModel.pageSize, function(results){
+      endTime: new Date(settings.endTime || Date.now()).getTime(),
+      maxResults: historyModel.pageSize
+    }, config.filters, config.combined, function(results){
       historyModel.append(results);
     });
+    } catch (e) {console.error(e)}
   }
 
   $('#frm-search').submit(function(){
     historyModel.clear();
     historyView.clear();
     historyView.disableControls();
-    if ($form.is(":visible")){
+    if ($pnlAdvanced.is(":visible")){
       parseForm($pnlAdvanced, function (text) {
         parseQuery(text, search);
       });

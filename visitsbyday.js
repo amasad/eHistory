@@ -1,8 +1,8 @@
 
 function DaysVisits (firstItem) {
   this.items = [firstItem];
-  this.id_map = {}
-  this.id_map[firstItem.id] = this.items[0]
+  this.id_map = {};
+  this.id_map[firstItem.id] = 0;
   this.day = firstItem.day;
 }
 
@@ -10,20 +10,14 @@ DaysVisits.prototype = {
   insert: function (item) {
 
     var currentItem;
+    var index = this.id_map[item.id];
     if (item.day != this.day) throw new Error("Invalid Day");
-    if (currentItem = this.id_map[item.id]) {
+    if (currentItem = this.items[index]) {
      if (currentItem.visitTime < item.visitTime) {
-  
-
-      this.items.splice(this.items.indexOf(currentItem), 1, item);
-      this.id_map[item.id] = item;
-       }
+      this.items.splice(index, 1, item);
+     }
     } else {
-      if(item.id ==12075 ) 
-          console.log(this.items);  
-      this.items.push(item);
-      this.id_map[item.id] = item;
-      
+      this.id_map[item.id] = this.items.push(item) - 1; 
     }
   },
   sort: function () {
@@ -34,11 +28,8 @@ DaysVisits.prototype = {
   },
 
   dequeue: function (length) {
-    var ret = this.items.splice(0, length);
-    for (var i = 0, item; item = ret[i]; i++)
-      delete this.id_map[item.id];
-
-    return ret;
+    return this.items.splice(0, length);
+    
   },
 
   clear: function () {
@@ -69,7 +60,6 @@ VisitsByDay.prototype = {
     for (var i=0; i < this.days.length; i++){
       this.items_day[this.days[i]].sort();
     }
-       console.log(this.items_day);
     return this;
   },
   
@@ -83,7 +73,6 @@ VisitsByDay.prototype = {
     }
     if (ret.length)
       this.latestDay = ret[ret.length - 1].day;
-    console.log(this.latestDay);
     return ret;  
   },
 

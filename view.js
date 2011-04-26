@@ -40,14 +40,13 @@ historyView = (function(){
   $(historyModel).bind("modelrefresh", function(e, args){
     updateControls();
     var page = this.getPage(currentPage);
-    console.log(page);
     if (page === -1)  return;
     var results_day = {};
     $.each(page, function (i, visit) {
       if (!results_day[visit.day]) results_day[visit.day] = [];
       results_day[visit.day].push(visit);
     });
- $table.empty();
+    $table.empty();
     $.each(results_day, function (day, items) {
       $.tmpl('day-row', {date: new Date(parseInt(day)).toDateString()}).appendTo($table);
       $.each(items, function(i, visit){
@@ -67,7 +66,7 @@ historyView = (function(){
     $olderPage.add($lastPage).attr("disabled", true);
   });
 
-  return {
+   return {
     clear: function () {
       currentPage = 0;
     },

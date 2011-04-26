@@ -25,7 +25,6 @@ historyModel = (function(){
       }
       var visit, resultItem, timeStr, hours, which;
       for (var i = 0; visit = data.visits[i]; i++){
-       if (i===139) console.log("fas", visit); 
         resultItem = $.extend(null,item_map[visit.id]);
         resultItem.visitTime = visit.visitTime;
         resultItem.day = visit.day;

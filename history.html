@@ -6,6 +6,15 @@
       #pnl-advanced{
         display: none;
       }
+      #div-seperator{
+margin-top: 12px;
+border-top: 1px solid #9CC2EF;
+background-color: #EBEFF9;
+font-weight: bold;
+padding: 3px;
+margin-bottom: -8px;
+          
+}
     </style>
     <script type="text/javascript" src="lib/jquery.js" ></script>
     <script type="text/javascript" src="lib/jquery.tmpl.js" ></script>
@@ -29,21 +38,26 @@
         <input type="text" id="date-to" data-settings-item="text"/> 
       </div>
     </form>
-    <table id="tbl-main">
-      <tbody>
-      </tbody>
-    </table>
-    <button id="btn-first">
-      First Page
-    </button>
-    <button id="btn-newer">
-      newer
-    </button>
-    <button id="btn-older">
-      older
-    </button>
-    <button id="btn-last">
-      Last Page
-    </button>
+    <div id="div-main">
+      <div id="div-seperator">
+        eHistory
+      </div>
+      <table id="tbl-main">
+        <tbody>
+        </tbody>
+      </table>
+      <button id="btn-first">
+        First Page
+      </button>
+      <button id="btn-newer">
+        newer
+      </button>
+      <button id="btn-older">
+        older
+      </button>
+      <button id="btn-last">
+        Last Page
+      </button>
+    </div>
   </body>
 </html>
