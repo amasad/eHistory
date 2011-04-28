@@ -1,45 +1,52 @@
 (function($){
 
 /******** Utils **********/
-function getPrevDay(day){
-  day = new Date(new Date(day).toDateString()).getTime();
-  day -= (24 * 60 * 60 * 1000);
-  return day;
- }
 function parseQuery (input, callback) {
   var options = (input.split(/\s/)),
-      filters = {},
+      filters = {
+        inurl: null,
+        intitle: null,
+        site: null
+      },
       searchSettings = {
         startTime: null,
         endTime: null,
         text: ""
       },
-      combined = "";
-
+      combined = "", pureText = "";
+      
   $.each(options, function (i, pair) {
     pair = pair.split(":");
     if (!pair[0]) return;
     searchSettings[pair[0]] !== undefined ? searchSettings[pair[0]] = pair[1] :
-            filters[pair[1]] !== undefined ? filters[pair[0]] = pair[1] : combined += " " + (pair[1] || pair[0] || "");
+            filters[pair[0]] !== undefined ? combined += " " + (filters[pair[0]] = pair[1]) : combined += " " + (pair[1] || pair[0] || "");
+    if (!pair[1]) pureText += " " + pair[0];
   });
-  searchSettings.text = $.trim(combined);
   
+  searchSettings.text = $.trim(combined);
+  for (var prop in filters) {
+    if (filters[prop] === null) {
+      delete filters[prop];
+    }
+  }
   callback({
     searchSettings: searchSettings,
-    filters: filters
+    filters: filters,
+    pureText: $.trim(pureText)
   });
 }
-
+//intitle:title inurl:url site:site startTime:startime endTime:endtime searchquery
 function parseForm ($form, callback) {
   var query = "",
       text = "";
-  $form.children('input').each(function (i, elem) {
+
+  $form.find('input').each(function (i, elem) {
     elem = $(elem);
-    if (elem.data("settings-item") === "text") {
+    if (elem.attr("id") == "pure-text") {
       text += elem.val();
-      return;
+    } else {
+      query += elem.val() ?  " " + elem.data("settings-item") + ":" + elem.val() : ""; 
     }
-    query += elem.val() ?  " " + elem.data("settings-item") + ":" + elem.val() : "";
   });
   callback($.trim(query + " " + text));
 }
@@ -52,10 +59,14 @@ $(function(){
       $resultsTable = $('#tbl-main');
 
   function fillForm (config) {
-    config = $.extend(config.searchSettings, config.filters);
-    $pnlAdvanced.children('input').each(function (i, elem) {
+    var operators = $.extend(config.searchSettings, config.filters);
+    $pnlAdvanced.find('input').each(function (i, elem) {
       elem = $(elem);
-      elem.val(config[elem.data("settings-item")] || "");
+      if (elem.attr('id') == "pure-text"){
+        elem.val(config.pureText)
+      } else {
+        elem.val(operators[elem.data("settings-item")] || "");
+      }
     });
   }
 
@@ -79,9 +90,12 @@ $(function(){
   $("#chk-advanced").click(function () {
       var $this = $(this);
 			if ($pnlAdvanced.is(":visible")) {
+			  $query.attr("disabled", false);
 				parseForm($pnlAdvanced, fillText);
 			} else { 
+			  $query.attr("disabled", true);
 				parseQuery($query.val(), fillForm);
+				$query.focus();
 			}
 			$pnlAdvanced.toggle();
 	});
@@ -123,11 +137,12 @@ $(function(){
  
   $('#date-frm').datepicker();
   $('#date-to').datepicker();
+  // TODO move to view.js
   //templates
   $.template("row", "<tr class='entry'>"+
                       "<td><input type='checkbox'class='chk-entry'/></td>"+
                       "<td class='time'>${date}</td>"+
-                      "<td><a href='${url}'>{{if title}} ${title} {{else}} ${url} {{/if}}</a></td>"+
+                      "<td><a href='${url}' style='background-image:url(chrome://favicon/${url})'>{{if title}} ${title} {{else}} ${url} {{/if}}</a></td>"+
                     "</tr>");
   $.template("day-row", "<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td>${date}</td> </tr>");
 });

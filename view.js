@@ -1,13 +1,12 @@
-(function($){
+(function ($) {
 /************************ VIEW ************************/
 // History View, responsible for populating results in the current page view
 // Holds current page state, and updates page controls accordingly 
 // Direct communication with history model
-/** global */
-historyView = (function(){
-  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $summary;
+/** global **/
+historyView = (function () {
   // Initial DOM (jQuery) variables 
-  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav;
+  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $summary;
   // Current page in the history view
   var currentPage = 0;
   var EHISTORY = "eHistory";
@@ -31,27 +30,27 @@ historyView = (function(){
     $summary = $('#results-summary');
 
     // Bind buttons functionalities
-    $olderPage.click(function (){
+    $olderPage.click(function () {
       currentPage++;
       $(historyModel).trigger("modelrefresh");
     });
-    $newerPage.click(function (){
+    $newerPage.click(function () {
       if (currentPage != 0) currentPage--;
       $(historyModel).trigger("modelrefresh");
     });
-    $firstPage.click(function (){
+    $firstPage.click(function () {
       currentPage = 0;
       $(historyModel).trigger("modelrefresh"); 
     });
     // TODO: Implement
-    $lastPage.click(function (){
+    $lastPage.click(function () {
       
     });
     // Navigation controls disabled onload
     $allNav.attr("disabled", true);
   });
   // when the view is on the first page disable first, newer buttons
-  function updateControls(){
+  function updateControls () {
     $allNav.attr("disabled", false);
     if (currentPage === 0){
       $firstPage.add($newerPage).attr("disabled", true);
@@ -59,7 +58,7 @@ historyView = (function(){
   }
   // Listen to history model refresh event
   // and get the page required from the model
-  $(historyModel).bind("modelrefresh", function(e, args){
+  $(historyModel).bind("modelrefresh", function (e, args) {
     updateControls();
     var page = this.getPage(currentPage);
     if (page === -1)  return;
@@ -75,7 +74,7 @@ historyView = (function(){
     $.each(results_day, function (day, items) {
       $.tmpl('day-row', {date: new Date(parseInt(day)).toDateString()}).appendTo($table);
       // on each day populate the results that corresponds to that day.
-      $.each(items, function(i, visit){
+      $.each(items, function (i, visit) {
         var row = $.tmpl('row', visit);
         // let the elem data hold info of the corrosponding visit
         row.data('id', visit.id);
@@ -90,22 +89,23 @@ historyView = (function(){
    
   });
   // listens for lastPage event from the historyModel update controls accordingly 
-  $(historyModel).bind("lastPage", function(e, args){
+  $(historyModel).bind("lastPage", function (e, args) {
     $olderPage.add($lastPage).attr("disabled", true);
   });
   $(EHistory).bind("done", function (e, args) {
-          $throbber.removeClass('active');
+    $throbber.removeClass("active");
   });
    // Public functions
    return {
     clear: function () {
       currentPage = 0;
+      $table.empty();
     },
     disableControls: function () {
       $allNav.attr("disabled", true);
     },
     displayThrobber: function () {
-      $throbber.addClass('active');
+      $throbber.addClass("active");
     },
     setSummary: function (text) {
       var prefix = text ? SUMMARY_PREFIX : EHISTORY;
@@ -114,7 +114,7 @@ historyView = (function(){
   };
 })();
 
-$(function(){
+$(function () {
   
 });
 

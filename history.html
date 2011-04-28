@@ -47,8 +47,8 @@ margin-bottom: 0px;
 	float: left;
 	-webkit-margin-start: 12px;
 }
-.chk-day, .chk-entry{
-	visibility:hidden;
+.entry {
+	margin-top:8px;
 }
 .entry .time{
 	color: #888;
@@ -59,6 +59,29 @@ margin-bottom: 0px;
 	white-space: nowrap;
 }
 
+.entry a{
+	max-width:500px;
+	white-space:nowrap;
+	box-sizing: border-box;
+	background-repeat: no-repeat;
+	background-size: 16px;
+	background-position: 0px 1px;
+	padding: 1px 0px 4px 22px;
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#tbl-advanced{
+  padding: 15px 12px 14px;
+  border: solid 3px #D5DDF3;
+  border-bottom: none;
+  background: #D5DDF3;
+}
+#pnl-advanced > label:first-child{
+  position: absolute;
+  color: #999;
+}
     </style>
     <script type="text/javascript" src="lib/jquery.js" ></script>
     <script type="text/javascript" src="lib/jquery.tmpl.js" ></script>
@@ -75,17 +98,25 @@ margin-bottom: 0px;
 			<img src="css/icon_thumb.png" class="logo"></img>
 		</a>
     	<form action="" id="frm-search" />
-	     <input type="text" id="query"/>
+	     <input type="text" id="query" size="110"/>
 	     <input type="submit" id="" value="Search History"/>
-	     <input type="checkbox" id="chk-advanced" />
+	     <label>Advanced</label><input type="checkbox" id="chk-advanced" />
 	     <button id="btn-delete-selected"> Delete Selected</button>
-	     <button id="btn-delete-all">delete All</button>
+	     <button id="btn-delete-all" disabled>delete All</button>
 	     <div id="pnl-advanced">
-	       <input type="text" id="date-frm" data-settings-item="startTime" />
-	       <input type="text" id="date-to" data-settings-item="endTime"/>
-	       <input type="text" id="filter-title" data-settings-item="intitle"/> 
-		   <input type="text" id="filter-url" data-settings-item="inurl"/> 
-		   <input type="text" id="filter-site" data-settings-item="site"/> 
+	       <label>Filter for</label>
+		    <table id="tbl-advanced">
+		      <tr>
+  	      <td><label>Start date</label></td><td><input type="text" id="date-frm" data-settings-item="startTime" /></td>
+  	      <td><label>End date</label></td><td><input type="text" id="date-to" data-settings-item="endTime"/></td>
+  	      <td><label>Title</label></td><td><input type="text" id="filter-title" data-settings-item="intitle"/> </td>
+  	      </tr>
+  	      <tr>
+      	  <td><label>Url</label></td><td><input type="text" id="filter-url" data-settings-item="inurl"/> </td>
+      	  <td><label>Site</label></td><td><input type="text" id="filter-site" data-settings-item="site"/> </td>
+      	  <td><label>Text</label></td><td><input type="text" id="pure-text" /> </td>
+      	  </tr>
+    	  </table>
 	     </div>
 	   </form>
 	</div>
