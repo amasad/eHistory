@@ -1,5 +1,8 @@
 (function($){
-
+/** Global **/
+initialSearch = function () {
+  $('#frm-search').submit();
+};
 /******** Utils **********/
 function parseQuery (input, callback) {
   var options = (input.split(/\s/)),
