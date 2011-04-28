@@ -176,7 +176,10 @@ EHistory.prototype = {
     var settings = $.extend(null, this.settings);
     settings.maxResults = this.filterOffset + this._pageLimit(pageNo);
     var that = this;
-
+    function triggerDone () {
+      $(that).trigger("finished");
+      $(that).trigger("done");
+    }
     function search (left) {
       settings.maxResults += left;
       chrome.history.search(settings, function (result) {
@@ -184,11 +187,11 @@ EHistory.prototype = {
         if (result.length) {
           filtered = filtered.concat(that.filter(result));
         } else {
-          $(that).trigger("finished");
-          $(that).trigger("done");
+          triggerDone();
         }
         if (!result.length || filtered.length >= that.pageSize) {
           that.filterOffset = settings.maxResults - that._pageLimit(pageNo);
+          if (!filtered.length) triggerDone();
           that.getVisits(filtered, cb); 
         } else {
           left = that.pageSize - filtered.length;
