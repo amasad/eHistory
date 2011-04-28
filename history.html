@@ -3,6 +3,13 @@
   <head>
     <link rel="stylesheet" href="css/ui-darkness/jquery-ui-1.8.11.custom.css" type="text/css" />
     <style>
+body {
+	font-family: Helvetica, sans-serif;
+	font-size: 84%;
+	background-color: white;
+	color: black;
+	margin: 10px;
+}
       #pnl-advanced{
         display: none;
       }
@@ -12,9 +19,46 @@ border-top: 1px solid #9CC2EF;
 background-color: #EBEFF9;
 font-weight: bold;
 padding: 3px;
-margin-bottom: -8px;
-          
+margin-bottom: 0px;         
 }
+#throbber.active{
+	background-image: url(css/throbber.gif);
+	height:32px;
+	width:32px;
+	display: inline-block;
+}
+#results-summary {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.header {
+	overflow: auto;
+}
+.header .logo{
+	float:left;
+}
+
+#div-main{
+	clear: both;
+}
+#frm-search {
+	margin-top: 22px;
+	float: left;
+	-webkit-margin-start: 12px;
+}
+.chk-day, .chk-entry{
+	visibility:hidden;
+}
+.entry .time{
+	color: #888;
+	float: left;
+	min-width: 56px;
+	-webkit-margin-end: 5px;
+	padding-top: 1px;
+	white-space: nowrap;
+}
+
     </style>
     <script type="text/javascript" src="lib/jquery.js" ></script>
     <script type="text/javascript" src="lib/jquery.tmpl.js" ></script>
@@ -26,22 +70,27 @@ margin-bottom: -8px;
     <script type="text/javascript" src="view.js" ></script>
   </head>
   <body>
-    <form action="" id="frm-search" />
-      <input type="text" id="query"/>
-      <input type="submit" id="" />
-      <input type="checkbox" id="chk-advanced" />
-      <button id="btn-delete-selected"> Delete Selected</button>
-      <button id="btn-delete-all">delete All</button>
-      <div id="pnl-advanced">
-        <input type="text" id="date-frm" data-settings-item="startTime" />
-        <input type="text" id="date-to" data-settings-item="endTime"/>
-        <input type="text" id="date-to" data-settings-item="text"/> 
-      </div>
-    </form>
+	<div class="header">
+		<a href="">
+			<img src="css/icon_thumb.png" class="logo"></img>
+		</a>
+    	<form action="" id="frm-search" />
+	     <input type="text" id="query"/>
+	     <input type="submit" id="" value="Search History"/>
+	     <input type="checkbox" id="chk-advanced" />
+	     <button id="btn-delete-selected"> Delete Selected</button>
+	     <button id="btn-delete-all">delete All</button>
+	     <div id="pnl-advanced">
+	       <input type="text" id="date-frm" data-settings-item="startTime" />
+	       <input type="text" id="date-to" data-settings-item="endTime"/>
+	       <input type="text" id="filter-title" data-settings-item="intitle"/> 
+		   <input type="text" id="filter-url" data-settings-item="inurl"/> 
+		   <input type="text" id="filter-site" data-settings-item="site"/> 
+	     </div>
+	   </form>
+	</div>
     <div id="div-main">
-      <div id="div-seperator">
-        eHistory
-      </div>
+      <div id="div-seperator"><span id="results-summary">eHistory</span></div>
       <table id="tbl-main">
         <tbody>
         </tbody>
@@ -58,6 +107,7 @@ margin-bottom: -8px;
       <button id="btn-last">
         Last Page
       </button>
+      <div id="throbber" class=""></div>
     </div>
   </body>
 </html>

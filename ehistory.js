@@ -47,7 +47,7 @@ var getPrevDay = function (day) {
 EHistory.prototype = {
 
 
-  search: function (settings, filters, combined, cb) {
+  search: function (settings, filters, cb) {
     this.filterOffset = 0;
     this.pageOffset = 0;
     this.filters = filters;
@@ -63,7 +63,6 @@ EHistory.prototype = {
 				maxResults : 150
     };
     $.extend(this.settings, settings);
-    this.settings.text = combined;
     var that = this;
     this.getPage(1); 
     //this.getFilteredPage(1);
@@ -112,6 +111,7 @@ EHistory.prototype = {
             items: items,
             visits: visits_day.sort().dequeue(that.pageSize)
           });
+          $(that).trigger("done");
         }
       });
     }
@@ -176,21 +176,17 @@ EHistory.prototype = {
       settings.maxResults += left;
       chrome.history.search(settings, function (result) {
         result = result.slice(settings.maxResults - (left || that.pageSize), settings.maxResults);
-        if (!result.length) {
-          $(that).trigger("finished");
-          that.cb({
-            items: [],
-            visits: []
-          });
-        } else {
+        if (result.length) {
           filtered = filtered.concat(that.filter(result));
-          if (filtered.length < that.pageSize) {
-            left = that.pageSize - filtered.length;
-            search(left);
-          } else {
-            that.filterOffset = settings.maxResults - that._pageLimit(pageNo);
-            that.getVisits(filtered, cb);
-          }
+        } else {
+          $(that).trigger("finished");
+        }
+        if (!result.length || filtered.length >= that.pageSize) {
+          that.filterOffset = settings.maxResults - that._pageLimit(pageNo);
+          that.getVisits(filtered, cb); 
+        } else {
+          left = that.pageSize - filtered.length;
+          search(left);
         }
       });
     }

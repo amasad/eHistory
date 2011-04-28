@@ -52,7 +52,9 @@ historyModel = (function(){
       var uBound = page * pageSize;
       var lBound = uBound - pageSize;
       if (results.length < uBound && !finished){
+        // TODO combine into one function call
         historyView.disableControls();
+        historyView.displayThrobber();
         EHistory.getPage(page,$.proxy(this.append, this));
         return -1;
       }

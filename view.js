@@ -2,8 +2,10 @@
 /******** VIEW **********/
 /** global */
 historyView = (function(){
-  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav;
+  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $summary;
   var currentPage = 0;
+  var EHISTORY = "eHistory";
+  var SUMMARY_PREFIX = "Search results for ";
   //init
   $(function(){
     $table = $('#tbl-main');
@@ -12,6 +14,8 @@ historyView = (function(){
     $firstPage = $('#btn-first');
     $lastPage = $('#btn-last');
     $allNav = $olderPage.add($newerPage).add($firstPage).add($lastPage);
+    $throbber = $('#throbber');
+    $summary = $('#results-summary');
 
     $olderPage.click(function (){
       currentPage++;
@@ -65,13 +69,22 @@ historyView = (function(){
   $(historyModel).bind("lastPage", function(e, args){
     $olderPage.add($lastPage).attr("disabled", true);
   });
-
+  $(EHistory).bind("done", function (e, args) {
+          $throbber.removeClass('active');
+  });
    return {
     clear: function () {
       currentPage = 0;
     },
     disableControls: function () {
       $allNav.attr("disabled", true);
+    },
+    displayThrobber: function () {
+      $throbber.addClass('active');
+    },
+    setSummary: function (text) {
+      var prefix = text ? SUMMARY_PREFIX : EHISTORY;
+      $summary.text(prefix + text);
     }
   };
 })();
