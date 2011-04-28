@@ -1,6 +1,6 @@
 {
   "name": "eHistory",
-  "version": "0.1.1",
+  "version": "0.5",
   "description": "Enhanced History",
   "background_page": "background.html",
   "browser_action": {

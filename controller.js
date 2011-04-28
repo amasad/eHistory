@@ -53,6 +53,23 @@ function parseForm ($form, callback) {
 
 //Controller
 $(function(){
+  //check version
+  //get manifest version
+  var version;
+  var manifest = $.ajax({
+          url: 'manifest.json',
+          async: false
+        }).responseText;
+  manifest = JSON.parse(manifest || 'null');
+  if (manifest) version = manifest.version;
+  if (localStorage['version'] != version) {
+    $('#version-updated').show("slow");
+    localStorage.clear();
+    localStorage['version'] = version;
+  }
+  setTimeout(function () {
+    $('#version-updated').hide("slow");
+  }, 5000);
   var $query = $('#query'),
       $form = $('form'),
       $pnlAdvanced = $('#pnl-advanced'),
