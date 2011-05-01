@@ -93,6 +93,23 @@ margin-bottom: 0px;
     <script type="text/javascript" src="lib/jquery.js" ></script>
     <script type="text/javascript" src="lib/jquery.tmpl.js" ></script>
     <script type="text/javascript" src="lib/jquery-ui-1.8.11.custom.min.js" ></script>
+    <script>
+    // for older chrome versions
+    if(!Object.keys) Object.keys = function(o){
+     if (o !== Object(o))
+          throw new TypeError('Object.keys called on non-object');
+     var ret=[],p;
+     for(p in o) if(Object.prototype.hasOwnProperty.call(o,p)) ret.push(p);
+     return ret;
+    }
+    if (typeof Object.create !== 'function') {
+        Object.create = function (o) {
+            function F() {}
+            F.prototype = o;
+            return new F();
+        };
+    }
+    </script>
     <script type="text/javascript" src="visitsbyday.js"></script>
     <script type="text/javascript" src="ehistory.js" ></script> 
     <script type="text/javascript" src="controller.js" ></script>

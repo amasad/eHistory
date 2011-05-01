@@ -39,10 +39,12 @@ historyModel = (function(){
       var visit, resultItem, timeStr, hours, which;
       for (var i = 0; visit = data.visits[i]; i++){
         // Create a "resultItem" that will contain all the information about the visit
-        // TODO: resultItem must only contain a reference to the item, to free memory.
-        resultItem = $.extend(null,item_map[visit.id]);
+        resultItem = Object.create(item_map[visit.id]);
+        resultItem.visitTime = visit.visitTime || 0;
+        resultItem.day = visit.day || 0;
+       /* resultItem = $.extend(null,item_map[visit.id]);
         resultItem.visitTime = visit.visitTime;
-        resultItem.day = visit.day;
+        resultItem.day = visit.day;*/
         //fix dates and shit
         timeStr = new Date(visit.visitTime).toLocaleTimeString().substr(0, 5);
         hours = parseInt(timeStr.split(":")[0]);

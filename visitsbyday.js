@@ -8,7 +8,6 @@ function DaysVisits (firstItem) {
 
 DaysVisits.prototype = {
   insert: function (item) {
-
     var currentItem;
     var index = this.id_map[item.id];
     if (item.day != this.day) throw new Error("Invalid Day");
@@ -66,7 +65,11 @@ VisitsByDay.prototype = {
   dequeue: function (length) {
     var ret = [];
     for (var i = 0; i < this.days.length && length > 0; i++){
-      if (this.days[i] > this.latestDay) continue;
+      if (this.days[i] > this.latestDay) {
+        delete this.items_day[this.days[i]];
+        this.days.splice(i--, 1);
+        continue;
+      }
       var day = this.items_day[this.days[i]].dequeue(length);
       length -= day.length;
       ret = ret.concat(day);
