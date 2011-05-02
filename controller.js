@@ -58,8 +58,7 @@ function parseForm ($form, callback) {
 $(function(){
   //check version
   //get manifest version
-  var version,
-      version_message = "<br>Enhanced Performance";
+  var version;
   var manifest = $.ajax({
           url: 'manifest.json',
           async: false
@@ -67,7 +66,7 @@ $(function(){
   manifest = JSON.parse(manifest || 'null');
   if (manifest) version = manifest.version;
   if (localStorage['version'] != version) {
-    $('#version-updated').append(" to " + version).append(version_message).show("slow");
+    $('#version-updated').show("slow");
     localStorage.clear();
     localStorage['version'] = version;
   }

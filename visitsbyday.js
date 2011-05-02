@@ -1,4 +1,3 @@
-
 function DaysVisits (firstItem) {
   this.items = [firstItem];
   this.id_map = {};
@@ -46,6 +45,8 @@ function VisitsByDay () {
 VisitsByDay.prototype = {
   insert: function (item) {
    //array of items on one day
+   if (item.day > this.latestDay)
+    return;
     if (!this.items_day[item.day]) {
       day = this.items_day[item.day] = new DaysVisits(item);
     } else {
@@ -65,6 +66,7 @@ VisitsByDay.prototype = {
   dequeue: function (length) {
     var ret = [];
     for (var i = 0; i < this.days.length && length > 0; i++){
+      
       if (this.days[i] > this.latestDay) {
         delete this.items_day[this.days[i]];
         this.days.splice(i--, 1);
@@ -73,7 +75,9 @@ VisitsByDay.prototype = {
       var day = this.items_day[this.days[i]].dequeue(length);
       length -= day.length;
       ret = ret.concat(day);
+      if (!this.items_day[this.days[i]].items.length) delete this.items_day[this.days[i]];
     }
+    
     if (ret.length)
       this.latestDay = ret[ret.length - 1].day;
     return ret;  

@@ -16,6 +16,8 @@ historyModel = (function(){
   // key: Timestamp for day, value: Array of history Items
   // TODO: Make at an array of ids
   var selected = {};
+  
+  var prevPage = -1;
   // Constructor for History Model Singleton
   function HistoryModel(){
     // hash of items, Key: id, Value: Item
@@ -30,8 +32,8 @@ historyModel = (function(){
   //                 visits: visits found corresponding to history items. 
   HistoryModel.prototype = {
     append: function (data) {
-      var items = data.items;
-      var item_map = this.item_map;
+      var items = data.items,
+          item_map = this.item_map;
       // Populate the item_map hash with items coming from EHistory
       for (var j = 0, item; item = data.items[j]; j++){
         item_map[item.id] = item;
@@ -76,7 +78,11 @@ historyModel = (function(){
       var lBound = uBound - pageSize;
       // check if the results requested are available and the EHistory has not finished
       // if not request from EHistory
+      var ret = results.slice(lBound, lBound + pageSize);
       if (results.length < uBound && !finished){
+        if (page === prevPage) 
+          return ret;
+        prevPage = page;
         // TODO combine into one function call
         historyView.disableControls();
         historyView.displayThrobber();
@@ -84,7 +90,7 @@ historyModel = (function(){
         return -1;
       }
       // TODO: Verify the following
-      var ret = results.slice(lBound, lBound + pageSize);
+      
       // if only some of the results found then make others know this is the last page.
       if (ret.length < pageSize) {
         $(this).trigger("lastPage");
@@ -134,6 +140,7 @@ historyModel = (function(){
      lastDay = 0;
      selected = {};
      this.item_map = {};
+     prevPage = -1;
     }
   };
   // an event listener for when the EHistory has got all its results
