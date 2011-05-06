@@ -6,7 +6,7 @@
 /** global **/
 historyView = (function () {
   // Initial DOM (jQuery) variables 
-  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $summary;
+  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $summary, $pageNo;
   // Current page in the history view
   var currentPage = 0;
   var EHISTORY = "eHistory";
@@ -28,7 +28,7 @@ historyView = (function () {
     $allNav = $olderPage.add($newerPage).add($firstPage).add($lastPage);
     $throbber = $('#throbber');
     $summary = $('#results-summary');
-
+    $pageNo = $('#page-no');
     // Bind buttons functionalities
     $olderPage.click(function () {
       currentPage++;
@@ -48,6 +48,14 @@ historyView = (function () {
     });
     // Navigation controls disabled onload
     $allNav.attr("disabled", true);
+    
+    //templates
+    $.template("row", "<tr class='entry'>"+
+                        "<td><input type='checkbox'class='chk-entry'/></td>"+
+                        "<td class='time'>${date}</td>"+
+                        "<td><a href='${url}' style='background-image:url(chrome://favicon/${url})'>{{if title}} ${title} {{else}} ${url} {{/if}}</a></td>"+
+                      "</tr>");
+    $.template("day-row", "<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td>${date}</td> </tr>");
   });
   // when the view is on the first page disable first, newer buttons
   function updateControls () {
@@ -62,6 +70,7 @@ historyView = (function () {
     updateControls();
     var page = this.getPage(currentPage);
     if (page === -1)  return;
+    $pageNo.text(currentPage + 1);
     // results per day hash
     var results_day = {};
     $.each(page, function (i, visit) {

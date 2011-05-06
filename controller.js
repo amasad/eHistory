@@ -154,17 +154,63 @@ $(function(){
     }
     return false;
   });
- 
+  
+  $('#show-url input').change(function () {
+    var link,
+        $entries = $('.entry a');
+    if ($(this).attr('checked')) {
+      $entries.each(function () {
+        var $this = $(this),
+            title = $this.text();
+        if (!$this.data('title')) {
+          $this.data('title', title);
+        }
+        $this.text($this.attr('href'));
+      });
+    } else {
+      $entries.each(function () {
+        var $this = $(this);
+        $this.text($this.data('title'));
+      });
+    }
+  })
   $('#date-frm').datepicker();
   $('#date-to').datepicker();
-  // TODO move to view.js
-  //templates
-  $.template("row", "<tr class='entry'>"+
-                      "<td><input type='checkbox'class='chk-entry'/></td>"+
-                      "<td class='time'>${date}</td>"+
-                      "<td><a href='${url}' style='background-image:url(chrome://favicon/${url})'>{{if title}} ${title} {{else}} ${url} {{/if}}</a></td>"+
-                    "</tr>");
-  $.template("day-row", "<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td>${date}</td> </tr>");
+  /*$confirmBox = $('#box-confirm');
+   $progressBar = $('#bar-progress');
+   $overlay = $('<div></div>');
+   var doneDeleting = function () {
+     $overlay.hide();
+     stopProgress();
+   };
+   var confirmAndProgress = function (e) {
+     var msg = e.data.msg;
+     $overlay.show();
+     confirmBox(msg, function () {
+       showProgress();
+       EHistory.deleteAll(function () {
+         doneDeleting();
+       });
+     }, doneDeleting);
+   };
+   $('#btn-clear-history').click({msg:"clear history"},confirmAndProgress);
+
+   var showProgress = function () {
+     $progressBar.show();
+   }
+   var confirmBox = function (msg, success, fail){
+     $confirmBox.show();
+     $confirmBox.text('Are you sure you want to ' + msg);
+     $('<button>Ok</button>').click(function () {
+       $confirmBox.empty().hide();
+       success();
+     }).appendTo($confirmBox);
+     $('<button>Cancel</button>').click(function () {
+       $confirmBox.empty.hide();
+       fail();
+     }).appendTo($confirmBox);
+   }*/
 });
+ 
 
 })(jQuery);

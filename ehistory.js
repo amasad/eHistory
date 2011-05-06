@@ -45,13 +45,23 @@ var getPrevDay = function (day) {
   return day - msDay;
 };
 
+var arrayUnique = function (arr) {
+  var ids = {};
+  for (var i=0; i < arr.length; i++) {
+    if (ids[arr[i].id]) {
+      arr.splice(i--, 1);
+    } else {
+      ids[arr[i].id] = true;
+    }
+  }
+  return arr;
+}
 //methods
 EHistory.prototype = {
 
 
   search: function (settings, filters, cb) {
-    this.filterOffset = 0;
-    this.pageOffset = 0;
+    this.offset = 0;
     this.filters = filters;
     this.visits_day = new VisitsByDay();
     this.latestDay;
@@ -73,30 +83,43 @@ EHistory.prototype = {
 
   getPage: function(pageNo, cb){ 
     this.cb = cb || this.cb;
-    var that = this;
-    if (Object.keys(this.filters).length){
-      this.getFilteredPage(pageNo);
-      return;
-    }
-    this.settings.maxResults = pageNo * this.pageSize;
-    chrome.history.search(this.settings, function (res){
-      res = res.slice(that.settings.maxResults - that.pageSize, that.settings.maxResults);
-      if (res.length < that.pageSize) {
-        $(that).trigger("finished");
-        if (!res.length) {
-          $(that).trigger("done");
-          $(that).trigger("noResults");
+    var settings = this.settings,
+        filtered = [],
+        ids = {},
+        that = this,
+        filter = Object.keys(this.filters).length;
+        
+    settings.maxResults = this.offset + this._pageLimit(pageNo);
+    
+    function search () {
+      chrome.history.search(settings, function (result) {
+        var resultItem;
+        result = result.slice(settings.maxResults - that.pageSize, settings.maxResults);
+        for (var i=0; i < result.length && filtered.length < that.pageSize; i++) {
+          resultItem = result[i];
+          if (ids[resultItem.id] || (filter && !that.filter(resultItem))) continue;
+          ids[resultItem.id] = true;
+          filtered.push(resultItem);
+        }
+        if (result.length && filtered.length < that.pageSize) {
+          settings.maxResults += that.pageSize;
+          that.offset = settings.maxResults - that._pageLimit(pageNo) - i;
+          search();
+        } else if (filtered.length){
+          if (filtered.length < that.pageSize) $(that).trigger("finished");
+          that.getVisits(filtered, cb);
         } else {
-          that.getVisits(res);
-        }     
-      } else {
-        $.when(that.fingerPrint(pageNo)).then(function(){
-          that.getVisits(res);
-        });
-      }
-    });
+          $(that).trigger("finished");
+          $(that).trigger("done");
+        }
+      });
+     }
+     search(); 
   },
 
+  _pageLimit: function (pageNo) {
+    return pageNo * this.pageSize;            
+  },
   getVisits: function (items) {
       var visits = [],
       that = this,
@@ -124,23 +147,6 @@ EHistory.prototype = {
     }
   },
 
-
-  fingerPrint: function (pageNo) {
-    var dfd = new $.Deferred();
-    var settings = $.extend(null, this.settings, {
-      maxResults: pageNo * this.pageSize
-    });
-    var that = this;
-    chrome.history.search(settings, function (res) {
-      res = res.slice(settings.maxResults - that.pageSize, settings.maxResults);
-      if (!res.length)
-        $(that).trigger("finished");
-      dfd.resolve();
-    });
-    return dfd.promise();
-  },
-
-
   deleteUrlOnDay: function (url, day, callback) {
     var nextDay = getNextDay(day);
     var toDelete = [];
@@ -156,7 +162,6 @@ EHistory.prototype = {
       that.removeVisits(toDelete, callback);
     });
   },
-  
 
   removeVisits: function (visitTimes, callback) {
     var length = visitTimes.length;
@@ -173,55 +178,16 @@ EHistory.prototype = {
     }              
   },
   
-  getFilteredPage: function (pageNo ,cb) {
-    var filtered = [];
-    var settings = $.extend(null, this.settings);
-    settings.maxResults = this.filterOffset + this._pageLimit(pageNo);
-    var that = this;
-    function triggerDone () {
-      $(that).trigger("finished");
-      $(that).trigger("done");
+  filter: function (item) {
+    if (!this.operators) this.operators = Object.keys(this.filters);
+    if (!this.operators.length) return true;
+    for (var i=0; i < this.operators.length; i++) {
+      if (!Filters[this.operators[i]]({
+        regex: this.filters.regex || 0,
+        text: this.filters[this.operators[i]]
+      }, item)) return false;
     }
-    function search (left) {
-      settings.maxResults += left;
-      chrome.history.search(settings, function (result) {
-        result = result.slice(settings.maxResults - (left || that.pageSize), settings.maxResults);
-        if (result.length) {
-          filtered = filtered.concat(that.filter(result));
-        } else {
-          triggerDone();
-        }
-        if (!result.length || filtered.length >= that.pageSize) {
-          that.filterOffset = settings.maxResults - that._pageLimit(pageNo);
-          if (!filtered.length) triggerDone();
-          that.getVisits(filtered, cb); 
-        } else {
-          left = that.pageSize - filtered.length;
-          search(left);
-        }
-      });
-    }
-    search(0);
-  },
-  
-  _pageLimit: function (pageNo) {
-    return pageNo * this.pageSize;            
-  },
-  filter: function (items) {
-    var operators = Object.keys(this.filters);
-    if (!operators.length) return items;
-    for (var i = 0, item; item = items[i]; i++) {
-      for (var j = 0; operators[j]; j++) {
-        if (!Filters[operators[j]]({
-          regex: this.filters.regex || 0,
-          text: this.filters[operators[j]]
-        }, item)) {
-          items.splice(i--, 1);
-          break;
-        }
-      }
-    }
-    return items;
+    return true;
   }
 
 };

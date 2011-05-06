@@ -89,6 +89,48 @@ margin-bottom: 0px;
   left:50%;
   display:none;
 }
+#btn-last{
+  visibility: hidden;
+}
+#show-url{
+  float:right;
+}
+
+#pnl-edit{
+  border: 3px solid #6B90DA;
+  width:35%;
+  float:right;
+  margin-top:5px;
+  margin-right:20px ;
+  position:relative;
+  text-align:center;
+  vertical-align:middle;
+}
+#pnl-edit div {
+  margin: 0 auto;
+  padding:5px;
+}
+#pnl-edit div button{
+  height: 20px;
+  width: 180px;
+  margin: 0px;
+  
+}
+#pnl-edit span{
+  position:absolute;
+  left:0px;
+  color:#999;
+  font-family: arial,sans-serif;
+  font-size:1.2em;
+  padding:3px;
+}
+
+#box-confirm {
+  position:absolute;
+  left: 50%;
+  top:50%;
+  display:none;
+}
     </style>
     <script type="text/javascript" src="lib/jquery.js" ></script>
     <script type="text/javascript" src="lib/jquery.tmpl.js" ></script>
@@ -126,8 +168,6 @@ margin-bottom: 0px;
 	     <input type="text" id="query" size="110"/>
 	     <input type="submit" id="" value="Search History"/>
 	     <label>Advanced</label><input type="checkbox" id="chk-advanced" />
-	     <button id="btn-delete-selected"> Delete Selected</button>
-	     <button id="btn-delete-all" disabled>delete All</button>
 	     <div id="pnl-advanced">
 	       <label>Filter for</label>
 		    <table id="tbl-advanced">
@@ -144,26 +184,36 @@ margin-bottom: 0px;
     	  </table>
 	     </div>
 	   </form>
+	     
+	   <div id="pnl-edit">
+<span>Edit</span>
+	     <div>
+	       <button id="btn-delete-selected"> Delete Selected</button>
+  	     <button id="btn-delete-all" >Delete all search results</button>
+  	     <button id="btn-clear-history" >Clear history</button>
+         </div>
+</div>
 	</div>
     <div id="div-main">
-      <div id="div-seperator"><span id="results-summary">eHistory</span></div>
+      <div id="div-seperator"><span id="results-summary">eHistory</span>&nbsp;&nbsp;&nbsp;&nbsp;Page #<span id="page-no"></span><span id="show-url"> Show URL<input type="checkbox"/></span></div>
       <table id="tbl-main">
         <tbody>
         </tbody>
       </table>
       <button id="btn-first">
-        First Page
+        Newest
       </button>
       <button id="btn-newer">
-        newer
+        Newer
       </button>
       <button id="btn-older">
-        older
+        Older
       </button>
       <button id="btn-last">
         Last Page
       </button>
       <div id="throbber" class=""></div>
     </div>
+   <!-- for deletion <div id="bar-progress">progress</div><div id="box-confirm"></div><div id="overlay"></div>-->
   </body>
 </html>
