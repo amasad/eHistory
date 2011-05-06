@@ -124,12 +124,16 @@ historyModel = (function(){
     // for each item to be deleted
     removeSelected: function () {
       var days = Object.keys(selected);
+      var inside = false;
       for (var i = 0, day; day = days[i]; i++) {
-        for (var j = 0, item; item = selected[day][j]; j++)
+        for (var j = 0, item; item = selected[day][j]; j++){
+          inside = true
           EHistory.deleteUrlOnDay(item.url, day, function () {
-            window.location.reload();
+            if (i == days.length && j  == selected[days[i-1]].length) window.location.reload();
           });
+        }
       }
+      if (!inside) window.location.reload();
             
     },
     
