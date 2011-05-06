@@ -173,13 +173,7 @@ $(function(){
   $('#date-frm').datepicker();
   $('#date-to').datepicker();
   $confirmBox = $('#box-confirm');
-   $progressBar = $('#bar-progress');
-   $overlay = $('<div></div>');
-   
-  var doneDeleting = function () {
-     $overlay.hide();
-     stopProgress();
-   };
+  $overLay = $('<div class="ui-widget-overlay" style="width: 1423px; height: 3802px; z-index: 1001; "><div class="throbb"></div></div>');
    var confirmAndProgress = function (e) {
      $( "#dialog-confirm" )
              .attr('title', e.data.msg)
@@ -189,8 +183,9 @@ $(function(){
              			modal: true,
              			buttons: {
              				"Delete all items": function() {
+             				  $( this ).dialog( "close" );
+             				  progress();
              				  (e.data.ok || $.noop)();
-             					$( this ).dialog( "close" );
              				},
              				Cancel: function() {
              					$( this ).dialog( "close" );
@@ -210,7 +205,10 @@ $(function(){
         historyModel.removeSelected();
       }
      }, confirmAndProgress);
-
+     
+    progress = function (e) {
+       $overLay.appendTo('body').show();
+     }
 });
  
 
