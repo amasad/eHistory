@@ -206,7 +206,7 @@ $(function(){
       }
      }, confirmAndProgress);
      
-    progress = function (e) {
+    var progress = function (e) {
        $overLay.appendTo('body').show();
      }
 });
