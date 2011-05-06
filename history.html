@@ -1,7 +1,7 @@
 <!DOCTYPE HTML> 
 <html i18n-values="dir:textdirection;"> 
   <head>
-    <link rel="stylesheet" href="css/ui-darkness/jquery-ui-1.8.11.custom.css" type="text/css" />
+    <link rel="stylesheet" href="css/ui-darkness/jquery-ui-1.8.12.custom.css" type="text/css" />
     <style>
 body {
 	font-family: Helvetica, sans-serif;
@@ -9,17 +9,18 @@ body {
 	background-color: white;
 	color: black;
 	margin: 10px;
+
 }
-      #pnl-advanced{
-        display: none;
-      }
-      #div-seperator{
-margin-top: 12px;
-border-top: 1px solid #9CC2EF;
-background-color: #EBEFF9;
-font-weight: bold;
-padding: 3px;
-margin-bottom: 0px;         
+#pnl-advanced{
+display: none;
+}
+#div-seperator{
+  margin-top: 12px;
+  border-top: 1px solid #9CC2EF;
+  background-color: #EBEFF9;
+  font-weight: bold;
+  padding: 3px;
+  margin-bottom: 0px;         
 }
 #throbber.active{
 	background-image: url(css/throbber.gif);
@@ -125,25 +126,28 @@ margin-bottom: 0px;
   padding:3px;
 }
 
-#box-confirm {
-  position:absolute;
-  left: 50%;
-  top:50%;
+#dialog-confirm {
   display:none;
+}
+.ui-widget {
+  font-size: 0.9em;
+}
+.ui-dialog-content {
+  overflow:hidden;
 }
     </style>
     <script type="text/javascript" src="lib/jquery.js" ></script>
     <script type="text/javascript" src="lib/jquery.tmpl.js" ></script>
-    <script type="text/javascript" src="lib/jquery-ui-1.8.11.custom.min.js" ></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.8.12.custom.min.js" ></script>
     <script>
     // for older chrome versions
-    if(!Object.keys) Object.keys = function(o){
+    if(!Object.keys) Object.keys = function(o) {
      if (o !== Object(o))
           throw new TypeError('Object.keys called on non-object');
      var ret=[],p;
      for(p in o) if(Object.prototype.hasOwnProperty.call(o,p)) ret.push(p);
      return ret;
-    }
+    };
     if (typeof Object.create !== 'function') {
         Object.create = function (o) {
             function F() {}
@@ -167,7 +171,7 @@ margin-bottom: 0px;
     	<form action="" id="frm-search" />
 	     <input type="text" id="query" size="110"/>
 	     <input type="submit" id="" value="Search History"/>
-	     <label>Advanced</label><input type="checkbox" id="chk-advanced" />
+	     <label>Advanced search</label><input type="checkbox" id="chk-advanced" />
 	     <div id="pnl-advanced">
 	       <label>Filter for</label>
 		    <table id="tbl-advanced">
@@ -189,7 +193,7 @@ margin-bottom: 0px;
 <span>Edit</span>
 	     <div>
 	       <button id="btn-delete-selected"> Delete Selected</button>
-  	     <button id="btn-delete-all" >Delete all search results</button>
+  	     <button id="btn-delete-all" disabled>Delete all search results</button>
   	     <button id="btn-clear-history" >Clear history</button>
          </div>
 </div>
@@ -214,6 +218,13 @@ margin-bottom: 0px;
       </button>
       <div id="throbber" class=""></div>
     </div>
-   <!-- for deletion <div id="bar-progress">progress</div><div id="box-confirm"></div><div id="overlay"></div>-->
+   <div id="bar-progress"></div>
+   <div id="dialog-confirm" title="Empty the recycle bin?">
+   	<p>
+   	  <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+   	  <p id="dialog-confirm-msg">These items will be permanently deleted and cannot be recovered. Are you sure?</p>
+   	  </p>
+   </div>
+   <div id="overlay"></div>
   </body>
 </html>

@@ -132,6 +132,12 @@ historyModel = (function(){
       }
             
     },
+    
+    clearHistory: function () {
+      chrome.history.deleteAll(function () {
+        window.location.reload();
+      })
+    },
     // Clears the current model state
     // usually called when a new search is taking place.
     clear: function(){

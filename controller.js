@@ -119,10 +119,6 @@ $(function(){
 			}
 			$pnlAdvanced.toggle();
 	});
- 
-  $("#btn-delete-selected").click(function () {
-    historyModel.removeSelected();
-  });
   
   function search(config) {
     var settings = config.searchSettings,
@@ -176,40 +172,45 @@ $(function(){
   })
   $('#date-frm').datepicker();
   $('#date-to').datepicker();
-  /*$confirmBox = $('#box-confirm');
+  $confirmBox = $('#box-confirm');
    $progressBar = $('#bar-progress');
    $overlay = $('<div></div>');
-   var doneDeleting = function () {
+   
+  var doneDeleting = function () {
      $overlay.hide();
      stopProgress();
    };
    var confirmAndProgress = function (e) {
-     var msg = e.data.msg;
-     $overlay.show();
-     confirmBox(msg, function () {
-       showProgress();
-       EHistory.deleteAll(function () {
-         doneDeleting();
-       });
-     }, doneDeleting);
+     $( "#dialog-confirm" )
+             .attr('title', e.data.msg)
+             .dialog({
+             			resizable: false,
+             			height:140,
+             			modal: true,
+             			buttons: {
+             				"Delete all items": function() {
+             				  (e.data.ok || $.noop)();
+             					$( this ).dialog( "close" );
+             				},
+             				Cancel: function() {
+             					$( this ).dialog( "close" );
+             				}
+             			}
+             		});
    };
-   $('#btn-clear-history').click({msg:"clear history"},confirmAndProgress);
+   $('#btn-clear-history').click({
+     msg:"Delete all items from history?",
+     ok: function (){
+       historyModel.clearHistory();
+     }
+     },confirmAndProgress);
+   $("#btn-delete-selected").click({
+     msg:"Delete selected items?",
+     ok: function () {
+        historyModel.removeSelected();
+      }
+     }, confirmAndProgress);
 
-   var showProgress = function () {
-     $progressBar.show();
-   }
-   var confirmBox = function (msg, success, fail){
-     $confirmBox.show();
-     $confirmBox.text('Are you sure you want to ' + msg);
-     $('<button>Ok</button>').click(function () {
-       $confirmBox.empty().hide();
-       success();
-     }).appendTo($confirmBox);
-     $('<button>Cancel</button>').click(function () {
-       $confirmBox.empty.hide();
-       fail();
-     }).appendTo($confirmBox);
-   }*/
 });
  
 
