@@ -131,7 +131,9 @@ EHistory.prototype = {
         chrome.history.getVisits({url: items[i].url}, function (res_visits) { 
         items_length--;
         for(var j = 0; j < res_visits.length; j++){ 
-          visitItem = res_visits[j];       
+          visitItem = res_visits[j];
+          if (visitItem.visitTime > that.settings.endTime || 
+                                                  visitItem.visitTime < that.settings.startTime) continue;
           visitItem.day = day = dayStart(visitItem.visitTime);
           visits_day.insert(visitItem);
         }
