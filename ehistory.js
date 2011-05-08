@@ -1,26 +1,14 @@
 /*
-Copyright (C) <2011> by Amjad Masad <amjad.masad@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-TODO: IMPLEMENT Filtering items returning from search to unique values and then asking for more, just like getFilteredPage and implement an offset.
-*/
+ * eHistory Chrome Extension
+ * https://chrome.google.com/webstore/detail/hiiknjobjfknoghbeelhfilaaikffopb
+ *
+ * Copyright 2011, Amjad Masad
+ * Dual licensed under the MIT license
+ * https://github.com/amasad/eHistory/blob/master/LICENSE.txt
+ *
+ * Date: Mon May 9
+ */
+ 
 //EHistory container
 var EHistory = (function($){
 //CONSTANTS
@@ -181,18 +169,28 @@ EHistory.prototype = {
   },
   
   filter: function (item) {
-    if (!this.operators) this.operators = Object.keys(this.filters);
-    if (!this.operators.length) return true;
-    for (var i=0; i < this.operators.length; i++) {
-      if (!Filters[this.operators[i]]({
+    var operators = getOperators(this.filters);
+    if (!operators.length) return true;
+    for (var i=0; i < operators.length; i++) {
+      if (!Filters[operators[i]]({
         regex: this.filters.regex || 0,
-        text: this.filters[this.operators[i]]
+        text: this.filters[operators[i]]
       }, item)) return false;
     }
     return true;
   }
 
 };
+var lastkeys;
+var lastarg;
+function getOperators(filters){
+  if (lastarg===filters) {
+    return lastkeys;
+  } else {
+    lastarg = filters;
+    return lastkeys = Object.keys(filters);
+  }
+}
 	function parseUrl(url){
 	  url = url.replace(/http(s)*:\/\//, "").replace(/:[0-9]+/,'');
 	  var hostName = url.split('/')[0]

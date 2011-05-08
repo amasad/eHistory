@@ -1,3 +1,14 @@
+/*
+ * eHistory Chrome Extension
+ * https://chrome.google.com/webstore/detail/hiiknjobjfknoghbeelhfilaaikffopb
+ *
+ * Copyright 2011, Amjad Masad
+ * Dual licensed under the MIT license
+ * https://github.com/amasad/eHistory/blob/master/LICENSE.txt
+ *
+ * Date: Mon May 9
+ */
+ 
 function DaysVisits (firstItem) {
   this.items = [firstItem];
   this.id_map = {};
