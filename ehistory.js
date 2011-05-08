@@ -3,12 +3,11 @@
  * https://chrome.google.com/webstore/detail/hiiknjobjfknoghbeelhfilaaikffopb
  *
  * Copyright 2011, Amjad Masad
- * Dual licensed under the MIT license
+ * Licensed under the MIT license
  * https://github.com/amasad/eHistory/blob/master/LICENSE.txt
  *
  * Date: Mon May 9
  */
- 
 //EHistory container
 var EHistory = (function($){
 //CONSTANTS
