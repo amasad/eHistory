@@ -1,6 +1,6 @@
 {
   "name": "eHistory",
-  "version": "0.5.3.9",
+  "version": "0.5.3.95",
   "description": "Enhanced History",
   "permissions": [
     "history",
@@ -8,5 +8,8 @@
   ],
    "chrome_url_overrides" : {
     "history": "history.html"
+  },
+  "icons": { 
+    "128": "128.png" 
   }
 }
