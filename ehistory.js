@@ -14,23 +14,23 @@ var EHistory = (function($){
 var MAX = 2147483647;
 //constructor
 function EHistory(){/*fdsfsd*/}
-// static methods
-
-var dayStart = function (ts) {
-  return new Date(new Date(parseInt(ts)).toDateString()).getTime();
-};
-
-var msDay = (24 * 60 * 60 * 1000);
-
-var getNextDay = function (day) {
-  day = dayStart(day);
-  return day + msDay;
-};
-
-var getPrevDay = function (day) {
-  day = dayStart(day);
-  return day - msDay;
-};
+// Extend date class to get some nice features
+(function () {
+  // milliseconds in one day
+  var msDay = (24 * 60 * 60 * 1000);
+  
+  Date.prototype.start = function() {
+    return new Date(this.toDateString());
+  };
+  
+  Date.prototype.next = function() {
+    return this.start().getTime() + msDay;
+  };
+  
+  Date.prototype.prev = function() {
+    return this.start().getTime() - msDay;
+  };
+}());
 
 var arrayUnique = function (arr) {
   var ids = {};
@@ -43,6 +43,21 @@ var arrayUnique = function (arr) {
   }
   return arr;
 }
+
+// simple memoization
+var memoizeKeys = (function() {
+  var lastKeys;
+  var lastObj;
+  return function(obj){
+    if (lastObj === obj) {
+      return lastKeys;
+    } else {
+      lastObj = obj;
+      return (lastKeys = Object.keys(obj));
+    }
+  }
+})();
+
 //methods
 EHistory.prototype = {
 
@@ -62,9 +77,7 @@ EHistory.prototype = {
 				maxResults : 150
     };
     $.extend(this.settings, settings);
-    var that = this;
     this.getPage(1); 
-    //this.getFilteredPage(1);
   },
 
 
@@ -107,21 +120,23 @@ EHistory.prototype = {
   _pageLimit: function (pageNo) {
     return pageNo * this.pageSize;            
   },
+  
   getVisits: function (items) {
       var visits = [],
-      that = this,
-      items_length = items.length,
-      days = [],
-      visits_day = this.visits_day,
-      visitItem, day;
-      for (var i = 0; i < items_length; i++){
-        chrome.history.getVisits({url: items[i].url}, function (res_visits) { 
+          that = this,
+          items_length = items.length,
+          days = [],
+          visits_day = this.visits_day,
+          visitItem, day;
+    
+      for (var i = 0; i < items_length; i++) {
+        chrome.history.getVisits({url: items[i].url}, function(res_visits) { 
         items_length--;
         for(var j = 0; j < res_visits.length; j++){ 
           visitItem = res_visits[j];
           if (visitItem.visitTime > that.settings.endTime || 
                                                   visitItem.visitTime < that.settings.startTime) continue;
-          visitItem.day = day = dayStart(visitItem.visitTime);
+          visitItem.day = day = new Date(visitItem.visitTime).start().getTime();
           visits_day.insert(visitItem);
         }
         
@@ -137,7 +152,7 @@ EHistory.prototype = {
   },
 
   deleteUrlOnDay: function (url, day, callback) {
-    var nextDay = getNextDay(day);
+    var nextDay = new Date(day).next();
     var toDelete = [];
     var that = this;
     chrome.history.getVisits({url:url}, function (visits) {
@@ -168,7 +183,7 @@ EHistory.prototype = {
   },
   
   filter: function (item) {
-    var operators = getOperators(this.filters);
+    var operators = memoizeKeys(this.filters);
     if (!operators.length) return true;
     for (var i=0; i < operators.length; i++) {
       if (!Filters[operators[i]]({
@@ -180,73 +195,61 @@ EHistory.prototype = {
   }
 
 };
-var lastkeys;
-var lastarg;
-function getOperators(filters){
-  if (lastarg===filters) {
-    return lastkeys;
-  } else {
-    lastarg = filters;
-    return lastkeys = Object.keys(filters);
+
+var Filters = (function () {
+  function parseUrl(url){
+    url = url.replace(/http(s)*:\/\//, "").replace(/:[0-9]+/,'');
+    var hostName = url.split('/')[0]
+    return {
+      hostName: hostName,
+      path: url.replace(hostName + "/", "")
+    };
   }
-}
-	function parseUrl(url){
-	  url = url.replace(/http(s)*:\/\//, "").replace(/:[0-9]+/,'');
-	  var hostName = url.split('/')[0]
-	  return {
-	    hostName: hostName,
-	    path: url.replace(hostName + "/", "")
-	  };
-	}
-	
-	function isValidRegex(regex) {
-	  var ret;
-		try {
-			ret = new RegExp(regex);
-		} catch (e) {
-			return false;
-		}
-		return ret;
-	}
-	
-	var Filters = {
-		//@todo think about upper/lower case
-		'intitle': function(obj, item){
-		  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
-			if (regex) { 
-				return regex.test(item.title);
-			} else {
-				return (item.title.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
-			}	
-		},
-		'inurl': function(obj, item){
-			var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
-			if (regex) {
-				return (new RegExp(item.url)).test(obj.text);
-			} else {
-				return (item.url.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
-			}
-		},
-		'site' : function(obj, item){
-			var hostName = parseUrl(item.url).hostName.split("."),
-				//handle stuff like site:.jo or ..jo
-				host = $.map(obj.text.split('.'), function(v){return v || undefined;}),
-				//j is where to start comparing in the hostname of the url in question
-				j = hostName.length - host.length;
-			for (var i=0; i < host.length; i++){	  
-				//if j is undefined or doesn't equal the hostname to match return false 
-				if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase())
-					return false;
-				j++;
-			}
-			return true;
-		}
-	};
-	 
-return $.extend(new EHistory(), {
-  getNextDay: getNextDay,
-  dayStart: dayStart
-});
 
+  function isValidRegex(regex) {
+    var ret;
+  	try {
+  		ret = new RegExp(regex);
+  	} catch (e) {
+  		return false;
+  	}
+  	return ret;
+  }
 
+  return {
+  	'intitle': function(obj, item){
+  	  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
+  		if (regex) { 
+  			return regex.test(item.title);
+  		} else {
+  			return (item.title.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
+  		}	
+  	},
+  	'inurl': function(obj, item){
+  		var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
+  		if (regex) {
+  			return (new RegExp(item.url)).test(obj.text);
+  		} else {
+  			return (item.url.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
+  		}
+  	},
+  	'site' : function(obj, item){
+  		var hostName = parseUrl(item.url).hostName.split("."),
+  			//handle stuff like site:.jo or ..jo
+  			host = $.map(obj.text.split('.'), function(v){return v || undefined;}),
+  			//j is where to start comparing in the hostname of the url in question
+  			j = hostName.length - host.length;
+  		for (var i=0; i < host.length; i++){	  
+  			//if j is undefined or doesn't equal the hostname to match return false 
+  			if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase())
+  				return false;
+  			j++;
+  		}
+  		return true;
+  	}
+  };
+  
+})();
+
+return new EHistory;
 })(jQuery);
