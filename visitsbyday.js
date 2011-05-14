@@ -9,10 +9,6 @@
  * Date: Mon May 9
  */
 
-// TODO: Optimizations
-//           Possible optimization in sorting, maybe being done on sorted arrays
-//           Maintain a sorted array?
-
 // Class DaysVisits
 //    Holds visit items on one day
 
@@ -23,7 +19,7 @@ function DaysVisits (firstItem) {
   this.items = [firstItem];
   // a hash containing the id of the visit item and its index in the items array for faster access
   this.id_map = {};
-  this.id_map[firstItem.id] = 0;
+  this.id_map[firstItem.id] = firstItem;
   // The particular day timestamp
   this.day = firstItem.day;
 }
@@ -33,32 +29,65 @@ DaysVisits.prototype = {
   //                 exists with the same parent history item, replace it
   //   @arg item: visit item
   insert: function (item) {
-    var currentItem;
-    // pull up the index of the visit item that corresponds to the same history item if it exists
-    var index = this.id_map[item.id];
     if (item.day != this.day) throw new Error("Invalid Day");
+    // pull up the index of the visit item that corresponds to the same history item if it exists
+    var currentItem = this.id_map[item.id],
+        index = this.items.indexOf(currentItem),
+        mid, spliceInd;
     // if the index is valid and the item to be added is newer in time then replace the old one
-    if (currentItem = this.items[index]) {
+    if (this.items[index]) {
      if (currentItem.visitTime < item.visitTime) {
-      this.items.splice(index, 1, item);
+      this.items.splice(index, 1);
+     } else {
+       return;
      }
-    } else {
-      // Add the new visit item and register in map
-      this.id_map[item.id] = this.items.push(item) - 1; 
     }
+    if (!this.items.length) {
+      this.items.push(item);
+    } else {
+      spliceInd = this._binsearch(item);
+      this.items.splice(spliceInd + 1, 0, item);
+    }
+    /*
+   
+    console.log(this.binsearch(item));
+  } catch (e) {console.log("err",this.items.length); throw e}
+    for (var i = 0; i < this.items.length; i++) {
+      if (this.items[i].visitTime < item.visitTime){
+        this.items.splice(i, 0, item);
+        console.log("really ", i);
+        break;
+      } else if (i == this.items.length - 1) {
+        this.items.push(item);
+        console.log("pushed ", i);
+        break;
+      }
+    } 
+    if (!this.items.length) this.items.push(item);*/
+    this.id_map[item.id] = item;
   },
-  // Method sort, sorts the items array according to visit time
-  //  @chainable
-  sort: function () {
-    this.items.sort(function (a,b) {
-      return b.visitTime - a.visitTime; 
-    });
-    return this;
+  _binsearch: function(item) {
+    var i = 0,
+        j = this.items.length -1 ,
+        mid;
+        
+    while (true) {
+      mid = Math.floor((j - i) / 2) + i;
+      
+      if (this.items[mid].visitTime < item.visitTime) {
+       j = mid - 1;
+       if (i > j) return j;
+      } else {
+        i = mid + 1;
+        if (i > j) return mid;
+      }
+    }
   },
   // Method dequeue: Gets the newest items up to a limited number, usually called after sort.
   //     @arg length: max length of the number of items to splice off.
   // @return Array
   dequeue: function (length) {
+    
     return this.items.splice(0, length);
   },
 
@@ -89,8 +118,7 @@ VisitsByDay.prototype = {
   //     @arg item: visit Item.
   insert: function (item) {
    //array of items on one day
-   if (item.day > this.latestDay)
-    return;
+   if (item.day > this.latestDay) return;
     if (!this.items_day[item.day]) {
       this.items_day[item.day] = new DaysVisits(item);
     } else {
@@ -103,9 +131,9 @@ VisitsByDay.prototype = {
   sort: function () {
     this.days = Object.keys(this.items_day);
     this.days.sort(function (a,b) {return parseInt(b)-parseInt(a);});
-    for (var i=0; i < this.days.length; i++){
-      this.items_day[this.days[i]].sort();
-    }
+ //  for (var i=0; i < this.days.length; i++){
+ //    this.items_day[this.days[i]].sort();
+ //  }
     return this;
   },
   // Method dequeue
@@ -122,7 +150,6 @@ VisitsByDay.prototype = {
       delete that.items_day[that.days[index]];
       that.days.splice(index, 1);
     }
-
     for (var i = 0; i < this.days.length && length > 0; i++){
       // remove days no longer needed, i.e. garbage visits, generated from getting all visits
       // @TODO: is this necessary since we have this check on insertion?
@@ -133,7 +160,7 @@ VisitsByDay.prototype = {
       daysResults = this.items_day[this.days[i]].dequeue(length);
       length -= daysResults.length;
       ret = ret.concat(daysResults);
-      if (!this.items_day[this.days[i]].items.length)  deleteDay(i);
+      if (!this.items_day[this.days[i]].items.length)  deleteDay(i--);
     }
     // record that last date of the last visit handed over, being the latest.
     if (ret.length)  this.latestDay = ret[ret.length - 1].day;
