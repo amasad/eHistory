@@ -152,7 +152,7 @@ EHistory.prototype = {
   },
 
   deleteUrlOnDay: function (url, day, callback) {
-    var nextDay = new Date(day).next();
+    var nextDay = new Date(parseFloat(day)).next();
     var toDelete = [];
     var that = this;
     chrome.history.getVisits({url:url}, function (visits) {
