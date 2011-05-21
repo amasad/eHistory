@@ -8,6 +8,8 @@
  *
  * Date: Mon May 9
  */
+ 
+ //TODO: rewrite
 (function($){
 /** Global **/
 initialSearch = function () {
@@ -203,22 +205,26 @@ $(function(){
              			}
              		});
    };
-   $('#btn-clear-history').click({
+   
+  var progress = function (e) {
+    $overLay.appendTo('body').show();
+  };
+   
+  $('#btn-clear-history').click({
      msg:"Delete all items from history?",
-     ok: function (){
-       historyModel.clearHistory();
-     }
-     },confirmAndProgress);
-   $("#btn-delete-selected").click({
-     msg:"Delete selected items?",
-     ok: function () {
-        historyModel.removeSelected();
-      }
-     }, confirmAndProgress);
-     
-    var progress = function (e) {
-       $overLay.appendTo('body').show();
-     }
+     ok: $.proxy(historyModel.clearHistory, historyModel)
+  },confirmAndProgress);
+  
+  $("#btn-delete-selected").click({
+    msg:"Delete selected items?",
+    ok: $.proxy(historyModel.removeSelected, historyModel)
+  }, confirmAndProgress);
+  
+  $('#btn-delete-all').click({
+    msg:"Delete all search results?",
+    ok: $.proxy(historyModel.clearResults, historyModel)
+  }, confirmAndProgress);
+  
 });
  
 

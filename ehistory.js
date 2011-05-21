@@ -66,7 +66,6 @@ EHistory.prototype = {
     this.offset = 0;
     this.filters = filters;
     this.visits_day = new VisitsByDay();
-    this.latestDay;
     this.pageSize = settings.maxResults;
     this.cb = cb;
     this.query = settings.text;
@@ -81,7 +80,7 @@ EHistory.prototype = {
   },
 
 
-  getPage: function (pageNo, cb) { 
+  getPage: function (pageNo, cb, callback) { 
     this.cb = cb || this.cb;
     var settings = this.settings,
         filtered = [],
@@ -107,7 +106,8 @@ EHistory.prototype = {
           search();
         } else if (filtered.length) {
           if (filtered.length < that.pageSize) $(that).trigger("finished");
-          that.getVisits(filtered, cb);
+          if (callback) callback(filtered);
+          else that.getVisits(filtered);
         } else {
           $(that).trigger("finished");
           $(that).trigger("done");
@@ -165,6 +165,30 @@ EHistory.prototype = {
     })();
   },
   
+  deleteAllresults: function (callback) {
+    var settings = $.extend(null, this.settings),
+        finished = false,
+        that = this;
+
+    settings.maxResults = MAX;
+    this.offset = 0;
+    function finish () { 
+      finished = true;
+      $(that).unbind("finished", finish);
+      callback();
+    }
+    $(this).bind("finished", finish);
+    (function deleteAll () {
+      if (finished) return;
+      that.getPage(1, undefined, function (page) {
+        for (var i = 0; i < page.length; i++) {
+          chrome.history.deleteUrl({url: page[i].url});
+        }
+        deleteAll();
+      });
+    })();
+    
+  },
   /* 
   deleteUrlOnDay: function (url, day, callback) {
     var nextDay = new Date(parseFloat(day)).next();

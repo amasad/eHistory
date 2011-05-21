@@ -141,6 +141,13 @@ historyModel = (function(){
         window.location.reload();
       })
     },
+    
+    clearResults: function () {
+      EHistory.deleteAllresults(function () {
+        alert('The page will reload now\nIt may take Chrome several minutes before making the history available again.')
+        window.location.reload();
+      });
+    },
     // Clears the current model state
     // usually called when a new search is taking place.
     clear: function(){
