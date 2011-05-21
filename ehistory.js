@@ -9,25 +9,25 @@
  * Date: Mon May 9
  */
 //EHistory container
-var EHistory = (function($){
+var EHistory = (function ($) {
 //CONSTANTS
 var MAX = 2147483647;
 //constructor
-function EHistory(){/*fdsfsd*/}
+function EHistory() {/*fdsfsd*/}
 // Extend date class to get some nice features
 (function () {
   // milliseconds in one day
   var msDay = (24 * 60 * 60 * 1000);
   
-  Date.prototype.start = function() {
+  Date.prototype.start = function () {
     return new Date(this.toDateString());
   };
   
-  Date.prototype.next = function() {
+  Date.prototype.next = function () {
     return this.start().getTime() + msDay;
   };
   
-  Date.prototype.prev = function() {
+  Date.prototype.prev = function () {
     return this.start().getTime() - msDay;
   };
 }());
@@ -45,10 +45,10 @@ var arrayUnique = function (arr) {
 }
 
 // simple memoization
-var memoizeKeys = (function() {
+var memoizeKeys = (function () {
   var lastKeys;
   var lastObj;
-  return function(obj){
+  return function (obj) {
     if (lastObj === obj) {
       return lastKeys;
     } else {
@@ -81,7 +81,7 @@ EHistory.prototype = {
   },
 
 
-  getPage: function(pageNo, cb){ 
+  getPage: function (pageNo, cb) { 
     this.cb = cb || this.cb;
     var settings = this.settings,
         filtered = [],
@@ -105,7 +105,7 @@ EHistory.prototype = {
           settings.maxResults += that.pageSize;
           that.offset = settings.maxResults - that._pageLimit(pageNo) - i;
           search();
-        } else if (filtered.length){
+        } else if (filtered.length) {
           if (filtered.length < that.pageSize) $(that).trigger("finished");
           that.getVisits(filtered, cb);
         } else {
@@ -130,9 +130,9 @@ EHistory.prototype = {
           visitItem, day;
     
       for (var i = 0; i < items_length; i++) {
-        chrome.history.getVisits({url: items[i].url}, function(res_visits) { 
+        chrome.history.getVisits({url: items[i].url}, function (res_visits) { 
         items_length--;
-        for(var j = 0; j < res_visits.length; j++){ 
+        for(var j = 0; j < res_visits.length; j++) { 
           visitItem = res_visits[j];
           if (visitItem.visitTime > that.settings.endTime || 
                                                   visitItem.visitTime < that.settings.startTime) continue;
@@ -140,7 +140,7 @@ EHistory.prototype = {
           visits_day.insert(visitItem);
         }
         
-        if (items_length === 0){
+        if (items_length === 0) {
           that.cb({
             items: items,
             visits: visits_day.sort().dequeue(that.pageSize)
@@ -151,6 +151,21 @@ EHistory.prototype = {
     }
   },
 
+  deleteUrls: function (urlsByDay, callback) {
+    var days = memoizeKeys(urlsByDay),
+        count = 0;        
+
+    (function deleteUrls() {
+      if (count === days.length) return callback();
+
+      var urls = urlsByDay[days[count++]];
+      for (var i = 0; i < urls.length; i++)
+        chrome.history.deleteUrl({url: urls[i].url});      
+      setTimeout(deleteUrls, 100);
+    })();
+  },
+  
+  /* 
   deleteUrlOnDay: function (url, day, callback) {
     var nextDay = new Date(parseFloat(day)).next();
     var toDelete = [];
@@ -180,26 +195,27 @@ EHistory.prototype = {
         }
       });
     }              
-  },
+  },*/
   
   filter: function (item) {
     var operators = memoizeKeys(this.filters);
     if (!operators.length) return true;
     for (var i=0; i < operators.length; i++) {
-      if (!Filters[operators[i]]({
+      
+      var satisfy = Filters[operators[i]]({
         regex: this.filters.regex || 0,
         text: this.filters[operators[i]]
-      }, item)) return false;
-    }
-    return true;
-  }
-
+        }, item);
+      if (!satisfy) return false;
+	  }
+	    return true;
+	  }
 };
 
 var Filters = (function () {
-  function parseUrl(url){
+  function parseUrl(url) {
     url = url.replace(/http(s)*:\/\//, "").replace(/:[0-9]+/,'');
-    var hostName = url.split('/')[0]
+    var hostName = url.split('/')[0];
     return {
       hostName: hostName,
       path: url.replace(hostName + "/", "")
@@ -217,7 +233,7 @@ var Filters = (function () {
   }
 
   return {
-  	'intitle': function(obj, item){
+  	'intitle': function (obj, item) {
   	  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
   		if (regex) { 
   			return regex.test(item.title);
@@ -225,7 +241,7 @@ var Filters = (function () {
   			return (item.title.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
   		}	
   	},
-  	'inurl': function(obj, item){
+  	'inurl': function (obj, item) {
   		var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
   		if (regex) {
   			return (new RegExp(item.url)).test(obj.text);
@@ -233,13 +249,13 @@ var Filters = (function () {
   			return (item.url.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
   		}
   	},
-  	'site' : function(obj, item){
+  	'site' : function (obj, item) {
   		var hostName = parseUrl(item.url).hostName.split("."),
   			//handle stuff like site:.jo or ..jo
-  			host = $.map(obj.text.split('.'), function(v){return v || undefined;}),
+  			host = $.map(obj.text.split('.'), function (v) {return v || undefined;}),
   			//j is where to start comparing in the hostname of the url in question
   			j = hostName.length - host.length;
-  		for (var i=0; i < host.length; i++){	  
+  		for (var i=0; i < host.length; i++) {	  
   			//if j is undefined or doesn't equal the hostname to match return false 
   			if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase())
   				return false;

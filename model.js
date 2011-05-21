@@ -54,10 +54,7 @@ historyModel = (function(){
         resultItem = Object.create(item_map[visit.id]);
         resultItem.visitTime = visit.visitTime || 0;
         resultItem.day = visit.day || 0;
-       /* resultItem = $.extend(null,item_map[visit.id]);
-        resultItem.visitTime = visit.visitTime;
-        resultItem.day = visit.day;*/
-        //fix dates and shit
+        //fix dates
         timeStr = new Date(visit.visitTime).toLocaleTimeString().substr(0, 5);
         hours = parseInt(timeStr.split(":")[0]);
         which = "&nbsp;AM";
@@ -129,22 +126,14 @@ historyModel = (function(){
       if (!selected[day]) return;
       return selected[day].indexOf(this.item_map[id]) > -1
     },
-    // Delete all selected items
+    // Deletes all selected items
     // loops over all items in all days and make a call to the EHistory
     // for each item to be deleted
     removeSelected: function () {
-      var days = Object.keys(selected);
-      var inside = false;
-      for (var i = 0, day; day = days[i]; i++) {
-        for (var j = 0, item; item = selected[day][j]; j++){
-          inside = true
-          EHistory.deleteUrlOnDay(item.url, day, function () {
-            if (i == days.length && j  == selected[days[i-1]].length) window.location.reload();
-          });
-        }
-      }
-      if (!inside) window.location.reload();
-            
+      EHistory.deleteUrls(selected, function () {
+        //TODO: Don't reload
+        window.location.reload();   
+      });
     },
     
     clearHistory: function () {
