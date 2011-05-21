@@ -9,6 +9,7 @@
  * Date: Mon May 9
  */
 
+// TODO: Implement linked list
 // Class DaysVisits
 //    Holds visit items on one day
 

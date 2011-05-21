@@ -9,160 +9,211 @@
  * Date: Mon May 9
  */
  
- //TODO: rewrite
 (function($){
 /** Global **/
 initialSearch = function () {
   $('#frm-search').submit();
 };
 /******** Utils **********/
-function parseQuery (input, callback) {
-  var options = (input.split(/\s/)),
-      filters = {
-        inurl: null,
-        intitle: null,
-        site: null
-      },
-      searchSettings = {
-        startTime: null,
-        endTime: null,
-        text: ""
-      },
-      combined = "", pureText = "";
-      
+/*  parseQuery:  Parses the search query
+ *      @arg (String) input: The search query
+ *      @returns (Array) [settings, filters, text]
+ */
+function parseQuery (input) {
+  // assumes search query is a space delimted key/value pairs
+  var options = (input.split(/\s/));
+  // initiate possible filters to null
+  var filters = {
+    inurl: null,
+    intitle: null,
+    site: null
+  };
+  // initiate possible settings in query
+  var searchSettings = {
+    startTime: null,
+    endTime: null,
+    text: ""
+  };
+  // text types
+  var pureText = "", combined = "";
+  
+  // loop each pair in the query string 
   $.each(options, function (i, pair) {
+    if (!pair) return;
+    // assume key:value
     pair = pair.split(":");
-    if (!pair[0]) return;
-    searchSettings[pair[0]] !== undefined ? searchSettings[pair[0]] = pair[1] :
-            filters[pair[0]] !== undefined ? combined += " " + (filters[pair[0]] = pair[1]) : combined += " " + (pair[1] || pair[0] || "");
+    searchSettings[pair[0]] !== undefined ? 
+        // pair is a search setting type
+        searchSettings[pair[0]] = pair[1] :
+        // pair is a filter type
+        filters[pair[0]] !== undefined ?
+            combined += " " + (filters[pair[0]] = pair[1]) : 
+            combined += " " + (pair[1] || pair[0] || "");
+    // pair is is just text
     if (!pair[1]) pureText += " " + pair[0];
   });
-  
   searchSettings.text = $.trim(combined);
+  // delete all empty filters
   for (var prop in filters) {
     if (filters[prop] === null) {
       delete filters[prop];
     }
   }
-  callback({
-    searchSettings: searchSettings,
-    filters: filters,
-    pureText: $.trim(pureText)
-  });
+  return [
+    searchSettings,
+    filters,
+    $.trim(pureText)
+  ];
 }
-//intitle:title inurl:url site:site startTime:startime endTime:endtime searchquery
-function parseForm ($form, callback) {
+
+/* parseForm: Parses the html form into text format
+ *    @arg (jQueryObject) $form: jQuery object containing the form element
+ *    @returns (String) text query equivalent to the form
+ * intitle:title inurl:url site:site startTime:startime endTime:endtime searchquery
+ */
+function parseForm ($form) {
   var query = "",
       text = "";
-
+  // loop over all input elements
   $form.find('input').each(function (i, elem) {
     elem = $(elem);
     if (elem.attr("id") == "pure-text") {
+      // just text
       text += elem.val();
     } else {
+      // filter/setting
       query += elem.val() ?  " " + elem.data("settings-item") + ":" + elem.val() : ""; 
     }
   });
-  callback($.trim(query + " " + text));
+  // return filter/setting text format key:value followed by regular text
+  return $.trim(query + " " + text);
 }
 
-//Controller
-$(function(){
-  //check version
-  //get manifest version
-  var version;
-  var manifest = $.ajax({
+// Check version number
+$(function() {
+  var manifest = JSON.parse($.ajax({
           url: 'manifest.json',
           async: false
-        }).responseText;
-  manifest = JSON.parse(manifest || 'null');
-  if (manifest) version = manifest.version;
+        }).responseText || '{}');
+  var version = manifest.version;
   if (localStorage['version'] != version) {
     $('#version-updated').show("slow");
     localStorage.clear();
     localStorage['version'] = version;
   }
+  
   setTimeout(function () {
     $('#version-updated').hide("slow");
   }, 5000);
-  var $query = $('#query'),
-      $form = $('form'),
-      $pnlAdvanced = $('#pnl-advanced'),
-      $resultsTable = $('#tbl-main');
+})
+/*************** Controller  ***************/
+/*  Collection of functions and event handlers 
+ *    Interacts with UI, historyModel and historyView
+ */
+$(function(){
+  // DOM ready
+  // search box
+  var $query = $('#query');
+  // advanced search form
+  var $pnlAdvanced = $('#pnl-advanced');
+  // history items table
+  var $resultsTable = $('#tbl-main');
 
+  // fill the advanced search form with parsed filter/settings values
   function fillForm (config) {
-    var operators = $.extend(config.searchSettings, config.filters);
+    // merge all types of key value pairs
+    var operators = $.extend(config[0], config[1]);
+    // loop over the form input and fill them with values
     $pnlAdvanced.find('input').each(function (i, elem) {
       elem = $(elem);
       if (elem.attr('id') == "pure-text"){
-        elem.val(config.pureText)
+        elem.val(config[2]);
       } else {
+        // in the elements data contains type of settings/filter
         elem.val(operators[elem.data("settings-item")] || "");
       }
     });
   }
-
+  
+  // fills the search box
   function fillText (text) {
     $query.val(text || "");
   }
-
+  
+  // results day headers check-boxs handler
   $resultsTable.delegate(".chk-day", "change", function () {
+    // check all results until the next day header
     $(this).parents('tr').nextUntil('.hdr-day')
         .children(':nth-child(1)').children()
             .attr("checked",  $(this).attr("checked")).trigger("change");
   });
-
+  
+  // result item checkbox handler
   $resultsTable.delegate(".chk-entry", "change", function () {
     var val =  $(this).attr("checked"),
         $row = $(this).parents("tr"),
+        // decides what function to call, select/unselect
         fn = val ? $.proxy(historyModel.select, historyModel) : $.proxy(historyModel.unselect, historyModel);
     fn($row.data("id"),$row.data("day"));
   });
   
+  // advanced search checkbox handler
   $("#chk-advanced").click(function () {
-      var $this = $(this);
-			if ($pnlAdvanced.is(":visible")) {
-			  $query.attr("disabled", false);
-				parseForm($pnlAdvanced, fillText);
-			} else { 
-			  $query.attr("disabled", true);
-				parseQuery($query.val(), fillForm);
-				$query.focus();
-			}
-			$pnlAdvanced.toggle();
+    var $this = $(this);
+    // if the panel is visible enable searchbox
+    // parse the panel's form to fill searchbox
+    // otherwise disable searchbox and and fill form
+		if ($pnlAdvanced.is(":visible")) {
+		  $query.attr("disabled", false);
+			fillText(parseForm($pnlAdvanced));
+			$query.focus();
+		} else { 
+		  $query.attr("disabled", true);
+			fillForm(parseQuery($query.val()));
+		}
+		// toggle visibility
+	  $pnlAdvanced.toggle();
 	});
   
+  // called to initiate the search
   function search(config) {
-    var settings = config.searchSettings,
-        filters = config.filters;
+    var settings = config[0],
+        filters = config[1],
+        text = config[2];
+
     historyView.displayThrobber();
     historyView.setSummary(settings.text || "");
-    try {
+    
       EHistory.search({
-          text: settings.text || "",
-          startTime: new Date(settings.startTime || 0).getTime() ,
-          endTime: new Date(settings.endTime || Date.now()).getTime(),
-          maxResults: historyModel.pageSize
-        }, config.filters, function(results){
+        text: settings.text || "",
+        startTime: new Date(settings.startTime || 0).getTime() ,
+        endTime: new Date(settings.endTime || Date.now()).getTime(),
+        maxResults: historyModel.pageSize
+      }, filters, function(results){
         historyModel.append(results);
       });
-    } catch (e) {console.error(e)}
   }
-
+  
+  // form submit handler
   $('#frm-search').submit( function () {
+    var text;
+    //clear everything
     historyModel.clear();
     historyView.clear();
     historyView.disableControls();
+    
     if ($pnlAdvanced.is(":visible")){
-      parseForm($pnlAdvanced, function (text) {
-        parseQuery(text, search);
-      });
+      text = parseForm($pnlAdvanced);
+      search(parseQuery(text));
     } else {
-      parseQuery($query.val(), search);
+      search(parseQuery($query.val()));
     }
-    return false;
+    //return false;
   });
   
+  // show url checkbox handler
+  // loop over all entries and swap href with title
+  // title saved in the data
   $('#show-url input').change(function () {
     var link,
         $entries = $('.entry a');
@@ -181,35 +232,42 @@ $(function(){
         $this.text($this.data('title'));
       });
     }
-  })
+  });
+  
+  // instantiate date pickers
   $('#date-frm').datepicker();
   $('#date-to').datepicker();
-  $confirmBox = $('#box-confirm');
-  $overLay = $('<div class="ui-widget-overlay" style="width: 1423px; height: 3802px; z-index: 1001; "><div class="throbb"></div></div>');
-   var confirmAndProgress = function (e) {
-     $( "#dialog-confirm" )
-             .attr('title', e.data.msg)
-             .dialog({
-             			resizable: false,
-             			height:140,
-             			modal: true,
-             			buttons: {
-             				"Delete all items": function() {
-             				  $( this ).dialog( "close" );
-             				  progress();
-             				  (e.data.ok || $.noop)();
-             				},
-             				Cancel: function() {
-             					$( this ).dialog( "close" );
-             				}
-             			}
-             		});
-   };
-   
+  // static overlay element
+  var $overLay = $('<div class="ui-widget-overlay" style="width: 1423px;'
+                  +'height: 3802px; z-index: 1001;"><div class="throbb"></div></div>');
+  // confirms with the user and proceeds according to which edit button was pressed
+  // msg is found in the event data "OK" handler and message to show in the confirm box
+  var confirmAndProgress = function (e) {
+    $( "#dialog-confirm" )
+      .attr('title', e.data.msg)
+      .dialog({
+        resizable: false,
+        height:140,
+        modal: true,
+        buttons: {
+          "Delete all items": function() {
+            $( this ).dialog( "close" );
+            progress();
+            (e.data.ok || $.noop)();
+          },
+          Cancel: function() {
+            $( this ).dialog( "close" );
+          }
+        }
+      });
+  };
+  // shows the overlay and throbber
   var progress = function (e) {
     $overLay.appendTo('body').show();
   };
-   
+  // edit buttons handlers
+  // sends msg and OK handler in the event data
+  
   $('#btn-clear-history').click({
      msg:"Delete all items from history?",
      ok: $.proxy(historyModel.clearHistory, historyModel)

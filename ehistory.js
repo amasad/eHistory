@@ -247,42 +247,39 @@ var Filters = (function () {
   }
 
   function isValidRegex(regex) {
-    var ret;
-  	try {
-  		ret = new RegExp(regex);
-  	} catch (e) {
-  		return false;
-  	}
-  	return ret;
+    try {
+      return new RegExp(regex);
+    } catch (e) {
+      return false;
+    }
   }
 
   return {
   	'intitle': function (obj, item) {
   	  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
-  		if (regex) { 
-  			return regex.test(item.title);
-  		} else {
-  			return (item.title.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
-  		}	
+  	  if (regex) { 
+  	    return regex.test(item.title);
+  	  } else {
+  	    return (item.title.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
+  	  }	
   	},
   	'inurl': function (obj, item) {
-  		var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
-  		if (regex) {
-  			return (new RegExp(item.url)).test(obj.text);
-  		} else {
-  			return (item.url.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
-  		}
+  	  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
+  	  if (regex) {
+  	    return (new RegExp(item.url)).test(obj.text);
+  	  } else {
+  	    return (item.url.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
+  	  }
   	},
   	'site' : function (obj, item) {
-  		var hostName = parseUrl(item.url).hostName.split("."),
-  			//handle stuff like site:.jo or ..jo
-  			host = $.map(obj.text.split('.'), function (v) {return v || undefined;}),
-  			//j is where to start comparing in the hostname of the url in question
-  			j = hostName.length - host.length;
-  		for (var i=0; i < host.length; i++) {	  
-  			//if j is undefined or doesn't equal the hostname to match return false 
-  			if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase())
-  				return false;
+  	  var hostName = parseUrl(item.url).hostName.split(".");
+  	  //handle stuff like site:.jo or ..jo
+  	  var host = $.map(obj.text.split('.'), function (v) {return v || undefined;});
+  	  //j is where to start comparing in the hostname of the url in question
+  	  var j = hostName.length - host.length;
+  	  for (var i=0; i < host.length; i++) {	  
+  	    //if j is undefined or doesn't equal the hostname to match return false 
+  	    if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase()) return false;
   			j++;
   		}
   		return true;
