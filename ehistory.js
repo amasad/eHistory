@@ -237,14 +237,6 @@ EHistory.prototype = {
 };
 
 var Filters = (function () {
-  function parseUrl(url) {
-    url = url.replace(/http(s)*:\/\//, "").replace(/:[0-9]+/,'');
-    var hostName = url.split('/')[0];
-    return {
-      hostName: hostName,
-      path: url.replace(hostName + "/", "")
-    };
-  }
 
   function isValidRegex(regex) {
     try {
@@ -272,7 +264,7 @@ var Filters = (function () {
   	  }
   	},
   	'site' : function (obj, item) {
-  	  var hostName = parseUrl(item.url).hostName.split(".");
+  	  var hostName = Utils.parseUrl(item.url).hostName.split(".");
   	  //handle stuff like site:.jo or ..jo
   	  var host = $.map(obj.text.split('.'), function (v) {return v || undefined;});
   	  //j is where to start comparing in the hostname of the url in question
