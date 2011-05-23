@@ -1,4 +1,3 @@
-/** Global **/
 EStats = (function () {
   var MAX = 2147483647;
   var bind = function (fn, obj) {
@@ -104,29 +103,54 @@ EStats = (function () {
     
   };  
   
+  
+  
+  
+  
   var visualize = (function () {
     
-    var normalize = function (nodes, premature) {
+    var normalize = function (siteMap, nodes, premature) {
       var data = [], node;
       for (var id in nodes) {
         node = nodes[id];
+        l = node.links;
+        if (premature[id] && Array.isArray(premature[id].links)) node.links.concat(premature[id].links);
+      }
+      var item;
+      var got_links = {};
+      for (var site in siteMap) {
+        node = siteMap[site];
         item = {
           id: node.id,
           name: node.name,
-          adjacencies: []
+          adjacencies: [],
+          data: {
+            "$color": "#416D9C",
+            "$type": "circle"
+          }
         };
-        if (premature[id] && Array.isArray(premature[id].links)) node.links.concat(premature[id].links);
+       
         node.links.forEach(function (link) {
+          got_links[link.id] = got_links[node.id] = true;
           var adj = {
             nodeFrom: node.id,
             nodeTo: link.id,
-            data: {}
+            data: {
+              "$color": "#557EAA"
+            }
           };
           item.adjacencies.push(adj);
+          
         });
         data.push(item);
       }
-      return data;
+      var ret = [];
+      data.forEach(function (item) {
+        if (got_links[item.id]){
+          ret.push(item);
+        }
+      })
+      return ret;
     }
     return function visualize (config, callback) {
       var nodes = {};
@@ -142,16 +166,20 @@ EStats = (function () {
       chrome.history.search(config, function (results) {
         results.forEach(function (item, i, arr) {
           var site = Utils.parseUrl(item.url).hostName;
-          if (sitesMap[site])
-          nodes[item.id] = {
-            name: Utils.parseUrl(item.url).hostName,
-            links: [],
-            id: item.id
-          };
+          if (sitesMap[site]) {
+            nodes[item.id] = sitesMap[site];
+          } else {
+            sitesMap[site] = nodes[item.id] = {
+              name: site,
+              links: [],
+              id: item.id
+            }
+          }
           item = Object.create(item);
           item.url = item.url;
           chrome.history.getVisits(item, function (visits){
             visits.forEach(function (visit) {
+              
               var ref = visit.referringVisitId;
               visitsMap[visit.visitId] = nodes[visit.id];
               if (ref){
@@ -164,7 +192,7 @@ EStats = (function () {
               } 
             });
           });
-          if (arr.length - 1 === i) callback(normalize(nodes, links));
+          if (arr.length - 1 === i) callback(normalize(sitesMap, nodes, links));
         });
 
       });
@@ -180,4 +208,5 @@ EStats = (function () {
     }
   }
   
+
 }());
