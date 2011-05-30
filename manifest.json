@@ -6,10 +6,10 @@
     "history",
     "chrome://favicon/"
   ],
-   "chrome_url_overrides" : {
+  "chrome_url_overrides" : {
     "history": "history.html"
   },
   "icons": { 
-    "128": "128.png" 
+    "128": "css/icon.png" 
   }
 }
