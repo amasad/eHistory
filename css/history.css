@@ -18,6 +18,11 @@ input[type=text] {
     vertical-align: top;
 }
 
+input[type=checkbox] {
+    position: relative;
+    top: 1px;
+}
+
 .header {
     overflow: auto;
 }
@@ -67,8 +72,8 @@ input[type=text] {
 .ui-widget-overlay .throbb {
     background-image: url(throbber-2.gif);
     height: 11px;
-    width: 43px;
     margin: 0 auto;
+    width: 43px;
 }
 
 #query {
@@ -100,9 +105,9 @@ input[type=text] {
 
 #throbber.active {
     background-image: url(throbber.gif);
+    display: inline-block;
     height: 32px;
     width: 32px;
-    display: inline-block;
 }
 
 #results-summary {
@@ -121,6 +126,13 @@ input[type=text] {
     margin-top: 22px;
 }
 
+#frm-search input[type=submit] {
+    margin-bottom: -2px;
+    padding: 4px 6px 5px 6px;
+    position: relative;
+    top: -2px;
+}
+
 #tbl-advanced {
     border-bottom: none;
     padding: 8px 6px 14px 10px;
@@ -128,16 +140,16 @@ input[type=text] {
 }
 
 #pnl-advanced > label:first-child {
-    position: absolute;
     color: #999;
+    position: absolute;
 }
 
 #version-updated {
     background: #D5DDF3;
-    position:absolute;
-    top:0px;
-    left:50%;
-    display:none;
+    display: none;
+    left: 50%;
+    position: absolute;
+    top: 0px;
 }
 
 #btn-last {
@@ -146,12 +158,14 @@ input[type=text] {
 
 #show-url {
     float: right;
+    position: relative;
+    top: -2px;
 }
 
 #pnl-edit {
-    border: 3px solid #6B90DA;
+    border: 1px solid #CCC;
     float: right;
-    margin-right: 20px ;
+    margin-right: 0px;
     margin-top: 5px;
     position: relative;
     text-align: center;
