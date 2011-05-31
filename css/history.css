@@ -6,30 +6,16 @@ body {
     margin: 10px;
 }
 
-#pnl-advanced {
-    display: none;
-}
-
-#div-seperator {
-    background-color: #EBEFF9;
-    border-top: 1px solid #9CC2EF;
-    font-weight: bold;
-    margin-bottom: 0px;
-    margin-top: 12px;
-    padding: 3px;
-}
-
-#throbber.active {
-    background-image: url(throbber.gif);
-    height:32px;
-    width:32px;
-    display: inline-block;
-}
-
-#results-summary {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+input[type=text] {
+    background: white;
+    border: 1px solid #CCC;
+    border-bottom-color: #999;
+    border-right-color: #999;
+    color: black;
+    font: 14px Arial, sans-serif bold;
+    margin: 0;
+    padding: 2px 4px 0 3px;
+    vertical-align: top;
 }
 
 .header {
@@ -38,16 +24,6 @@ body {
 
 .header .logo {
     float: left;
-}
-
-#div-main {
-    clear: both;
-}
-
-#frm-search {
-    -webkit-margin-start: 12px;
-    float: left;
-    margin-top: 22px;
 }
 
 .entry {
@@ -76,12 +52,79 @@ body {
     white-space:nowrap;
 }
 
-#tbl-advanced {
+.advanced-label {
+    text-align: right;
+}
+
+.ui-widget {
+    font-size: 0.9em;
+}
+
+.ui-dialog-content {
+    overflow: hidden;
+}
+
+.ui-widget-overlay .throbb {
+    background-image: url(throbber-2.gif);
+    height: 11px;
+    width: 43px;
+    margin: 0 auto;
+}
+
+#query {
+    font-size: 18px;
+}
+
+#query, #pnl-advanced {
+    padding: 5px 8px 0 6px;
+    width: 663px;
+}
+
+#pnl-advanced {
     background: #D5DDF3;
-    border: solid 3px #D5DDF3;
+    border: 1px solid #CCC;
+    border-bottom-color: #999;
+    border-right-color: #999;
+    border-top-color: transparent;
+    display: none;
+}
+
+#div-seperator {
+    background-color: #EBEFF9;
+    border-top: 1px solid #9CC2EF;
+    font-weight: bold;
+    margin-bottom: 0px;
+    margin-top: 12px;
+    padding: 3px;
+}
+
+#throbber.active {
+    background-image: url(throbber.gif);
+    height: 32px;
+    width: 32px;
+    display: inline-block;
+}
+
+#results-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#div-main {
+    clear: both;
+}
+
+#frm-search {
+    -webkit-margin-start: 12px;
+    float: left;
+    margin-top: 22px;
+}
+
+#tbl-advanced {
     border-bottom: none;
-    padding: 15px 12px 14px;
-    width: 670px
+    padding: 8px 6px 14px 10px;
+    width: 100%;
 }
 
 #pnl-advanced > label:first-child {
@@ -116,19 +159,6 @@ body {
     width: 25%;
 }
 
-#query {
-    background: white;
-    border: 1px solid #CCC;
-    border-bottom-color: #999;
-    border-right-color: #999;
-    color: black;
-    font: 18px Arial, sans-serif bold;
-    margin: 0;
-    padding: 5px 8px 0 6px;
-    vertical-align: top;
-    width: 663px;
-}
-
 #pnl-edit div {
     margin: 0 auto;
     padding: 5px;
@@ -156,19 +186,4 @@ body {
 #dialog-confirm-icon {
   float: left;
   margin: 0 7px 20px 0;
-}
-
-.ui-widget {
-    font-size: 0.9em;
-}
-
-.ui-dialog-content {
-    overflow: hidden;
-}
-
-.ui-widget-overlay .throbb {
-    background-image: url(throbber-2.gif);
-    height: 11px;
-    width: 43px;
-    margin: 0 auto;
 }

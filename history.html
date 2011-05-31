@@ -22,25 +22,28 @@
   <body>
     <div id="version-updated">Version Updated</div>
     <div class="header">
-      <a href="">
-        <img src="css/icon_thumb.png" class="logo"></img>
-      </a>
+      <a href=""><img src="css/icon_thumb.png" class="logo" /></a>
       <form action="#" id="frm-search" />
         <input type="text" id="query" size="110" />
         <input type="submit" id="" value="Search History"/>
-        <label>Advanced search</label><input type="checkbox" id="chk-advanced" />
+        <input type="checkbox" id="chk-advanced" /><label>Advanced</label>
         <div id="pnl-advanced">
-          <label>Filter for</label>
           <table id="tbl-advanced">
             <tr>
-              <td><label>Start date</label></td><td><input type="text" id="date-frm" data-settings-item="startTime" /></td>
-              <td><label>End date</label></td><td><input type="text" id="date-to" data-settings-item="endTime"/></td>
-              <td><label>Title</label></td><td><input type="text" id="filter-title" data-settings-item="intitle"/> </td>
+              <td class="advanced-label">From:</td>
+              <td><input type="text" id="date-frm" data-settings-item="startTime"/></td>
+              <td class="advanced-label">To:</td>
+              <td><input type="text" id="date-to" data-settings-item="endTime"/></td>
+              <td class="advanced-label">Title:</td>
+              <td><input type="text" id="filter-title" data-settings-item="intitle"/></td>
             </tr>
             <tr>
-              <td><label>Url</label></td><td><input type="text" id="filter-url" data-settings-item="inurl"/> </td>
-              <td><label>Site</label></td><td><input type="text" id="filter-site" data-settings-item="site"/> </td>
-              <td><label>Text</label></td><td><input type="text" id="pure-text" /> </td>
+              <td class="advanced-label">URL:</td>
+              <td><input type="text" id="filter-url" data-settings-item="inurl"/></td>
+              <td class="advanced-label">Site:</td>
+              <td><input type="text" id="filter-site" data-settings-item="site"/></td>
+              <td class="advanced-label">Text:</td>
+              <td><input type="text" id="pure-text" /></td>
             </tr>
           </table>
         </div>
@@ -58,10 +61,10 @@
       <div id="div-seperator">
         <span id="results-summary">eHistory</span>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        Page #<span id="page-no"></span>
+        Page #<span id="page-no">1</span>
         <span id="show-url">
-          Show URL
           <input type="checkbox" />
+          Show URL
         </span>
       </div>
       <table id="tbl-main">
