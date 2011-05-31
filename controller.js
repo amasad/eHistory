@@ -8,7 +8,7 @@
  *
  * Date: Mon May 9
  */
- 
+
 (function($){
 /** Global **/
 initialSearch = function () {
@@ -36,18 +36,18 @@ function parseQuery (input) {
   };
   // text types
   var pureText = "", combined = "";
-  
-  // loop each pair in the query string 
+
+  // loop each pair in the query string
   $.each(options, function (i, pair) {
     if (!pair) return;
     // assume key:value
     pair = pair.split(":");
-    searchSettings[pair[0]] !== undefined ? 
+    searchSettings[pair[0]] !== undefined ?
         // pair is a search setting type
         searchSettings[pair[0]] = pair[1] :
         // pair is a filter type
         filters[pair[0]] !== undefined ?
-            combined += " " + (filters[pair[0]] = pair[1]) : 
+            combined += " " + (filters[pair[0]] = pair[1]) :
             combined += " " + (pair[1] || pair[0] || "");
     // pair is is just text
     if (!pair[1]) pureText += " " + pair[0];
@@ -82,7 +82,7 @@ function parseForm ($form) {
       text += elem.val();
     } else {
       // filter/setting
-      query += elem.val() ?  " " + elem.data("settings-item") + ":" + elem.val() : ""; 
+      query += elem.val() ?  " " + elem.data("settings-item") + ":" + elem.val() : "";
     }
   });
   // return filter/setting text format key:value followed by regular text
@@ -101,13 +101,13 @@ $(function() {
     localStorage.clear();
     localStorage['version'] = version;
   }
-  
+
   setTimeout(function () {
     $('#version-updated').hide("slow");
   }, 5000);
 })
 /*************** Controller  ***************/
-/*  Collection of functions and event handlers 
+/*  Collection of functions and event handlers
  *    Interacts with UI, historyModel and historyView
  */
 $(function(){
@@ -134,12 +134,12 @@ $(function(){
       }
     });
   }
-  
+
   // fills the search box
   function fillText (text) {
     $query.val(text || "");
   }
-  
+
   // results day headers check-boxs handler
   $resultsTable.delegate(".chk-day", "change", function () {
     // check all results until the next day header
@@ -147,7 +147,7 @@ $(function(){
         .children(':nth-child(1)').children()
             .attr("checked",  $(this).attr("checked")).trigger("change");
   });
-  
+
   // result item checkbox handler
   $resultsTable.delegate(".chk-entry", "change", function () {
     var val =  $(this).attr("checked"),
@@ -158,14 +158,13 @@ $(function(){
   });
 
   // Update the main search box whenever advanced settings are changed.
-  $("input", $pnlAdvanced).change(function () {
-    console.log('change');
-    fillText(parseForm($pnlAdvanced));
-  }).keypress(function() {
-    $(this).change();
-  }).keydown(function() {
-    $(this).change();
-  });
+  var updateMainSearchBox = function () {
+    // Delay until the keypress is handled by the browser.
+    setTimeout(function() { fillText(parseForm($pnlAdvanced)); }, 0);
+  };
+  $("input", $pnlAdvanced).change(updateMainSearchBox)
+                          .keypress(updateMainSearchBox)
+                          .keydown(updateMainSearchBox);
 
   // advanced search checkbox handler
   $("#chk-advanced").click(function () {
@@ -173,18 +172,20 @@ $(function(){
     // if the panel is visible enable searchbox
     // parse the panel's form to fill searchbox
     // otherwise disable searchbox and and fill form
-		if ($pnlAdvanced.is(":visible")) {
-		  $query.attr("disabled", false);
-			fillText(parseForm($pnlAdvanced));
-			$query.focus();
-		} else { 
-		  $query.attr("disabled", true);
-			fillForm(parseQuery($query.val()));
-		}
-		// toggle visibility
-	  $pnlAdvanced.toggle();
-	});
-  
+    if ($pnlAdvanced.is(":visible")) {
+      fillText(parseForm($pnlAdvanced));
+      $query.attr("disabled", false).focus();
+      $query.focus();
+    } else {
+      fillForm(parseQuery($query.val()));
+      $query.attr("disabled", true);
+      // Focus the normal text filter once it appears.
+      setTimeout(function() { $('#pure-text').focus(); }, 0);
+    }
+    // toggle visibility
+    $pnlAdvanced.slideToggle('fast');
+  });
+
   // called to initiate the search
   function search(config) {
     var settings = config[0],
@@ -193,7 +194,7 @@ $(function(){
 
     historyView.displayThrobber();
     historyView.setSummary(settings.text || "");
-    
+
       EHistory.search({
         text: settings.text || "",
         startTime: new Date(settings.startTime || 0).getTime() ,
@@ -203,7 +204,7 @@ $(function(){
         historyModel.append(results);
       });
   }
-  
+
   // form submit handler
   $('#frm-search').submit( function () {
     var text;
@@ -211,7 +212,7 @@ $(function(){
     historyModel.clear();
     historyView.clear();
     historyView.disableControls();
-    
+
     if ($pnlAdvanced.is(":visible")){
       text = parseForm($pnlAdvanced);
       search(parseQuery(text));
@@ -220,7 +221,7 @@ $(function(){
     }
     //return false;
   });
-  
+
   // show url checkbox handler
   // loop over all entries and swap href with title
   // title saved in the data
@@ -243,7 +244,7 @@ $(function(){
       });
     }
   });
-  
+
   // instantiate date pickers
   $('#date-frm').datepicker();
   $('#date-to').datepicker();
@@ -277,23 +278,24 @@ $(function(){
   };
   // edit buttons handlers
   // sends msg and OK handler in the event data
-  
+
   $('#btn-clear-history').click({
      msg:"Delete all items from history?",
      ok: $.proxy(historyModel.clearHistory, historyModel)
   },confirmAndProgress);
-  
+
   $("#btn-delete-selected").click({
     msg:"Delete selected items?",
     ok: $.proxy(historyModel.removeSelected, historyModel)
   }, confirmAndProgress);
-  
+
   $('#btn-delete-all').click({
     msg:"Delete all search results?",
     ok: $.proxy(historyModel.clearResults, historyModel)
   }, confirmAndProgress);
-  
+
+  // Focus query box by default.
+  $query.focus();
 });
- 
 
 })(jQuery);
