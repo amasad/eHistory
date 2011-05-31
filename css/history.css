@@ -69,6 +69,10 @@ input[type=checkbox] {
     overflow: hidden;
 }
 
+.ui-widget-overlay {
+    opacity: 0.6;
+}
+
 .ui-widget-overlay .throbb {
     background-image: url(throbber-2.gif);
     height: 11px;
@@ -206,6 +210,6 @@ input[type=checkbox] {
 }
 
 #dialog-confirm-icon {
-  float: left;
-  margin: 0 7px 20px 0;
+    float: left;
+    margin: 1px 7px 20px 0;
 }

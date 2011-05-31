@@ -254,23 +254,21 @@ $(function(){
   // confirms with the user and proceeds according to which edit button was pressed
   // msg is found in the event data "OK" handler and message to show in the confirm box
   var confirmAndProgress = function (e) {
-    $( "#dialog-confirm" )
-      .attr('title', e.data.msg)
-      .dialog({
-        resizable: false,
-        height:140,
-        modal: true,
-        buttons: {
-          "Delete all items": function() {
-            $( this ).dialog( "close" );
-            progress();
-            (e.data.ok || $.noop)();
-          },
-          Cancel: function() {
-            $( this ).dialog( "close" );
-          }
+    $("#dialog-confirm").dialog({
+      title: e.data.msg,
+      resizable: false,
+      modal: true,
+      buttons: {
+        "Delete items": function() {
+          $(this).dialog("close");
+          progress();
+          (e.data.ok || $.noop)();
+        },
+        Cancel: function() {
+          $(this).dialog("close");
         }
-      });
+      }
+    });
   };
   // shows the overlay and throbber
   var progress = function (e) {
@@ -280,17 +278,17 @@ $(function(){
   // sends msg and OK handler in the event data
 
   $('#btn-clear-history').click({
-     msg:"Delete all items from history?",
+     msg: "Delete all items from history?",
      ok: $.proxy(historyModel.clearHistory, historyModel)
-  },confirmAndProgress);
+  }, confirmAndProgress);
 
   $("#btn-delete-selected").click({
-    msg:"Delete selected items?",
+    msg: "Delete selected items?",
     ok: $.proxy(historyModel.removeSelected, historyModel)
   }, confirmAndProgress);
 
   $('#btn-delete-all').click({
-    msg:"Delete all search results?",
+    msg: "Delete all search results?",
     ok: $.proxy(historyModel.clearResults, historyModel)
   }, confirmAndProgress);
 
