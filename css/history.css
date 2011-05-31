@@ -127,8 +127,12 @@ input[type=checkbox] {
 }
 
 #frm-search input[type=submit] {
+    background: -webkit-gradient(linear, center top, center bottom, from(#f8f8f8), to(#dadada));
+    border: 1px #CCC solid;
+    border-bottom-color: #999;
+    border-right-color: #999;
     margin-bottom: -2px;
-    padding: 4px 6px 5px 6px;
+    padding: 6px 8px 5px 8px;
     position: relative;
     top: -2px;
 }
