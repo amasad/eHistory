@@ -56,6 +56,8 @@ historyView = (function () {
     $lastPage.click(function () {
       
     });
+    
+    
     // Navigation controls disabled onload
     $allNav.attr("disabled", true);
     
@@ -114,13 +116,16 @@ historyView = (function () {
   $(EHistory).bind("done", function (e, args) {
     $throbber.removeClass("active");
   });
+  $(EHistory).bind("finished", function (e, args) {
+    $firstPage.add($newerPage).attr("disabled", false);
+  });
    // Public functions
    return {
     clear: function () {
       currentPage = 0;
       $table.empty();
     },
-    disableControls: function () {
+    disableControls: function disableControls() {
       $allNav.attr("disabled", true);
     },
     displayThrobber: function () {
