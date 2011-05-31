@@ -1,0 +1,174 @@
+body {
+    background-color: white;
+    color: black;
+    font-family: Helvetica, sans-serif;
+    font-size: 84%;
+    margin: 10px;
+}
+
+#pnl-advanced {
+    display: none;
+}
+
+#div-seperator {
+    background-color: #EBEFF9;
+    border-top: 1px solid #9CC2EF;
+    font-weight: bold;
+    margin-bottom: 0px;
+    margin-top: 12px;
+    padding: 3px;
+}
+
+#throbber.active {
+    background-image: url(throbber.gif);
+    height:32px;
+    width:32px;
+    display: inline-block;
+}
+
+#results-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.header {
+    overflow: auto;
+}
+
+.header .logo {
+    float: left;
+}
+
+#div-main {
+    clear: both;
+}
+
+#frm-search {
+    -webkit-margin-start: 12px;
+    float: left;
+    margin-top: 22px;
+}
+
+.entry {
+    margin-top:8px;
+}
+
+.entry .time {
+    -webkit-margin-end: 5px;
+    color: #888;
+    float: left;
+    min-width: 56px;
+    padding-top: 1px;
+    white-space: nowrap;
+}
+
+.entry a {
+    background-position: 0px 1px;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    box-sizing: border-box;
+    display: inline-block;
+    max-width: 500px;
+    overflow: hidden;
+    padding: 1px 0px 4px 22px;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+}
+
+#tbl-advanced {
+    background: #D5DDF3;
+    border: solid 3px #D5DDF3;
+    border-bottom: none;
+    padding: 15px 12px 14px;
+    width: 670px
+}
+
+#pnl-advanced > label:first-child {
+    position: absolute;
+    color: #999;
+}
+
+#version-updated {
+    background: #D5DDF3;
+    position:absolute;
+    top:0px;
+    left:50%;
+    display:none;
+}
+
+#btn-last {
+    visibility: hidden;
+}
+
+#show-url {
+    float: right;
+}
+
+#pnl-edit {
+    border: 3px solid #6B90DA;
+    float: right;
+    margin-right: 20px ;
+    margin-top: 5px;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    width: 25%;
+}
+
+#query {
+    background: white;
+    border: 1px solid #CCC;
+    border-bottom-color: #999;
+    border-right-color: #999;
+    color: black;
+    font: 18px Arial, sans-serif bold;
+    margin: 0;
+    padding: 5px 8px 0 6px;
+    vertical-align: top;
+    width: 663px;
+}
+
+#pnl-edit div {
+    margin: 0 auto;
+    padding: 5px;
+}
+
+#pnl-edit div button {
+    height: 20px;
+    margin: 0px;
+    width: 180px;
+}
+
+#pnl-edit span {
+    color: #999;
+    font-family: Arial, sans-serif;
+    font-size: 1.2em;
+    left: 0px;
+    padding: 3px;
+    position: absolute;
+}
+
+#dialog-confirm {
+    display: none;
+}
+
+#dialog-confirm-icon {
+  float: left;
+  margin: 0 7px 20px 0;
+}
+
+.ui-widget {
+    font-size: 0.9em;
+}
+
+.ui-dialog-content {
+    overflow: hidden;
+}
+
+.ui-widget-overlay .throbb {
+    background-image: url(throbber-2.gif);
+    height: 11px;
+    width: 43px;
+    margin: 0 auto;
+}
