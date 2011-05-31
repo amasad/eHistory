@@ -156,7 +156,17 @@ $(function(){
         fn = val ? $.proxy(historyModel.select, historyModel) : $.proxy(historyModel.unselect, historyModel);
     fn($row.data("id"),$row.data("day"));
   });
-  
+
+  // Update the main search box whenever advanced settings are changed.
+  $("input", $pnlAdvanced).change(function () {
+    console.log('change');
+    fillText(parseForm($pnlAdvanced));
+  }).keypress(function() {
+    $(this).change();
+  }).keydown(function() {
+    $(this).change();
+  });
+
   // advanced search checkbox handler
   $("#chk-advanced").click(function () {
     var $this = $(this);
