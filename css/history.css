@@ -131,21 +131,25 @@ input[type=checkbox] {
     border: 1px #CCC solid;
     border-bottom-color: #999;
     border-right-color: #999;
-    margin-bottom: -2px;
-    padding: 6px 8px 5px 8px;
-    position: relative;
-    top: -2px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    height: 29px;
+    padding: 5px 8px 5px 8px;
+}
+
+#frm-search input[type=submit]:hover {
+    background: -webkit-gradient(linear, center top, center bottom, from(#fbfbfb), to(#e0e0e0));
+}
+
+#frm-search input[type=submit]:active {
+    background: -webkit-gradient(linear, center bottom, center top, from(#f0f0f0), to(#e8e8e8));
+    color: #333;
 }
 
 #tbl-advanced {
     border-bottom: none;
     padding: 8px 6px 14px 10px;
     width: 100%;
-}
-
-#pnl-advanced > label:first-child {
-    color: #999;
-    position: absolute;
 }
 
 #version-updated {
