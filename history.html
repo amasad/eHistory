@@ -1,232 +1,76 @@
-<!doctype html`> 
-<html i18n-values="dir:textdirection;"> 
+<!DOCTYPE html>
+
+<html i18n-values="dir:textdirection;">
   <head>
-    <link rel="stylesheet" href="css/ui-darkness/jquery-ui-1.8.12.custom.css" type="text/css" />
-    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB9sFChEZIK76ac8AAAKjSURBVDjLPZPNbhxFFEbPrVtV3TPdY8+YYAckNiwSQPAkLHg8niUrIoUNEqtILFhEmNiOkxlsz0zP9E9VdxWLkbL+pKt7z7mf5Jzl1es3v5Su/AGSNcZgrQVgHBMhBNq2pWlbtruGw/4AGFRNn5E/7avXb36uyvmvhXdXxgiqioiQUmLUCchMkyfEkdJ7eueIcSQDIry1VvSlc/bSOSfeO1QNgtB2HSEEQhhIKeGsMisL+n44DcgZEXlpjRprVfHe4Z1DBFJKrDePhBARI8QQabuOGCOqijGnDY0RbOE91ipWDdM0cne/Znl+xldXl1TVjHGaEGDz8MTN7QeObQdAzpmcwRpjEBEAbu8+sd0fWC2XnJ/XDEPg/uOG7158i/cOYwwhRI7Hlpwz5IxNKZFSput7Hrc7LlYrysJTeE+MIzFGZmXBvCyoq4qcMpv/HhjHSAZsHEfGcSTGQBwnFvWc+XyGcycmdVXhrEVV8d7z/OoZZVnQDwEBzBhHhhAIIaLGsFyeUc1nWKuoKm3X0RyOqBpUFQAjBjh5NH0/0LbdCZZACBFjDMYYvrhYcrE65+1ff9McjojAdtcQwgAZRMA2TUtROpy15Jz4cL9mtTyj8A6AH79/we3dR1SV/f5ATumkUBUQ7G7XUAyOoiyQnFhvNqhVvvn6ii+fXeCc4+ys5vr9HevNAzc3N+z2B6p6AYDdNQ1ucBT9gFVDmiaur/+laQ7M3t+hxhDHie12y6dPax6fttSLc0QEgZPGYQifb0/TyHb7xLt3/6BqOOUDwxCwznN59fxzX6y12JRpjZw+a5omcoZ5taDrOrb7PX3X47xnuVxR1zXee1SVaj5DkGxV9A/Iv+ecf4KMwMn7YkFdL0BAxaBqMKoURUFVlVhr8+Fw/O1/orNbBcp7RQAAAAAASUVORK5CYII=" type="image/x-icon">
     <title>eHistory</title>
-    <style>
-body {
-	font-family: Helvetica, sans-serif;
-	font-size: 84%;
-	background-color: white;
-	color: black;
-	margin: 10px;
-
-}
-
-#pnl-advanced{
-display: none;
-}
-#div-seperator{
-  margin-top: 12px;
-  border-top: 1px solid #9CC2EF;
-  background-color: #EBEFF9;
-  font-weight: bold;
-  padding: 3px;
-  margin-bottom: 0px;         
-}
-#throbber.active{
-	background-image: url(css/throbber.gif);
-	height:32px;
-	width:32px;
-	display: inline-block;
-}
-#results-summary {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.header {
-	overflow: auto;
-}
-.header .logo{
-	float:left;
-}
-
-#div-main{
-	clear: both;
-}
-#frm-search {
-	margin-top: 22px;
-	float: left;
-	-webkit-margin-start: 12px;
-}
-.entry {
-	margin-top:8px;
-}
-.entry .time{
-	color: #888;
-	float: left;
-	min-width: 56px;
-	-webkit-margin-end: 5px;
-	padding-top: 1px;
-	white-space: nowrap;
-}
-
-.entry a{
-	max-width:500px;
-	white-space:nowrap;
-	box-sizing: border-box;
-	background-repeat: no-repeat;
-	background-size: 16px;
-	background-position: 0px 1px;
-	padding: 1px 0px 4px 22px;
-	display: inline-block;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-#tbl-advanced{
-  padding: 15px 12px 14px;
-  border: solid 3px #D5DDF3;
-  border-bottom: none;
-  background: #D5DDF3;
-  width:670px
-}
-#pnl-advanced > label:first-child{
-  position: absolute;
-  color: #999;
-}
-#version-updated {
-  background: #D5DDF3;
-  position:absolute;
-  top:0px;
-  left:50%;
-  display:none;
-}
-#btn-last{
-  visibility: hidden;
-}
-#show-url{
-  float:right;
-}
-
-#pnl-edit{
-  border: 3px solid #6B90DA;
-  width:25%;
-  float:right;
-  margin-top:5px;
-  margin-right:20px ;
-  position:relative;
-  text-align:center;
-  vertical-align:middle;
-}
-
-#query{
-	width: 663px;
-	background: white;
-  border: 1px solid #CCC;
-  border-bottom-color: #999;
-  border-right-color: #999;
-  color: black;
-  font: 18px arial,sans-serif bold;
-  margin: 0;
-  padding: 5px 8px 0 6px;
-  vertical-align: top;
-}
-#pnl-edit div {
-  margin: 0 auto;
-  padding:5px;
-}
-#pnl-edit div button{
-  height: 20px;
-  width: 180px;
-  margin: 0px;
-  
-}
-#pnl-edit span{
-  position:absolute;
-  left:0px;
-  color:#999;
-  font-family: arial,sans-serif;
-  font-size:1.2em;
-  padding:3px;
-}
-
-#dialog-confirm {
-  display:none;
-}
-.ui-widget {
-  font-size: 0.9em;
-}
-.ui-dialog-content {
-  overflow:hidden;
-}
-.ui-widget-overlay .throbb{
-  background-image: url(css/throbber-2.gif);
-	height:11px;
-	width:43px;
-	margin: 0 auto;
-}
-    </style>
-    <script type="text/javascript" src="lib/jquery.js" ></script>
-    <script type="text/javascript" src="lib/jquery.tmpl.js" ></script>
-    <script type="text/javascript" src="lib/jquery-ui-1.8.12.custom.min.js" ></script>
+    <link rel="stylesheet" href="css/smoothness/jquery-ui-1.8.13.custom.css" type="text/css" />
+    <link rel="stylesheet" href="css/history.css" type="text/css" />
+    <!-- Chrome has problems with normal icons in page overrides. -->
+    <!-- Source: css/icon_tiny.png -->
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAAAAAAAA+UO7fwAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB9sFChEZIK76ac8AAAKjSURBVDjLPZPNbhxFFEbPrVtV3TPdY8+YYAckNiwSQPAkLHg8niUrIoUNEqtILFhEmNiOkxlsz0zP9E9VdxWLkbL+pKt7z7mf5Jzl1es3v5Su/AGSNcZgrQVgHBMhBNq2pWlbtruGw/4AGFRNn5E/7avXb36uyvmvhXdXxgiqioiQUmLUCchMkyfEkdJ7eueIcSQDIry1VvSlc/bSOSfeO1QNgtB2HSEEQhhIKeGsMisL+n44DcgZEXlpjRprVfHe4Z1DBFJKrDePhBARI8QQabuOGCOqijGnDY0RbOE91ipWDdM0cne/Znl+xldXl1TVjHGaEGDz8MTN7QeObQdAzpmcwRpjEBEAbu8+sd0fWC2XnJ/XDEPg/uOG7158i/cOYwwhRI7Hlpwz5IxNKZFSput7Hrc7LlYrysJTeE+MIzFGZmXBvCyoq4qcMpv/HhjHSAZsHEfGcSTGQBwnFvWc+XyGcycmdVXhrEVV8d7z/OoZZVnQDwEBzBhHhhAIIaLGsFyeUc1nWKuoKm3X0RyOqBpUFQAjBjh5NH0/0LbdCZZACBFjDMYYvrhYcrE65+1ff9McjojAdtcQwgAZRMA2TUtROpy15Jz4cL9mtTyj8A6AH79/we3dR1SV/f5ATumkUBUQ7G7XUAyOoiyQnFhvNqhVvvn6ii+fXeCc4+ys5vr9HevNAzc3N+z2B6p6AYDdNQ1ucBT9gFVDmiaur/+laQ7M3t+hxhDHie12y6dPax6fttSLc0QEgZPGYQifb0/TyHb7xLt3/6BqOOUDwxCwznN59fxzX6y12JRpjZw+a5omcoZ5taDrOrb7PX3X47xnuVxR1zXee1SVaj5DkGxV9A/Iv+ecf4KMwMn7YkFdL0BAxaBqMKoURUFVlVhr8+Fw/O1/orNbBcp7RQAAAAAASUVORK5CYII=" type="image/png">
+    <script type="text/javascript" src="lib/jquery.js"></script>
+    <script type="text/javascript" src="lib/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.8.12.custom.min.js"></script>
+    <script type="text/javascript" src="polyfills.js"></script>
     <script type="text/javascript" src="utils.js"></script>
-    <script>
-    // for older chrome versions
-    if(!Object.keys) Object.keys = function(o) {
-     if (o !== Object(o))
-          throw new TypeError('Object.keys called on non-object');
-     var ret=[],p;
-     for(p in o) if(Object.prototype.hasOwnProperty.call(o,p)) ret.push(p);
-     return ret;
-    };
-    if (typeof Object.create !== 'function') {
-        Object.create = function (o) {
-            function F() {}
-            F.prototype = o;
-            return new F();
-        };
-    }
-    </script>
     <script type="text/javascript" src="visitsbyday.js"></script>
-    <script type="text/javascript" src="ehistory.js" ></script> 
-    <script type="text/javascript" src="controller.js" ></script>
-    <script type="text/javascript" src="model.js" ></script>
-    <script type="text/javascript" src="view.js" ></script>
+    <script type="text/javascript" src="ehistory.js"></script>
+    <script type="text/javascript" src="controller.js"></script>
+    <script type="text/javascript" src="model.js"></script>
+    <script type="text/javascript" src="view.js"></script>
   </head>
   <body>
-    <div id="version-updated">Version Updated</div>  
-	<div class="header">
-		<a href="">
-			<img src="css/icon_thumb.png" class="logo"></img>
-		</a>
-    	<form action="#" id="frm-search" />
-	     <input type="text" id="query" size="110" />
-	     <input type="submit" id="" value="Search History"/>
-	     <label>Advanced search</label><input type="checkbox" id="chk-advanced" />
-	     <div id="pnl-advanced">
-	       <label>Filter for</label>
-		    <table id="tbl-advanced">
-		      <tr>
-  	      <td><label>Start date</label></td><td><input type="text" id="date-frm" data-settings-item="startTime" /></td>
-  	      <td><label>End date</label></td><td><input type="text" id="date-to" data-settings-item="endTime"/></td>
-  	      <td><label>Title</label></td><td><input type="text" id="filter-title" data-settings-item="intitle"/> </td>
-  	      </tr>
-  	      <tr>
-      	  <td><label>Url</label></td><td><input type="text" id="filter-url" data-settings-item="inurl"/> </td>
-      	  <td><label>Site</label></td><td><input type="text" id="filter-site" data-settings-item="site"/> </td>
-      	  <td><label>Text</label></td><td><input type="text" id="pure-text" /> </td>
-      	  </tr>
-    	  </table>
-	     </div>
-	   </form>
-	     
-	   <div id="pnl-edit">
-<span>Edit</span>
-	     <div>
-	       <button id="btn-delete-selected"> Delete Selected</button>
-  	     <button id="btn-delete-all">Delete all search results</button>
-  	     <button id="btn-clear-history" >Clear history</button>
-         </div>
-</div>
-	</div>
+    <div id="version-updated">Version Updated</div>
+    <div class="header">
+      <a href=""><img src="css/icon_thumb.png" class="logo" /></a>
+      <form action="#" id="frm-search" />
+        <input type="text" id="query" size="110" />
+        <input type="submit" value="Search History"/>
+        <span id="advanced-toggler">
+          <input type="checkbox" id="chk-advanced" />Advanced
+        </span>
+        <div id="pnl-advanced">
+          <table id="tbl-advanced">
+            <tr>
+              <td class="advanced-label">From:</td>
+              <td><input type="text" id="date-frm" data-settings-item="startTime"/></td>
+              <td class="advanced-label">To:</td>
+              <td><input type="text" id="date-to" data-settings-item="endTime"/></td>
+              <td class="advanced-label">Title:</td>
+              <td><input type="text" id="filter-title" data-settings-item="intitle"/></td>
+            </tr>
+            <tr>
+              <td class="advanced-label">URL:</td>
+              <td><input type="text" id="filter-url" data-settings-item="inurl"/></td>
+              <td class="advanced-label">Site:</td>
+              <td><input type="text" id="filter-site" data-settings-item="site"/></td>
+              <td class="advanced-label">Text:</td>
+              <td><input type="text" id="pure-text" /></td>
+            </tr>
+          </table>
+        </div>
+      </form>
+      <div id="pnl-edit">
+        <span>Edit</span>
+        <div>
+          <button id="btn-delete-selected"> Delete Selected</button>
+          <button id="btn-delete-all">Delete all search results</button>
+          <button id="btn-clear-history">Clear history</button>
+        </div>
+      </div>
+    </div>
     <div id="div-main">
-      <div id="div-seperator"><span id="results-summary">eHistory</span>&nbsp;&nbsp;&nbsp;&nbsp;Page #<span id="page-no"></span><span id="show-url"> Show URL<input type="checkbox"/></span></div>
+      <div id="div-seperator">
+        <span id="results-summary">eHistory</span>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        Page #<span id="page-no">1</span>
+        <span id="show-url">
+          <input type="checkbox" />
+          Show URL
+        </span>
+      </div>
       <table id="tbl-main">
-        <tbody>
-        </tbody>
+        <tbody></tbody>
       </table>
       <button id="btn-first">
         Newest
@@ -239,12 +83,14 @@ display: none;
       </button>
       <div id="throbber" class=""></div>
     </div>
-   <div id="bar-progress"></div>
-   <div id="dialog-confirm" title="Empty the recycle bin?">
-   	<p>
-   	  <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-   	  <p id="dialog-confirm-msg">These items will be permanently deleted and cannot be recovered. Are you sure?</p>
-   	  </p>
+    <div id="bar-progress"></div>
+    <div id="dialog-confirm">
+      <p>
+        <span id="dialog-confirm-icon" class="ui-icon ui-icon-alert"></span>
+        <p id="dialog-confirm-msg">
+          These items will be permanently deleted and cannot be recovered. Are you sure?
+        </p>
+      </p>
    </div>
    <div id="overlay"></div>
   </body>
