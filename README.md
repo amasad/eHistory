@@ -31,5 +31,5 @@ In native chrome history you can't search then delete something, you have to bro
 
 ##Short comings
 The filtration feature sometimes works slower than expected, since the filtration process is done in the user space rather than the browser it self, nonetheless eHistory system is highly optimized and also uses certain hacks to get the results as fast as possible.
-Chrome's history API doesn't expose the snippet which can reveal which part of the page your search string actually matched.
+Another pain point would be that Chrome's history API doesn't expose the snippet which can reveal which part of the page your search string actually matched.
 
