@@ -70,10 +70,10 @@ EHistory.prototype = {
     this.cb = cb;
     this.query = settings.text;
     this.settings = {
-				text: "",
-        startTime: 0,
-        endTime: Date.now(),
-				maxResults : 150
+      text: "",
+      startTime: 0,
+      endTime: Date.now(),
+      maxResults : 150
     };
     $.extend(this.settings, settings);
     this.getPage(1); 

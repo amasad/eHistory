@@ -206,8 +206,9 @@ $(function(){
   }
 
   // form submit handler
-  $('#frm-search').submit( function () {
+  $('#frm-search').submit( function (e) {
     var text;
+    e.preventDefault();
     //clear everything
     historyModel.clear();
     historyView.clear();
