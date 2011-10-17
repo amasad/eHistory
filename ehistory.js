@@ -17,7 +17,7 @@ function EHistory() {/*fdsfsd*/}
 // Extend date class to get some nice features
 (function () {
   // milliseconds in one day
-  var msDay = (24 * 60 * 60 * 1000);
+  var msDay = 24 * 60 * 60 * 1000;
   
   Date.prototype.start = function () {
     return new Date(this.toDateString());
@@ -224,60 +224,76 @@ EHistory.prototype = {
   filter: function (item) {
     var operators = memoizeKeys(this.filters);
     if (!operators.length) return true;
-    for (var i=0; i < operators.length; i++) {
-      
-      var satisfy = Filters[operators[i]]({
-        regex: this.filters.regex || 0,
-        text: this.filters[operators[i]]
-        }, item);
-      if (!satisfy) return false;
+    for (var i=0; i < operators.length; i++) {  
+      var res = Filters[operators[i]](item, this.filters[operators[i]]);
+      if (!res) return false;
 	  }
-	    return true;
-	  }
+	  return true;
+	}
 };
 
 var Filters = (function () {
+  var rProtocol = /^([a-z0-9+]+:)/i,
+      rPort = /:[0-9]+$/,
+      // Charecters that are not allowed in a hostname.
+      nonHostChars = ['<', '>', '"', '`', ' ', '\r', '\n', '\t', '{', '}', '|',
+                      '\\', '^', '~', '[', ']', '`', '%', '/', '?', ';', '#'],
+      // Protocols that don't have a hostname.
+      hostlessProtocols = {
+        'javascript': true,
+        'file': true
+      },
+      
+      // Gets the hostname without the port.
+      getHostName = function (url) {    
+        var proto = rProtocol.exec(url),
+            rest = url,
+            host = '';
 
-  function isValidRegex(regex) {
-    try {
-      return new RegExp(regex);
-    } catch (e) {
-      return false;
-    }
-  }
-
+        proto = proto ? proto[0] : null;
+        
+        if (proto && !hostlessProtocols[proto]) {
+          // We should have a host.
+          rest = rest.substr(proto.length + 2);
+          
+          // Find the first non host character index in the url string left.
+          var firstNonHost = -1;
+          for (var i = 0; i < nonHostChars.length; i++) {
+            var index = rest.indexOf(nonHostChars[i]);
+            if (index !== -1 && 
+                  (index < firstNonHost || firstNonHost === -1)) firstNonHost = index;
+          }
+          
+          // Get the actual hostName.
+          if (firstNonHost !== -1) {
+            host = rest.substr(0, firstNonHost);
+            // Remove port.
+            host = host.replace(rPort, '');
+          }
+        }
+        return host;
+      },
+      
+      isIn = function (prop) {
+        return function (item, str) {
+          return item[prop].toLowerCase().indexOf(str.toLowerCase()) > -1;
+        }
+      };
+      
   return {
-  	'intitle': function (obj, item) {
-  	  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
-  	  if (regex) { 
-  	    return regex.test(item.title);
-  	  } else {
-  	    return (item.title.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
-  	  }	
-  	},
-  	'inurl': function (obj, item) {
-  	  var regex = obj.regex && obj.regex == "1" && isValidRegex(obj.text);
-  	  if (regex) {
-  	    return (new RegExp(item.url)).test(obj.text);
-  	  } else {
-  	    return (item.url.toLowerCase().indexOf(obj.text.toLowerCase()) > -1);
-  	  }
-  	},
-  	'site' : function (obj, item) {
-  	  var hostName = Utils.parseUrl(item.url).hostName.split(".");
-  	  //handle stuff like site:.jo or ..jo
-  	  var host = $.map(obj.text.split('.'), function (v) {return v || undefined;});
-  	  //j is where to start comparing in the hostname of the url in question
-  	  var j = hostName.length - host.length;
-  	  for (var i=0; i < host.length; i++) {	  
-  	    //if j is undefined or doesn't equal the hostname to match return false 
-  	    if (!hostName[j] || hostName[j].toLowerCase() != host[i].toLowerCase()) return false;
-  			j++;
-  		}
-  		return true;
-  	}
+    intitle: isIn('title'),
+    inurl: isIn('url'),
+    site: function (item, str) {
+      // amjad.a.com a.com
+      var hostDomains = getHostName(item.url).split('.'),
+          // handle extra dots (e.g. .jo.).
+          siteDomains = str.replace(/^\.*|\.*$/g, '').split('.');
+      for (var i = siteDomains.length - 1, j = hostDomains.length - 1; j >= 0 && i >= 0; i--, j--) {
+        if (hostDomains[j] !== siteDomains[i]) return false;
+      }
+      return true;
+    }
   };
-  
 })();
 
 return new EHistory;
