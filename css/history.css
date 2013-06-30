@@ -96,6 +96,7 @@ header {
 }
 #div-main {
     /*display:none!important;*/
+    width: 700px;
 }
 
 input[type=checkbox] {
@@ -137,37 +138,54 @@ header .logo {
     white-space:nowrap;
 }
 
-.advanced-label {
-    text-align: right;
-}
-
-.ui-widget {
-    font-size: 0.9em;
-}
-
-.ui-dialog-content {
-    overflow: hidden;
-}
-
-.ui-widget-overlay {
-    opacity: 0.6;
-}
-
-.ui-widget-overlay .throbb {
-    background-image: url(throbber-2.gif);
-    height: 11px;
-    margin: 0 auto;
-    width: 43px;
-}
-
-
 #div-seperator {
-    background-color: #EBEFF9;
-    border-top: 1px solid #9CC2EF;
     font-weight: bold;
     margin-bottom: 0px;
     margin-top: 12px;
     padding: 3px;
+}
+
+#div-seperator:after {
+    clear: both;
+    content: ".";
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+    display: block;
+}
+
+.page-buttons {
+    width: 100px;
+    height: 32px;
+    display: inline-block;
+    float: right;
+}
+.prev-page,.next-page {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    border: 1px solid #ceced6;
+    background-color: #eee;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 0.25s linear;
+    transition: border 0.25s linear;
+}
+.prev-page:hover,.next-page:hover {
+    opacity: 1;
+    border: 1px solid black;
+}
+
+.next-page {
+    background: url(next.png);
+}
+.prev-page {
+    background: url(prev.png);
+}
+.page-no {
+    display: inline-block;
+    padding: 9px 5px;
+    height: 100%;
 }
 
 #throbber.active {
@@ -177,11 +195,6 @@ header .logo {
     width: 32px;
 }
 
-#results-summary {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
 #div-main {
     clear: both;

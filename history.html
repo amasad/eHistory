@@ -53,26 +53,15 @@
     </header>
     <div id="div-main">
       <div id="div-seperator">
-        <span id="results-summary">eHistory</span>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        Page #<span id="page-no">1</span>
-        <span id="show-url">
-          <input type="checkbox" />
-          Show URL
-        </span>
+        <div class="page-buttons">
+          <button class="prev-page" id="btn-newer"></button>
+          <span class="page-no" id="page-no">1</span>
+          <button class="next-page" id="btn-older"></button>
+        </div>
       </div>
       <table id="tbl-main">
         <tbody></tbody>
       </table>
-      <button id="btn-first">
-        Newest
-      </button>
-      <button id="btn-newer">
-        Newer
-      </button>
-      <button id="btn-older">
-        Older
-      </button>
       <div id="throbber" class=""></div>
     </div>
     <div id="bar-progress"></div>

@@ -16,7 +16,7 @@
 /** global **/
 historyView = (function () {
   // Initial DOM (jQuery) variables 
-  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $summary, $pageNo;
+  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $pageNo;
   // Current page in the history view
   var currentPage = 0;
   var EHISTORY = "eHistory";
@@ -47,7 +47,6 @@ historyView = (function () {
     // jQuery instance holding all the navigation controls
     $allNav = $olderPage.add($newerPage).add($firstPage).add($lastPage);
     $throbber = $('#throbber');
-    $summary = $('#results-summary');
     $pageNo = $('#page-no');
     // Bind buttons functionalities
     $olderPage.click(function () {
@@ -131,7 +130,6 @@ historyView = (function () {
     },
     setSummary: function (text) {
       var prefix = text ? SUMMARY_PREFIX : EHISTORY;
-      $summary.text(prefix + text);
     }
   };
 })();
