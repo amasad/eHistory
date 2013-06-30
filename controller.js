@@ -115,7 +115,7 @@ $(function(){
   // search box
   var $query = $('#query');
   // advanced search form
-  var $pnlAdvanced = $('#pnl-advanced');
+  var $pnlAdvanced = $('.advanced-search');
   // history items table
   var $resultsTable = $('#tbl-main');
 
@@ -166,24 +166,15 @@ $(function(){
                           .keypress(updateMainSearchBox)
                           .keydown(updateMainSearchBox);
 
-  // advanced search checkbox handler
-  $("#chk-advanced").click(function () {
-    var $this = $(this);
-    // if the panel is visible enable searchbox
-    // parse the panel's form to fill searchbox
-    // otherwise disable searchbox and and fill form
-    if ($pnlAdvanced.is(":visible")) {
-      fillText(parseForm($pnlAdvanced));
-      $query.attr("disabled", false).focus();
-      $query.focus();
-    } else {
-      fillForm(parseQuery($query.val()));
-      $query.attr("disabled", true);
-      // Focus the normal text filter once it appears.
-      setTimeout(function() { $('#pure-text').focus(); }, 0);
-    }
-    // toggle visibility
-    $pnlAdvanced.slideToggle('fast');
+  $('body').bind('click', function (e) {
+    if ($(e.srcElement).parents('.advanced-search').length) return;
+    $('.open-advanced').show();
+    $('.advanced-search').hide();
+  });
+  $('.open-advanced').click(function () {
+    $('.advanced-search').show();
+    $('.open-advanced').hide();
+    return false;
   });
 
   // called to initiate the search

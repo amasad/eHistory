@@ -67,6 +67,33 @@ header {
     opacity: 1;
 }
 
+.advanced-search {
+    background: #fff;
+    width: 400px;
+    color: grey;
+    padding: 10px;
+    border: 1px solid #ceced6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: absolute;
+    top: 60px;
+    display: none;
+}
+.advanced-search fieldset {
+    border: none;
+}
+.advanced-search label {
+    width: 50px;
+    display: inline-block;
+}
+.advanced-search input {
+    border: 1px solid #ceced6;
+    width: calc(100% - 50px);
+    height: 30px;
+}
+.advanced-search input:focus {
+    border:1px solid #4d90fe!important;
+    outline: none;
+}
 #div-main {
     /*display:none!important;*/
 }
@@ -133,20 +160,6 @@ header .logo {
     width: 43px;
 }
 
-
-#pnl-advanced {
-    padding: 5px 8px 0 6px;
-    width: 663px;
-}
-
-#pnl-advanced {
-    background: #D5DDF3;
-    border: 1px solid #CCC;
-    border-bottom-color: #999;
-    border-right-color: #999;
-    border-top-color: transparent;
-    display: none;
-}
 
 #div-seperator {
     background-color: #EBEFF9;
