@@ -21,6 +21,16 @@ historyView = (function () {
   var currentPage = 0;
   var EHISTORY = "eHistory";
   var SUMMARY_PREFIX = "Search results for ";
+
+  var templates = {
+    'row': Mustache.compile("<tr class='entry'>"+
+                              "<td><input type='checkbox'class='chk-entry'/></td>"+
+                              "<td class='time'>{{{date}}}</td>"+
+                              "<td><a href='{{url}}' style='background-image:url(chrome://favicon/{{url}})'>{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a></td>"+
+                            "</tr>"),
+    'day-row': Mustache.compile("<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td>{{date}}</td> </tr>")
+  };
+
   //init
   //On domReady get the DOM elements
   $(function(){
@@ -53,21 +63,9 @@ historyView = (function () {
       $(historyModel).trigger("modelrefresh"); 
     });
     // TODO: Implement
-    $lastPage.click(function () {
-      
-    });
-    
-    
+    $lastPage.click(function () { });
     // Navigation controls disabled onload
     $allNav.attr("disabled", true);
-    
-    //templates
-    $.template("row", "<tr class='entry'>"+
-                        "<td><input type='checkbox'class='chk-entry'/></td>"+
-                        "<td class='time'>${date}</td>"+
-                        "<td><a href='${url}' style='background-image:url(chrome://favicon/${url})'>{{if title}} ${title} {{else}} ${url} {{/if}}</a></td>"+
-                      "</tr>");
-    $.template("day-row", "<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td>${date}</td> </tr>");
   });
   // when the view is on the first page disable first, newer buttons
   function updateControls () {
@@ -93,10 +91,10 @@ historyView = (function () {
     $table.empty();
     // for each day create a day row (holds day info and a checkbox allows selection of all day items)
     $.each(results_day, function (day, items) {
-      $.tmpl('day-row', {date: new Date(parseInt(day)).toDateString()}).appendTo($table);
+      $(templates['day-row']({date: new Date(parseInt(day)).toDateString()})).appendTo($table);
       // on each day populate the results that corresponds to that day.
       $.each(items, function (i, visit) {
-        var row = $.tmpl('row', visit);
+        var row = $(templates['row'](visit));
         // let the elem data hold info of the corrosponding visit
         row.data('id', visit.id);
         row.data('day', visit.day);

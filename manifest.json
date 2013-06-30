@@ -9,7 +9,8 @@
   "chrome_url_overrides" : {
     "history": "history.html"
   },
-  "icons": { 
-    "128": "css/icon.png" 
-  }
+  "icons": {
+    "128": "css/icon.png"
+  },
+  "manifest_version": 2
 }
