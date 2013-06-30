@@ -293,6 +293,12 @@ $(function(){
     ok: $.proxy(historyModel.clearResults, historyModel)
   }, confirmAndProgress);
 
+  $('.query').focus(function () {
+    $('.query-wrapper').addClass('active');
+  });
+  $('.query').blur(function () {
+    $('.query-wrapper').removeClass('active');
+  });
   // Focus query box by default.
   $query.focus();
 });

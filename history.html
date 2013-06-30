@@ -3,7 +3,8 @@
 <html i18n-values="dir:textdirection;">
   <head>
     <title>eHistory</title>
-    <link rel="stylesheet" href="css/smoothness/jquery-ui-1.8.13.custom.css" type="text/css" />
+    <!-- <link rel="stylesheet" href="css/smoothness/jquery-ui-1.8.13.custom.css" type="text/css" /> -->
+    <link rel="stylesheet" href="css/normalize.css" type="text/css" />
     <link rel="stylesheet" href="css/history.css" type="text/css" />
     <!-- Chrome has problems with normal icons in page overrides. -->
     <!-- Source: css/icon_tiny.png -->
@@ -20,14 +21,22 @@
   </head>
   <body>
     <div id="version-updated">Version Updated</div>
-    <div class="header">
-      <a href=""><img src="css/icon_thumb.png" class="logo" /></a>
+    <header>
+      <div class="logo">
+        <a href=""><img src="css/icon_thumb.png"/></a>
+      </div>
       <form action="#" id="frm-search" />
-        <input type="text" id="query" size="110" />
-        <input type="submit" value="Search History"/>
-        <span id="advanced-toggler">
+        <div class="search-container">
+          <div class="query-wrapper">
+            <input autocomplete=off type="text" class="query" id="query" size="110" />
+            <div class="open-advanced"></div>
+          </div>
+          <button value="search" class="bttn-search" type="submit">Search</button>
+        </div>
+        <!-- <input type="submit" value="Search History"/> -->
+<!--         <span id="advanced-toggler">
           <input type="checkbox" id="chk-advanced" />Advanced
-        </span>
+        </span> -->
         <div id="pnl-advanced">
           <table id="tbl-advanced">
             <tr>
@@ -49,15 +58,15 @@
           </table>
         </div>
       </form>
-      <div id="pnl-edit">
+<!--       <div id="pnl-edit">
         <span>Edit</span>
         <div>
           <button id="btn-delete-selected"> Delete Selected</button>
           <button id="btn-delete-all">Delete all search results</button>
           <button id="btn-clear-history">Clear history</button>
         </div>
-      </div>
-    </div>
+      </div> -->
+    </header>
     <div id="div-main">
       <div id="div-seperator">
         <span id="results-summary">eHistory</span>

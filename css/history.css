@@ -1,21 +1,74 @@
+html {
+    font-size: 62.5%;
+}
 body {
     background-color: white;
     color: black;
-    font-family: Helvetica, sans-serif;
-    font-size: 84%;
-    margin: 10px;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 1.5rem;
 }
 
-input[type=text] {
-    background: white;
-    border: 1px solid #CCC;
-    border-bottom-color: #999;
-    border-right-color: #999;
-    color: black;
-    font: 14px Arial, sans-serif bold;
-    margin: 0;
-    padding: 2px 4px 0 3px;
-    vertical-align: top;
+* { box-sizing: border-box; }
+
+header {
+    background: #eee
+}
+.logo {
+    padding-left: 20px;
+    -webkit-transform: scale(0.7885);
+    margin-top: 12px;
+}
+
+.bttn-search {
+    background: #3261c3;
+    border: 1px solid #3b2eca;
+    font-size: 1em;
+    height: 40px;
+    color: white;
+    padding: 10px 20px;
+    -webkit-font-smoothing: antialiased;
+}
+.query-wrapper {
+    background: #fff;
+    display: inline-block;
+    padding: 7px;
+    border: 1px solid #ceced6;
+    width: 400px;
+    font-size: 1.13em;
+    height: 40px;
+    position: relative;
+    transition: border 0.25s linear;
+}
+.query-wrapper.active {
+    border: 1px solid #7590f5!important;
+    outline:none;
+}
+.query {
+    border: 0;
+    width: 100%;
+    outline: none;
+}
+.open-advanced {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: 5px;
+    top: 12px;
+    background: url(arrow_down.png);
+    cursor: pointer;
+    opacity: 0.2;
+    transition: opacity 0.25s linear;
+}
+
+.query-wrapper:hover {
+    border: 1px solid rgb(147, 147, 148);
+}
+.open-advanced:hover {
+    opacity: 1;
+}
+
+#div-main {
+    /*display:none!important;*/
 }
 
 input[type=checkbox] {
@@ -23,11 +76,11 @@ input[type=checkbox] {
     top: 1px;
 }
 
-.header {
+header {
     overflow: auto;
 }
 
-.header .logo {
+header .logo {
     float: left;
 }
 
@@ -80,11 +133,8 @@ input[type=checkbox] {
     width: 43px;
 }
 
-#query {
-    font-size: 18px;
-}
 
-#query, #pnl-advanced {
+#pnl-advanced {
     padding: 5px 8px 0 6px;
     width: 663px;
 }
