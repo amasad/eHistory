@@ -35,6 +35,7 @@ this.parseQuery = function (query) {
 
   settings.text = combined.trim();
 
+  // TODO: is this needed?
   // delete all empty filters
   for (var prop in filters) {
     if (filters[prop] === null) {
