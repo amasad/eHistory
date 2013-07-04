@@ -214,29 +214,6 @@ $(function(){
     //return false;
   });
 
-  // show url checkbox handler
-  // loop over all entries and swap href with title
-  // title saved in the data
-  $('#show-url input').change(function () {
-    var link,
-        $entries = $('.entry a');
-    if ($(this).attr('checked')) {
-      $entries.each(function () {
-        var $this = $(this),
-            title = $this.text();
-        if (!$this.data('title')) {
-          $this.data('title', title);
-        }
-        $this.text($this.attr('href'));
-      });
-    } else {
-      $entries.each(function () {
-        var $this = $(this);
-        $this.text($this.data('title'));
-      });
-    }
-  });
-
   $('#btn-clear-history').click(function () {
     if (confirm('Delete all items from history?')) {
       historyModel.clearHistory();
