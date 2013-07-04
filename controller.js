@@ -27,25 +27,25 @@ function parseQuery (input) {
   var searchSettings = {
     startTime: null,
     endTime: null,
-    text: ""
+    text: ''
   };
   // text types
-  var pureText = "", combined = "";
+  var pureText = '', combined = '';
 
   // loop each pair in the query string
   $.each(options, function (i, pair) {
     if (!pair) return;
     // assume key:value
-    pair = pair.split(":");
+    pair = pair.split(':');
     searchSettings[pair[0]] !== undefined ?
         // pair is a search setting type
         searchSettings[pair[0]] = pair[1] :
         // pair is a filter type
         filters[pair[0]] !== undefined ?
-            combined += " " + (filters[pair[0]] = pair[1]) :
-            combined += " " + (pair[1] || pair[0] || "");
+            combined += ' ' + (filters[pair[0]] = pair[1]) :
+            combined += ' ' + (pair[1] || pair[0] || '');
     // pair is is just text
-    if (!pair[1]) pureText += " " + pair[0];
+    if (!pair[1]) pureText += ' ' + pair[0];
   });
   searchSettings.text = $.trim(combined);
   // delete all empty filters
@@ -67,21 +67,21 @@ function parseQuery (input) {
  * intitle:title inurl:url site:site startTime:startime endTime:endtime searchquery
  */
 function parseForm ($form) {
-  var query = "",
-      text = "";
+  var query = '',
+      text = '';
   // loop over all input elements
   $form.find('input').each(function (i, elem) {
     elem = $(elem);
-    if (elem.attr("id") == "pure-text") {
+    if (elem.attr('id') == 'pure-text') {
       // just text
       text += elem.val();
     } else {
       // filter/setting
-      query += elem.val() ?  " " + elem.data("settings-item") + ":" + elem.val() : "";
+      query += elem.val() ?  ' ' + elem.data('settings-item') + ':' + elem.val() : '';
     }
   });
   // return filter/setting text format key:value followed by regular text
-  return $.trim(query + " " + text);
+  return $.trim(query + ' ' + text);
 }
 
 // Check version number
@@ -92,13 +92,13 @@ $(function() {
         }).responseText || '{}');
   var version = manifest.version;
   if (localStorage['version'] != version) {
-    $('#version-updated').show("slow");
+    $('#version-updated').show('slow');
     localStorage.clear();
     localStorage['version'] = version;
   }
 
   setTimeout(function () {
-    $('#version-updated').hide("slow");
+    $('#version-updated').hide('slow');
   }, 5000);
 })
 /*************** Controller  ***************/
@@ -121,35 +121,35 @@ $(function(){
     // loop over the form input and fill them with values
     $pnlAdvanced.find('input').each(function (i, elem) {
       elem = $(elem);
-      if (elem.attr('id') == "pure-text"){
+      if (elem.attr('id') == 'pure-text'){
         elem.val(config[2]);
       } else {
         // in the elements data contains type of settings/filter
-        elem.val(operators[elem.data("settings-item")] || "");
+        elem.val(operators[elem.data('settings-item')] || '');
       }
     });
   }
 
   // fills the search box
   function fillText (text) {
-    $query.val(text || "");
+    $query.val(text || '');
   }
 
   // results day headers check-boxs handler
-  $resultsTable.delegate(".chk-day", "change", function () {
+  $resultsTable.delegate('.chk-day', 'change', function () {
     // check all results until the next day header
     $(this).parents('tr').nextUntil('.hdr-day')
         .children(':nth-child(1)').children()
-            .attr("checked",  $(this).attr("checked")).trigger("change");
+            .attr('checked',  $(this).attr('checked')).trigger('change');
   });
 
   // result item checkbox handler
-  $resultsTable.delegate(".chk-entry", "change", function () {
-    var val =  $(this).attr("checked"),
-        $row = $(this).parents("tr"),
+  $resultsTable.delegate('.chk-entry', 'change', function () {
+    var val =  $(this).attr('checked'),
+        $row = $(this).parents('tr'),
         // decides what function to call, select/unselect
         fn = val ? $.proxy(historyModel.select, historyModel) : $.proxy(historyModel.unselect, historyModel);
-    fn($row.data("id"),$row.data("day"));
+    fn($row.data('id'),$row.data('day'));
   });
 
   // Update the main search box whenever advanced settings are changed.
@@ -157,7 +157,7 @@ $(function(){
     // Delay until the keypress is handled by the browser.
     setTimeout(function() { fillText(parseForm($pnlAdvanced)); }, 0);
   };
-  $("input", $pnlAdvanced).change(updateMainSearchBox)
+  $('input', $pnlAdvanced).change(updateMainSearchBox)
                           .keypress(updateMainSearchBox)
                           .keydown(updateMainSearchBox);
 
@@ -179,10 +179,10 @@ $(function(){
         text = config[2];
 
     historyView.displayThrobber();
-    historyView.setSummary(settings.text || "");
+    historyView.setSummary(settings.text || '');
 
       EHistory.search({
-        text: settings.text || "",
+        text: settings.text || '',
         startTime: new Date(settings.startTime || 0).getTime() ,
         endTime: new Date(settings.endTime || Date.now()).getTime(),
         maxResults: historyModel.pageSize
@@ -200,7 +200,7 @@ $(function(){
     historyView.clear();
     historyView.disableControls();
 
-    if ($pnlAdvanced.is(":visible")){
+    if ($pnlAdvanced.is(':visible')){
       text = parseForm($pnlAdvanced);
       search(parseQuery(text));
     } else {
@@ -215,7 +215,7 @@ $(function(){
     }
   });
 
-  $(".delete.selected").click(function () {
+  $('.delete.selected').click(function () {
     if (confirm('Delete selected items?')) {
       historyModel.removeSelected();
     }
@@ -240,7 +240,6 @@ $(function(){
 $(function () {
 
   $(window).resize(function () {
-    console.log($(window).height() - 85 - 45)
     $('#div-main').css('height', $(window).height() - 85 - 45);
   }).resize();
   $('#frm-search').submit();
