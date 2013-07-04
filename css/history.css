@@ -16,7 +16,15 @@ header {
     background: #eee;
     padding: 22px 20px 0px 20px;
     height: 85px;
+    overflow: hidden;
 }
+
+@media all and (max-width:764px) {
+    .bttn.clear {
+        display: none;
+    }
+}
+
 .logo {
     -webkit-transform: scale(0.7885);
     margin-top: -10px;
@@ -61,6 +69,7 @@ header {
     width: 100%;
     outline: none;
 }
+
 .open-advanced {
     width: 16px;
     height: 16px;
@@ -109,13 +118,21 @@ header {
     outline: none;
 }
 
+@media all and (max-width: 620px) {
+    .query-wrapper, .advanced-search {
+        width: 250px;
+    }
+}
+
+@media all and (max-width: 462px) {
+    .query-wrapper, .advanced-search  {
+        width: 180px;
+    }
+}
+
 section.content {
     position: relative;
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-}
-
-header {
-    overflow: auto;
 }
 
 header .logo {
