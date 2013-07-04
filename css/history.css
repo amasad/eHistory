@@ -186,6 +186,8 @@ header .logo {
     margin: 0;
     padding: 0;
     border-spacing: 0;
+    font-weight: bold;
+    font-size: 1.2em;
 }
 
 .entry td {
