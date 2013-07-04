@@ -237,52 +237,23 @@ $(function(){
     }
   });
 
-  // instantiate date pickers
-  $('#date-frm').datepicker();
-  $('#date-to').datepicker();
-  // static overlay element
-  var $overLay = $('<div class="ui-widget-overlay" style="width: 1423px;'
-                  +'height: 3802px; z-index: 1001;"><div class="throbb"></div></div>');
-  // confirms with the user and proceeds according to which edit button was pressed
-  // msg is found in the event data "OK" handler and message to show in the confirm box
-  var confirmAndProgress = function (e) {
-    $("#dialog-confirm").dialog({
-      title: e.data.msg,
-      resizable: false,
-      modal: true,
-      buttons: {
-        "Delete items": function() {
-          $(this).dialog("close");
-          progress();
-          (e.data.ok || $.noop)();
-        },
-        Cancel: function() {
-          $(this).dialog("close");
-        }
-      }
-    });
-  };
-  // shows the overlay and throbber
-  var progress = function (e) {
-    $overLay.appendTo('body').show();
-  };
-  // edit buttons handlers
-  // sends msg and OK handler in the event data
+  $('#btn-clear-history').click(function () {
+    if (confirm('Delete all items from history?')) {
+      historyModel.clearHistory();
+    }
+  });
 
-  $('#btn-clear-history').click({
-     msg: "Delete all items from history?",
-     ok: $.proxy(historyModel.clearHistory, historyModel)
-  }, confirmAndProgress);
+  $("#btn-delete-selected").click(function () {
+    if (confirm('Delete selected items?')) {
+      historyModel.removeSelected();
+    }
+  });
 
-  $("#btn-delete-selected").click({
-    msg: "Delete selected items?",
-    ok: $.proxy(historyModel.removeSelected, historyModel)
-  }, confirmAndProgress);
-
-  $('#btn-delete-all').click({
-    msg: "Delete all search results?",
-    ok: $.proxy(historyModel.clearResults, historyModel)
-  }, confirmAndProgress);
+  $('#btn-delete-all').click(function () {
+    if (confirm('Delete all search results?')) {
+      historyModel.clearResults();
+    }
+  });
 
   $('.query').focus(function () {
     $('.query-wrapper').addClass('active');
@@ -293,6 +264,7 @@ $(function(){
   // Focus query box by default.
   $query.focus();
 });
+
 $(function () {
 
   $(window).resize(function () {
