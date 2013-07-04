@@ -25,13 +25,16 @@ this.parseQuery = function (input) {
     if (!pair) return;
     // assume key:value
     pair = pair.split(':');
-    searchSettings[pair[0]] !== undefined ?
-        // pair is a search setting type
-        searchSettings[pair[0]] = pair[1] :
-        // pair is a filter type
-        filters[pair[0]] !== undefined ?
-            combined += ' ' + (filters[pair[0]] = pair[1]) :
-            combined += ' ' + (pair[1] || pair[0] || '');
+    if (searchSettings[pair[0]] !== undefined) {
+      searchSettings[pair[0]] = pair[1];
+    } else {
+      if (filters[pair[0]] !== undefined) {
+        filters[pair[0]] = pair[1]
+        combined += ' ' + (pair[1]);
+      } else {
+        combined += ' ' + (pair[1] || pair[0] || '');
+      }
+    }
   });
   searchSettings.text = combined.trim();
 
