@@ -280,3 +280,12 @@ header .logo {
     -webkit-margin-start: 12px;
     float: left;
 }
+
+.feedback {
+    position: fixed;
+    bottom: 0;
+    right: 30px;
+    background: #eee;
+    padding: 12px;
+    border-radius: 4px;
+}
