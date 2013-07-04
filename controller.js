@@ -7,8 +7,8 @@
  * https://github.com/amasad/eHistory/blob/master/LICENSE.txt
  *
  */
-
 (function(){
+  /* global parseQuery */
   'use strict';
   /* parseForm: Parses the html form into text format
    *    @arg (jQueryObject) $form: jQuery object containing the form element
@@ -21,7 +21,7 @@
     // loop over all input elements
     $form.find('input').each(function (i, elem) {
       elem = $(elem);
-      if (elem.attr('id') == 'pure-text') {
+      if (elem.attr('id') === 'pure-text') {
         // just text
         text += elem.val();
       } else {
@@ -35,21 +35,17 @@
 
   // Check version number
   $(function() {
-    var manifest = JSON.parse($.ajax({
-            url: 'manifest.json',
-            async: false
-          }).responseText || '{}');
-    var version = manifest.version;
-    if (localStorage['version'] != version) {
-      $('#version-updated').show('slow');
-      localStorage.clear();
-      localStorage['version'] = version;
-    }
+    $.getJSON('manifest.json', function (manifest) {
+      var version = manifest.version;
+      if (localStorage['version'] !== version) {
+        localStorage.clear();
+        localStorage['version'] = version;
+        /* global console */
+        console.log('Version Updated!');
+      }
+    });
+  });
 
-    setTimeout(function () {
-      $('#version-updated').hide('slow');
-    }, 5000);
-  })
   /*************** Controller  ***************/
   /*  Collection of functions and event handlers
    *    Interacts with UI, historyModel and historyView
@@ -63,26 +59,19 @@
     // history items table
     var $resultsTable = $('#tbl-main');
 
-    // fill the advanced search form with parsed filter/settings values
-    function fillForm (config) {
-      // merge all types of key value pairs
-      var operators = $.extend(config[0], config[1]);
-      // loop over the form input and fill them with values
+    $('.open-advanced').click(function () {
+      var config = parseQuery($query.val());
+      var operators = $.extend(config.settings, config.filters);
       $pnlAdvanced.find('input').each(function (i, elem) {
         elem = $(elem);
-        if (elem.attr('id') == 'pure-text'){
+        if (elem.attr('id') === 'pure-text'){
           elem.val(config[2]);
         } else {
           // in the elements data contains type of settings/filter
           elem.val(operators[elem.data('settings-item')] || '');
         }
       });
-    }
-
-    // fills the search box
-    function fillText (text) {
-      $query.val(text || '');
-    }
+    });
 
     // results day headers check-boxs handler
     $resultsTable.delegate('.chk-day', 'change', function () {
@@ -104,8 +93,11 @@
     // Update the main search box whenever advanced settings are changed.
     var updateMainSearchBox = function () {
       // Delay until the keypress is handled by the browser.
-      setTimeout(function() { fillText(parseForm($pnlAdvanced)); }, 0);
+      setTimeout(function() {
+        $query.val(parseForm($pnlAdvanced) || '');
+      }, 0);
     };
+
     $('input', $pnlAdvanced).change(updateMainSearchBox)
                             .keypress(updateMainSearchBox)
                             .keydown(updateMainSearchBox);

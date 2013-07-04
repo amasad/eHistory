@@ -280,11 +280,3 @@ header .logo {
     -webkit-margin-start: 12px;
     float: left;
 }
-
-#version-updated {
-    background: #D5DDF3;
-    display: none;
-    left: 50%;
-    position: absolute;
-    top: 0px;
-}
