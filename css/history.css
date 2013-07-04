@@ -218,6 +218,10 @@ header .logo {
     font-weight: 300;
 }
 
+.hdr-day, .entry {
+    cursor: pointer;
+}
+
 .entry td {
     padding-top:8px;
     padding-right: 10px;

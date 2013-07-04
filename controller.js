@@ -172,6 +172,12 @@
     $('.query').blur(function () {
       $('.query-wrapper').removeClass('active');
     });
+
+    $(document).delegate('.hdr-day, .entry', 'click', function (e) {
+      if ($(e.target).is('input')) return;
+      $(this).find('input[type=checkbox]').click();
+    });
+
     // Focus query box by default.
     $query.focus();
   });
