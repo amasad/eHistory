@@ -3,6 +3,7 @@
  *      @returns (Array) [settings, filters, text]
  */
 this.parseQuery = function (query) {
+  // Custom filters.
   var filters = {
     inurl: null,
     intitle: null,
@@ -10,31 +11,29 @@ this.parseQuery = function (query) {
   };
 
   // Chrome search object.
-  var searchSettings = {
+  var settings = {
     startTime: null,
-    endTime: null,
-    text: ''
+    endTime: null
   };
 
   var combined = '';
 
-  // assumes search query is a space delimted key/value pairs.
+  // Assumes search query is a space delimted key/value pairs.
   query.split(/\s/).forEach(function (pair) {
     if (!pair) return;
-    // assume key:value
+    // Assume key:value
     pair = pair.split(':');
-    if (searchSettings[pair[0]] !== undefined) {
-      searchSettings[pair[0]] = pair[1];
+    if (settings.hasOwnProperty(pair[0])) {
+      settings[pair[0]] = pair[1];
+    } else if (filters.hasOwnProperty(pair[0])) {
+      filters[pair[0]] = pair[1]
+      combined += ' ' + (pair[1]);
     } else {
-      if (filters[pair[0]] !== undefined) {
-        filters[pair[0]] = pair[1]
-        combined += ' ' + (pair[1]);
-      } else {
-        combined += ' ' + pair.join(':');
-      }
+      combined += ' ' + pair.join(':');
     }
   });
-  searchSettings.text = combined.trim();
+
+  settings.text = combined.trim();
 
   // delete all empty filters
   for (var prop in filters) {
@@ -44,7 +43,7 @@ this.parseQuery = function (query) {
   }
 
   return {
-    settings: searchSettings,
+    settings: settings,
     filters: filters
   };
 };
