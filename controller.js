@@ -179,7 +179,6 @@ $(function(){
         text = config[2];
 
     historyView.displayThrobber();
-    historyView.setSummary(settings.text || '');
 
       EHistory.search({
         text: settings.text || '',

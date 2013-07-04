@@ -19,8 +19,6 @@ historyView = (function () {
   var $table,$olderPage, $newerPage, $allNav, $throbber, $pageNo;
   // Current page in the history view
   var currentPage = 0;
-  var EHISTORY = "eHistory";
-  var SUMMARY_PREFIX = "Search results for ";
 
   var templates = {
     'row': Mustache.compile("<tr class='entry'>"+
@@ -119,9 +117,6 @@ historyView = (function () {
     },
     displayThrobber: function () {
       $throbber.addClass("active");
-    },
-    setSummary: function (text) {
-      var prefix = text ? SUMMARY_PREFIX : EHISTORY;
     }
   };
 })();
