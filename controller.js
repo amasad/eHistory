@@ -6,14 +6,9 @@
  * Licensed under the MIT license
  * https://github.com/amasad/eHistory/blob/master/LICENSE.txt
  *
- * Date: Mon May 9
  */
 
 (function($){
-/** Global **/
-initialSearch = function () {
-  $('#frm-search').submit();
-};
 /******** Utils **********/
 /*  parseQuery:  Parses the search query
  *      @arg (String) input: The search query
@@ -197,7 +192,7 @@ $(function(){
   }
 
   // form submit handler
-  $('#frm-search').submit( function (e) {
+  $('#frm-search').submit(function (e) {
     var text;
     e.preventDefault();
     //clear everything
@@ -248,6 +243,7 @@ $(function () {
     console.log($(window).height() - 85 - 45)
     $('#div-main').css('height', $(window).height() - 85 - 45);
   }).resize();
-
+  $('#frm-search').submit();
 });
+
 })(jQuery);

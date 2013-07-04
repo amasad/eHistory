@@ -137,8 +137,4 @@ historyView = (function () {
   };
 })();
 
-$(function () {
-  initialSearch();
-});
-
 })(jQuery);
