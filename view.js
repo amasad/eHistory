@@ -114,6 +114,9 @@ historyView = (function () {
     $throbber.removeClass("active");
   });
   $(EHistory).bind("finished", function (e, args) {
+    if ($table.is(':empty')) {
+      $table.append('<tr class="no-results"><td colspan="3">No results :(</td></tr>');
+    }
     $firstPage.add($newerPage).attr("disabled", false);
   });
    // Public functions
