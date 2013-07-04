@@ -15,8 +15,8 @@
 // Direct communication with history model
 /** global **/
 historyView = (function () {
-  // Initial DOM (jQuery) variables 
-  var $table,$olderPage, $newerPage, $firstPage, $lastPage, $allNav, $throbber, $pageNo;
+  // Initial DOM (jQuery) variables
+  var $table,$olderPage, $newerPage, $allNav, $throbber, $pageNo;
   // Current page in the history view
   var currentPage = 0;
   var EHISTORY = "eHistory";
@@ -37,15 +37,11 @@ historyView = (function () {
     // Main table that holds results
     $table = $('#tbl-main');
     // Button responsible for getting older results, i.e. previous page
-    $olderPage = $('#btn-older');
+    $olderPage = $('.next-page');
     // Button for getting newer results, i.e. next page
-    $newerPage = $('#btn-newer');
-    // Button for getting the first page
-    $firstPage = $('#btn-first');
-    // Button to get the last page
-    $lastPage = $('#btn-last');
+    $newerPage = $('.prev-page');
     // jQuery instance holding all the navigation controls
-    $allNav = $olderPage.add($newerPage).add($firstPage).add($lastPage);
+    $allNav = $olderPage.add($newerPage);
     $throbber = $('#throbber');
     $pageNo = $('#page-no');
     // Bind buttons functionalities
@@ -57,12 +53,6 @@ historyView = (function () {
       if (currentPage != 0) currentPage--;
       $(historyModel).trigger("modelrefresh");
     });
-    $firstPage.click(function () {
-      currentPage = 0;
-      $(historyModel).trigger("modelrefresh"); 
-    });
-    // TODO: Implement
-    $lastPage.click(function () { });
     // Navigation controls disabled onload
     $allNav.attr("disabled", true);
   });
@@ -70,7 +60,7 @@ historyView = (function () {
   function updateControls () {
     $allNav.attr("disabled", false);
     if (currentPage === 0){
-      $firstPage.add($newerPage).attr("disabled", true);
+      $newerPage.attr("disabled", true);
     }
   }
   // Listen to history model refresh event
@@ -103,12 +93,11 @@ historyView = (function () {
         }
         $table.append(row);
       });
-    })
-   
+    });
   });
   // listens for lastPage event from the historyModel update controls accordingly 
   $(historyModel).bind("lastPage", function (e, args) {
-    $olderPage.add($lastPage).attr("disabled", true);
+    $olderPage.attr("disabled", true);
   });
   $(EHistory).bind("done", function (e, args) {
     $throbber.removeClass("active");
@@ -117,7 +106,7 @@ historyView = (function () {
     if ($table.is(':empty')) {
       $table.append('<tr class="no-results"><td colspan="3">No results :(</td></tr>');
     }
-    $firstPage.add($newerPage).attr("disabled", false);
+    $newerPage.attr("disabled", false);
   });
    // Public functions
    return {
