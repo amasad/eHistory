@@ -134,27 +134,12 @@ header .logo {
     box-shadow: 0 2px 2px -1px rgba(0,0,0,.1)
 }
 
-/*#div-seperator:after {
-background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, rgba(227,224,216,0)), color-stop(5%, #e3e0d8), color-stop(95%, #e3e0d8), color-stop(100%, rgba(227,224,216,0)));
-content: "";
-position: absolute;
-left: 8%;
-right: 8%;
-bottom: 1px;
-height: 1px;
-top:41px;
-}*/
-
 #div-main {
-    /*display:none!important;*/
     height: 500px;
     overflow: scroll;
     width: 100%;
+    clear: both;
 }
-
-/*#div-main::-webkit-scrollbar {
-  width: 13px;
-}*/
 
 .page-buttons {
     width: 100px;
@@ -245,48 +230,10 @@ tr.entry:nth-child(odd) {
 #tbl-main {
     width: 100%;
 }
-#throbber.active {
-    background-image: url(throbber.gif);
-    display: inline-block;
-    height: 32px;
-    width: 32px;
-}
-
-
-#div-main {
-    clear: both;
-}
 
 #frm-search {
     -webkit-margin-start: 12px;
     float: left;
-    /*margin-top: 22px;*/
-}
-
-#frm-search input[type=submit] {
-    background: -webkit-gradient(linear, center top, center bottom, from(#f8f8f8), to(#dadada));
-    border: 1px #CCC solid;
-    border-bottom-color: #999;
-    border-right-color: #999;
-    font-family: Arial, sans-serif;
-    font-size: 15px;
-    height: 29px;
-    padding: 5px 8px 5px 8px;
-}
-
-#frm-search input[type=submit]:hover {
-    background: -webkit-gradient(linear, center top, center bottom, from(#fbfbfb), to(#e0e0e0));
-}
-
-#frm-search input[type=submit]:active {
-    background: -webkit-gradient(linear, center bottom, center top, from(#f0f0f0), to(#e8e8e8));
-    color: #333;
-}
-
-#tbl-advanced {
-    border-bottom: none;
-    padding: 8px 6px 14px 10px;
-    width: 100%;
 }
 
 #version-updated {
@@ -295,54 +242,4 @@ tr.entry:nth-child(odd) {
     left: 50%;
     position: absolute;
     top: 0px;
-}
-
-#btn-last {
-    visibility: hidden;
-}
-
-#show-url {
-    float: right;
-    position: relative;
-    top: -2px;
-}
-
-#pnl-edit {
-    border: 1px solid #CCC;
-    float: right;
-    margin-right: 0px;
-    margin-top: 5px;
-    position: relative;
-    text-align: center;
-    vertical-align: middle;
-    width: 25%;
-}
-
-#pnl-edit div {
-    margin: 0 auto;
-    padding: 5px;
-}
-
-#pnl-edit div button {
-    height: 20px;
-    margin: 0px;
-    width: 180px;
-}
-
-#pnl-edit span {
-    color: #999;
-    font-family: Arial, sans-serif;
-    font-size: 1.2em;
-    left: 0px;
-    padding: 3px;
-    position: absolute;
-}
-
-#dialog-confirm {
-    display: none;
-}
-
-#dialog-confirm-icon {
-    float: left;
-    margin: 1px 7px 20px 0;
 }
