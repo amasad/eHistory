@@ -98,6 +98,17 @@ describe('query parser', function () {
         });
       });
 
+      it('should ignore unknown filter', function () {
+        var options = parseQuery('foo:bar');
+        expect(options).to.eql({
+          settings: {
+            startTime: null
+          , endTime: null
+          , text: 'foo:bar'
+          }
+        , filters: {}
+        });
+      });
     });
 
     describe('multi filters', function () {
@@ -169,6 +180,20 @@ describe('query parser', function () {
           startTime: null
         , endTime: null
         , text: 'hah shitmang'
+        }
+      , filters: {
+          inurl: 'hah'
+        }
+      });
+    });
+
+    it('should handle inurl + ignored filter', function () {
+      var options = parseQuery('inurl:hah shit:mang');
+      expect(options).to.eql({
+        settings: {
+          startTime: null
+        , endTime: null
+        , text: 'hah shit:mang'
         }
       , filters: {
           inurl: 'hah'

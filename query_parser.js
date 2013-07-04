@@ -2,10 +2,7 @@
  *      @arg (String) input: The search query
  *      @returns (Array) [settings, filters, text]
  */
-this.parseQuery = function (input) {
-  // assumes search query is a space delimted key/value pairs.
-  var options = (input.split(/\s/));
-
+this.parseQuery = function (query) {
   var filters = {
     inurl: null,
     intitle: null,
@@ -21,7 +18,8 @@ this.parseQuery = function (input) {
 
   var combined = '';
 
-  options.forEach(function (pair) {
+  // assumes search query is a space delimted key/value pairs.
+  query.split(/\s/).forEach(function (pair) {
     if (!pair) return;
     // assume key:value
     pair = pair.split(':');
@@ -32,7 +30,7 @@ this.parseQuery = function (input) {
         filters[pair[0]] = pair[1]
         combined += ' ' + (pair[1]);
       } else {
-        combined += ' ' + (pair[1] || pair[0] || '');
+        combined += ' ' + pair.join(':');
       }
     }
   });
