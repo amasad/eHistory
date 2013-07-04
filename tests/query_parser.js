@@ -199,6 +199,9 @@ describe('query parser', function () {
           inurl: 'hah'
         }
       });
+
     });
+
   });
+
 });
