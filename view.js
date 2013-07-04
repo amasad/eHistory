@@ -40,7 +40,7 @@
       // jQuery instance holding all the navigation controls
       $allNav = $olderPage.add($newerPage);
       $throbber = $('#throbber');
-      $pageNo = $('#page-no');
+      $pageNo = $('.page-no');
       // Bind buttons functionalities
       $olderPage.click(function () {
         currentPage++;
