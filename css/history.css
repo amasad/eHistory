@@ -37,6 +37,7 @@ header {
     font-size: 1em;
     color: white;
     border: 1px solid;
+    border-radius: 2px;
 }
 .bttn.search {
     background: #3261c3;
@@ -169,6 +170,7 @@ header .logo {
 }
 
 .prev-page,.next-page {
+    border-radius: 2px;
     width: 32px;
     height: 32px;
     display: inline-block;
