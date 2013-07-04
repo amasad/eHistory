@@ -293,5 +293,12 @@ $(function(){
   // Focus query box by default.
   $query.focus();
 });
+$(function () {
 
+  $(window).resize(function () {
+    console.log($(window).height() - 85 - 45)
+    $('#div-main').css('height', $(window).height() - 85 - 45);
+  }).resize();
+
+});
 })(jQuery);
