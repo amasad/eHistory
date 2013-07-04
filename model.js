@@ -6,15 +6,21 @@
  * Licensed under the MIT license
  * https://github.com/amasad/eHistory/blob/master/LICENSE.txt
  *
- * Date: Mon May 9
  */
+
+ /* Cleanup TODO:
+  * Why the hell was I mixing module pattern and classes?
+  * refactor append.
+  * remove reference to view!
+  */
+
 (function (){
   'use strict';
   /* global EHistory, historyView, chrome, alert */
   // Holds the current history search state, direct communication with the EHistory library.
   // Eventsource, triggers:
-  //                       "modelreferesh": when new items are appended to the model.
-  //                       "lastPage": when there is no more items.
+  //                       'modelreferesh': when new items are appended to the model.
+  //                       'lastPage': when there is no more items.
   this.historyModel = (function(){
     // Private variables
     // results, holding all the current results available
@@ -47,26 +53,26 @@
         }
         var visit, resultItem, timeStr, hours, which;
         for (var i = 0; visit = data.visits[i]; i++){
-          // Create a "resultItem" that will contain all the information about the visit
+          // Create a 'resultItem' that will contain all the information about the visit
           resultItem = Object.create(item_map[visit.id]);
           resultItem.visitTime = visit.visitTime || 0;
           resultItem.day = visit.day || 0;
           //fix dates
           timeStr = new Date(visit.visitTime).toLocaleTimeString().substr(0, 5);
-          hours = parseInt(timeStr.split(":")[0], 10);
-          which = "&nbsp;AM";
+          hours = parseInt(timeStr.split(':')[0], 10);
+          which = '&nbsp;AM';
           if (hours > 12) {
             hours = hours % 12;
-            which = "&nbsp;PM";
+            which = '&nbsp;PM';
           } else if (hours === 0) {
             hours = 12;
           }
-          timeStr = hours + ":" + timeStr.split(":")[1] + which;
+          timeStr = hours + ':' + timeStr.split(':')[1] + which;
           resultItem.date = timeStr;
           results.push(resultItem);
         }
         // Trigger an event stating that the model has new additions
-        $(this).trigger("modelrefresh");
+        $(this).trigger('modelrefresh');
       },
       // Gives model results according to the page number requested
       // if the page requested was not found, the model will make a new page request
@@ -95,7 +101,7 @@
         // TODO: Verify the following
         // if only some of the results found then make others know this is the last page.
         if (ret.length < pageSize) {
-          $(this).trigger("lastPage");
+          $(this).trigger('lastPage');
         }
         return ret;
       },
@@ -154,7 +160,7 @@
       }
     };
     // an event listener for when the EHistory has got all its results
-    $(EHistory).bind("finished", function () {
+    $(EHistory).bind('finished', function () {
       finished = true;
     });
     // Instantiate the history model
