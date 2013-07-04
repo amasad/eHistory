@@ -139,7 +139,7 @@ header .logo {
     float: left;
 }
 
-#div-seperator {
+.top-bar {
     margin: 0;
     padding: 3px;
     padding-right: 30px;
@@ -148,7 +148,7 @@ header .logo {
     padding-left: 30px;
 }
 
-#div-seperator > * {
+.top-bar > * {
     float:right;
 }
 
