@@ -8,7 +8,7 @@
  *
  */
 (function(){
-  /* global parseQuery */
+  /* global parseQuery, historyModel, historyView, EHistory, confirm */
   'use strict';
   /* parseForm: Parses the html form into text format
    *    @arg (jQueryObject) $form: jQuery object containing the form element
