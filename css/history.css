@@ -148,7 +148,9 @@ header .logo {
     display: inline-block;
     float: right;
     font-weight: bold;
+    margin-right: 5px;
 }
+
 .prev-page,.next-page {
     width: 32px;
     height: 32px;
