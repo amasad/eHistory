@@ -220,13 +220,13 @@ $(function(){
     }
   });
 
-  $("#btn-delete-selected").click(function () {
+  $(".delete.selected").click(function () {
     if (confirm('Delete selected items?')) {
       historyModel.removeSelected();
     }
   });
 
-  $('#btn-delete-all').click(function () {
+  $('.delete.results').click(function () {
     if (confirm('Delete all search results?')) {
       historyModel.clearResults();
     }

@@ -111,6 +111,7 @@ header {
 
 section.content {
     position: relative;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
 }
 
 header {
@@ -122,12 +123,16 @@ header .logo {
 }
 
 #div-seperator {
-    font-weight: bold;
     margin: 0;
     padding: 3px;
     padding-right: 30px;
     height:45px;
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,.1)
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,.1);
+    padding-left: 30px;
+}
+
+#div-seperator > * {
+    float:right;
 }
 
 #div-main {
@@ -142,6 +147,7 @@ header .logo {
     height: 32px;
     display: inline-block;
     float: right;
+    font-weight: bold;
 }
 .prev-page,.next-page {
     width: 32px;
@@ -173,7 +179,6 @@ header .logo {
 
 #tbl-main {
     width: 100%;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
 }
 .hdr-day {
     width: 100%;
@@ -226,6 +231,26 @@ header .logo {
 
 .entry a:hover {
     text-decoration: underline;
+}
+
+.bttn.delete {
+    background: white;
+    color: black;
+    height: 30px;
+    font-size: 0.9em;
+    padding: 5px 10px;
+    margin-top: 5px;
+    margin-right: 5px;
+    border: 1px solid #ceced6;
+    transition: border 0.25s linear;
+}
+
+.bttn.delete:hover {
+    border: 1px solid black;
+}
+
+.no-results td {
+    padding: 50px;
 }
 
 #tbl-main input[type=checkbox] {
