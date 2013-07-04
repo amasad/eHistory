@@ -6,7 +6,6 @@
  * Licensed under the MIT license
  * https://github.com/amasad/eHistory/blob/master/LICENSE.txt
  *
- * Date: Mon May 9
  */
 (function ($) {
 /************************ VIEW ************************/
@@ -19,14 +18,13 @@ historyView = (function () {
   var $table,$olderPage, $newerPage, $allNav, $throbber, $pageNo;
   // Current page in the history view
   var currentPage = 0;
-
   var templates = {
-    'row': Mustache.compile("<tr class='entry'>"+
-                              "<td><input type='checkbox'class='chk-entry'/></td>"+
-                              "<td class='time'>{{{date}}}</td>"+
-                              "<td><a href='{{url}}' style='background-image:url(chrome://favicon/{{url}})'>{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a></td>"+
-                            "</tr>"),
-    'day-row': Mustache.compile("<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td class='date' colspan='2'>{{date}}</td> </tr>")
+    'row': Mustache.compile('<tr class="entry">'+
+                              '<td><input type="checkbox" class="chk-entry"/></td>'+
+                              '<td class="time">{{{date}}}</td>'+
+                              '<td><a href="{{url}}" style="background-image:url(chrome://favicon/{{url}})">{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a></td>'+
+                            '</tr>'),
+    'day-row': Mustache.compile('<tr class="hdr-day"><td><input type="checkbox" class="chk-day"/></td><td class="date" colspan="2">{{date}}</td></tr>')
   };
 
   //init
@@ -45,25 +43,25 @@ historyView = (function () {
     // Bind buttons functionalities
     $olderPage.click(function () {
       currentPage++;
-      $(historyModel).trigger("modelrefresh");
+      $(historyModel).trigger('modelrefresh');
     });
     $newerPage.click(function () {
       if (currentPage != 0) currentPage--;
-      $(historyModel).trigger("modelrefresh");
+      $(historyModel).trigger('modelrefresh');
     });
     // Navigation controls disabled onload
-    $allNav.attr("disabled", true);
+    $allNav.attr('disabled', true);
   });
   // when the view is on the first page disable first, newer buttons
   function updateControls () {
-    $allNav.attr("disabled", false);
+    $allNav.attr('disabled', false);
     if (currentPage === 0){
-      $newerPage.attr("disabled", true);
+      $newerPage.attr('disabled', true);
     }
   }
   // Listen to history model refresh event
   // and get the page required from the model
-  $(historyModel).bind("modelrefresh", function (e, args) {
+  $(historyModel).bind('modelrefresh', function (e, args) {
     updateControls();
     var page = this.getPage(currentPage);
     if (page === -1)  return;
@@ -87,24 +85,24 @@ historyView = (function () {
         row.data('day', visit.day);
         // check if the current item to be populated was selected in earlier navigations
         if (historyModel.isSelected(visit.id, visit.day)) {
-          row.children().children("input").attr("checked", true);
+          row.children().children('input').attr('checked', true);
         }
         $table.append(row);
       });
     });
   });
   // listens for lastPage event from the historyModel update controls accordingly 
-  $(historyModel).bind("lastPage", function (e, args) {
-    $olderPage.attr("disabled", true);
+  $(historyModel).bind('lastPage', function (e, args) {
+    $olderPage.attr('disabled', true);
   });
-  $(EHistory).bind("done", function (e, args) {
-    $throbber.removeClass("active");
+  $(EHistory).bind('done', function (e, args) {
+    $throbber.removeClass('active');
   });
-  $(EHistory).bind("finished", function (e, args) {
+  $(EHistory).bind('finished', function (e, args) {
     if ($table.is(':empty')) {
       $table.append('<tr class="no-results"><td colspan="3">No results :(</td></tr>');
     }
-    $newerPage.attr("disabled", false);
+    $newerPage.attr('disabled', false);
   });
    // Public functions
    return {
@@ -113,10 +111,10 @@ historyView = (function () {
       $table.empty();
     },
     disableControls: function disableControls() {
-      $allNav.attr("disabled", true);
+      $allNav.attr('disabled', true);
     },
     displayThrobber: function () {
-      $throbber.addClass("active");
+      $throbber.addClass('active');
     }
   };
 })();
