@@ -6,28 +6,40 @@ body {
     color: black;
     font-family: "Helvetica Neue", sans-serif;
     font-size: 1.5rem;
+    height: 100%;
+    overflow: hidden;
 }
 
 * { box-sizing: border-box; }
 
 header {
-    background: #eee
+    background: #eee;
+    padding: 22px 20px 0px 20px;
 }
 .logo {
-    padding-left: 20px;
     -webkit-transform: scale(0.7885);
-    margin-top: 12px;
+    margin-top: -10px;
 }
 
-.bttn-search {
+.bttn {
+    -webkit-font-smoothing: antialiased;
+    height: 40px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    border: 1px solid;
+}
+.bttn.search {
     background: #3261c3;
     border: 1px solid #3b2eca;
-    font-size: 1em;
-    height: 40px;
-    color: white;
-    padding: 10px 20px;
-    -webkit-font-smoothing: antialiased;
 }
+.bttn.clear {
+    background: #d84938;
+    border: 1px solid rgb(177, 61, 47);
+    float: right;
+    margin-right: 20px;
+}
+
 .query-wrapper {
     background: #fff;
     display: inline-block;
@@ -77,6 +89,7 @@ header {
     position: absolute;
     top: 60px;
     display: none;
+    z-index: 1;
 }
 .advanced-search fieldset {
     border: none;
@@ -94,9 +107,9 @@ header {
     border:1px solid #4d90fe!important;
     outline: none;
 }
-#div-main {
-    /*display:none!important;*/
-    width: 700px;
+
+section.content {
+    position: relative;
 }
 
 input[type=checkbox] {
@@ -112,47 +125,36 @@ header .logo {
     float: left;
 }
 
-.entry {
-    margin-top:8px;
-}
-
-.entry .time {
-    -webkit-margin-end: 5px;
-    color: #888;
-    float: left;
-    min-width: 56px;
-    padding-top: 1px;
-    white-space: nowrap;
-}
-
-.entry a {
-    background-position: 0px 1px;
-    background-repeat: no-repeat;
-    background-size: 16px;
-    box-sizing: border-box;
-    display: inline-block;
-    max-width: 500px;
-    overflow: hidden;
-    padding: 1px 0px 4px 22px;
-    text-overflow: ellipsis;
-    white-space:nowrap;
-}
-
 #div-seperator {
     font-weight: bold;
-    margin-bottom: 0px;
-    margin-top: 12px;
+    margin: 0;
     padding: 3px;
+    padding-right: 30px;
+    height:45px;
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,.1)
 }
 
-#div-seperator:after {
-    clear: both;
-    content: ".";
-    visibility: hidden;
-    line-height: 0;
-    height: 0;
-    display: block;
+/*#div-seperator:after {
+background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, rgba(227,224,216,0)), color-stop(5%, #e3e0d8), color-stop(95%, #e3e0d8), color-stop(100%, rgba(227,224,216,0)));
+content: "";
+position: absolute;
+left: 8%;
+right: 8%;
+bottom: 1px;
+height: 1px;
+top:41px;
+}*/
+
+#div-main {
+    /*display:none!important;*/
+    height: 500px;
+    overflow: scroll;
+    width: 100%;
 }
+
+/*#div-main::-webkit-scrollbar {
+  width: 13px;
+}*/
 
 .page-buttons {
     width: 100px;
@@ -188,6 +190,61 @@ header .logo {
     height: 100%;
 }
 
+/*-webkit-linear-gradient(left, rgba(227,224,216,0) 0%,#eee 0%,#eee 80%,rgba(227,224,216,0) 100%);*/
+.hdr-day {
+    /*background: #eee;*/
+    width: 100%;
+    height: 35px;
+    border-collapse: collapse;
+}
+.hdr-day td {
+    margin: 0;
+    padding: 0;
+    border-spacing: 0;
+}
+
+.entry td {
+    padding-top:8px;
+    padding-right: 10px;
+}
+
+.entry .time {
+    -webkit-margin-end: 5px;
+    color: #888;
+    float: left;
+    min-width: 56px;
+    white-space: nowrap;
+}
+
+tr.entry:nth-child(even) {
+    background: #e5e5e5;
+}
+tr.entry:nth-child(odd) {
+    background: #edeef0;
+}
+
+.entry a {
+    background-position: 0px 1px;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    box-sizing: border-box;
+    display: inline-block;
+    max-width: 500px;
+    overflow: hidden;
+    padding: 1px 0px 4px 22px;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+    color: rgb(48, 57, 66);
+    text-decoration: none;
+}
+
+.entry a:hover {
+    text-decoration: underline;
+}
+
+#tbl-main {
+    width: 100%;
+}
 #throbber.active {
     background-image: url(throbber.gif);
     display: inline-block;
@@ -203,7 +260,7 @@ header .logo {
 #frm-search {
     -webkit-margin-start: 12px;
     float: left;
-    margin-top: 22px;
+    /*margin-top: 22px;*/
 }
 
 #frm-search input[type=submit] {

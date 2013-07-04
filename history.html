@@ -31,7 +31,7 @@
             <input autocomplete=off type="text" class="query" id="query" size="110" />
             <div class="open-advanced"></div>
           </div>
-          <button value="search" class="bttn-search" type="submit">Search</button>
+          <button value="search" class="bttn search" type="submit">Search</button>
         </div>
         <div class="advanced-search">
           <fieldset><label>Title</label><input type=text data-settings-item="intitle"></fieldset>
@@ -50,29 +50,34 @@
           <button id="btn-clear-history">Clear history</button>
         </div>
       </div> -->
+      <button class="bttn clear" id="btn-clear-history">Clear History</button>
     </header>
-    <div id="div-main">
-      <div id="div-seperator">
-        <div class="page-buttons">
-          <button class="prev-page" id="btn-newer"></button>
-          <span class="page-no" id="page-no">1</span>
-          <button class="next-page" id="btn-older"></button>
-        </div>
+    <section class="content">
+
+     <div id="div-seperator">
+      <div class="page-buttons">
+        <button class="prev-page" id="btn-newer"></button>
+        <span class="page-no" id="page-no">1</span>
+        <button class="next-page" id="btn-older"></button>
       </div>
-      <table id="tbl-main">
-        <tbody></tbody>
-      </table>
-      <div id="throbber" class=""></div>
     </div>
-    <div id="bar-progress"></div>
-    <div id="dialog-confirm">
-      <p>
-        <span id="dialog-confirm-icon" class="ui-icon ui-icon-alert"></span>
-        <p id="dialog-confirm-msg">
-          These items will be permanently deleted and cannot be recovered. Are you sure?
+
+      <div id="div-main" class="pretty-scroll">
+        <table id="tbl-main">
+          <tbody></tbody>
+        </table>
+        <div id="throbber" class=""></div>
+      </div>
+      <div id="bar-progress"></div>
+      <div id="dialog-confirm">
+        <p>
+          <span id="dialog-confirm-icon" class="ui-icon ui-icon-alert"></span>
+          <p id="dialog-confirm-msg">
+            These items will be permanently deleted and cannot be recovered. Are you sure?
+          </p>
         </p>
-      </p>
-   </div>
+     </div>
+   </section>
    <div id="overlay"></div>
   </body>
 </html>

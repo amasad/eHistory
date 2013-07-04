@@ -28,7 +28,7 @@ historyView = (function () {
                               "<td class='time'>{{{date}}}</td>"+
                               "<td><a href='{{url}}' style='background-image:url(chrome://favicon/{{url}})'>{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a></td>"+
                             "</tr>"),
-    'day-row': Mustache.compile("<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td>{{date}}</td> </tr>")
+    'day-row': Mustache.compile("<tr class='hdr-day'><td><input type='checkbox' class='chk-day'/></td><td colspan='2'>{{date}}</td> </tr>")
   };
 
   //init
