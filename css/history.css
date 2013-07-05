@@ -173,22 +173,32 @@ header .logo {
     display: inline-block;
     border: 1px solid #ceced6;
     background-color: #eee;
-    opacity: 0.6;
     cursor: pointer;
-    transition: opacity 0.25s linear;
     transition: border 0.25s linear;
     padding: 0;
+    position: relative;
+    background: #fff;
+}
+.prev-page .img, .next-page .img {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    opacity: 0.6;
+    transition: opacity 0.25s linear;
+}
+.prev-page .img {
+    background: url(prev.png);
+}
+.next-page .img {
+    background: url(next.png)
+}
+.prev-page:hover .img, .next-page:hover .img {
+    opacity: 1;
 }
 .prev-page:hover,.next-page:hover {
-    opacity: 1;
     border: 1px solid black;
-}
-
-.next-page {
-    background: url(next.png);
-}
-.prev-page {
-    background: url(prev.png);
 }
 .page-no {
     display: inline-block;
