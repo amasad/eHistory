@@ -4,7 +4,7 @@ html {
 body {
     background-color: white;
     color: black;
-    font-family: "Helvetica Neue", sans-serif;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
     font-size: 1.5rem;
     height: 100%;
     overflow: hidden;
@@ -31,7 +31,6 @@ header {
 }
 
 .bttn {
-    -webkit-font-smoothing: antialiased;
     height: 40px;
     padding: 10px 20px;
     font-size: 1em;
@@ -133,7 +132,6 @@ header {
 
 section.content {
     position: relative;
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
 }
 
 header .logo {
@@ -142,7 +140,6 @@ header .logo {
 
 .top-bar {
     margin: 0;
-    padding: 3px;
     padding-right: 30px;
     height:45px;
     box-shadow: 0 2px 2px -1px rgba(0,0,0,.1);
@@ -163,14 +160,14 @@ header .logo {
 .page-buttons {
     width: 100px;
     height: 32px;
-    display: inline-block;
     float: right;
     font-weight: bold;
     margin-right: 5px;
+    margin-top: 5px;
+    display: -webkit-flex;
 }
 
 .prev-page,.next-page {
-    border-radius: 2px;
     width: 32px;
     height: 32px;
     display: inline-block;
@@ -180,6 +177,7 @@ header .logo {
     cursor: pointer;
     transition: opacity 0.25s linear;
     transition: border 0.25s linear;
+    padding: 0;
 }
 .prev-page:hover,.next-page:hover {
     opacity: 1;
@@ -194,8 +192,13 @@ header .logo {
 }
 .page-no {
     display: inline-block;
-    padding: 9px 5px;
-    height: 100%;
+    height: 32px;
+    width: 26px;
+    padding: 0;
+    margin: 0;
+    display: -webkit-flex;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
 }
 
 #tbl-main {
@@ -261,13 +264,14 @@ header .logo {
 .bttn.delete {
     background: white;
     color: black;
-    height: 30px;
+    height: 32px;
     font-size: 0.9em;
-    padding: 5px 10px;
-    margin-top: 5px;
+    padding: 0 10px;
     margin-right: 5px;
     border: 1px solid #ceced6;
     transition: border 0.25s linear;
+    margin-top: 5px;
+    padding-bottom: 2px;
 }
 
 .bttn.delete:hover {
