@@ -8,7 +8,7 @@
  *
  */
 (function () {
-  /* global Mustache, historyModel, EHistory */
+  /* global Mustache, historyModel, EHistory, Spinner */
   'use strict';
   // History View: responsible for populating results in the current page view
   // Holds current page state, and updates page controls accordingly
