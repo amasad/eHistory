@@ -309,3 +309,18 @@ header .logo {
     padding: 12px;
     border-radius: 4px;
 }
+
+#throbber {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    background: #eee;
+    display: none;
+}
+
+#throbber.active {
+    display: block;
+}
