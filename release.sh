@@ -7,5 +7,5 @@ cd $tmp
 rm -rf .git
 rm release.sh
 cd ..
-zip ehistory_release.zip $tmp
+zip -r ehistory_release.zip $tmp/*
 rm -rf $tmp
