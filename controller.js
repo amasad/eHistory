@@ -146,7 +146,7 @@
     });
 
     $(document).delegate('.hdr-day, .entry', 'click', function (e) {
-      if ($(e.target).is('input')) return;
+      if ($(e.target).is('input') || $(e.target).is('a')) return;
       var $input = $(this).find('input[type=checkbox]');
       $input
         .attr('checked', !$input.is(':checked'))
