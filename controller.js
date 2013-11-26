@@ -81,6 +81,61 @@
               .attr('checked',  $(this).attr('checked')).trigger('change');
     });
 
+    var shiftDown = false;
+    $(document).bind('keydown keyup', function (e) {
+      shiftDown = e.shiftKey;
+    });
+
+    $resultsTable.delegate('.chk-entry', 'click', function () {
+      if (shiftDown) {
+        shiftClick($(this));
+      }
+    });
+
+    var shiftClick = (function () {
+
+      function getPath($firstChecked, dir, isChecked) {
+        var $path = $();
+        while ($firstChecked.length) {
+          $firstChecked = $firstChecked[dir]();
+          if (!$firstChecked.is('.entry')) {
+            continue;
+          } else if ((isChecked && $firstChecked.find(':checked').length) ||
+              (!isChecked && !$firstChecked.find(':checked').length)) {
+            break;
+          } else {
+            $path = $path.add($firstChecked);
+          }
+        }
+
+        // If we reached the end and we're looking for checked boxes then
+        // we haven't found any, however, if you we reached the end while
+        // looking for checked boxes, we may have something.
+        if ($firstChecked.length || !isChecked) {
+          return $path;
+        } else {
+          return $();
+        }
+      }
+
+      return function ($input) {
+        var $row = $input.parents('tr');
+        var isChecked = $input.is(':checked');
+        // Go up until we find the first checked input
+        var $path = getPath($row, 'prev', isChecked);
+        // If we couldn't find anything going up then go down.
+        if (!$path.length) {
+          $path = getPath($row, 'next', isChecked);
+        }
+        $path.each(function (i, row) {
+          if ($(row).is('.entry')) {
+            $(row).find('input[type=checkbox]').attr('checked', isChecked);
+          }
+        });
+      };
+
+    })();
+
     // result item checkbox handler
     $resultsTable.delegate('.chk-entry', 'change', function () {
       var val =  $(this).attr('checked'),
@@ -88,6 +143,17 @@
           // decides what function to call, select/unselect
           fn = val ? $.proxy(historyModel.select, historyModel) : $.proxy(historyModel.unselect, historyModel);
       fn($row.data('id'),$row.data('day'));
+    });
+
+    $(document).delegate('.hdr-day, .entry', 'click', function (e) {
+      if ($(e.target).is('input')) return;
+      var $input = $(this).find('input[type=checkbox]');
+      $input
+        .attr('checked', !$input.is(':checked'))
+        .trigger('change');
+      if (shiftDown) {
+        shiftClick($input);
+      }
     });
 
     // Update the main search box whenever advanced settings are changed.
@@ -171,11 +237,6 @@
     });
     $('.query').blur(function () {
       $('.query-wrapper').removeClass('active');
-    });
-
-    $(document).delegate('.hdr-day, .entry', 'click', function (e) {
-      if ($(e.target).is('input')) return;
-      $(this).find('input[type=checkbox]').click();
     });
 
     // Focus query box by default.
