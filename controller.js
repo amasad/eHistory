@@ -239,6 +239,16 @@
       $('.query-wrapper').removeClass('active');
     });
 
+    $resultsTable.delegate('a', 'click', function (e) {
+      if ($(this).attr('href').match(/^file/)) {
+        alert(
+          'For security concerns we cannot open local files. ' +
+          'You have to manually open the link by right clicking ' +
+          'on it and selecting "Open Link in New Tab"'
+        );
+      }
+    });
+
     // Focus query box by default.
     $query.focus();
   });
