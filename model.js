@@ -57,18 +57,17 @@
           resultItem = Object.create(item_map[visit.id]);
           resultItem.visitTime = visit.visitTime || 0;
           resultItem.day = visit.day || 0;
-          //fix dates
-          timeStr = new Date(visit.visitTime).toLocaleTimeString().substr(0, 5);
-          hours = parseInt(timeStr.split(':')[0], 10);
-          which = '&nbsp;AM';
-          if (hours > 12) {
-            hours = hours % 12;
-            which = '&nbsp;PM';
-          } else if (hours === 0) {
-            hours = 12;
+
+          timeStr = new Date(visit.visitTime).toLocaleTimeString();
+          // If we know the format of the locale time string then we'll try to
+          // end up with HH:MM [PERIOD] otherwise we'll just use it as is.
+          if (/^\d{1,2}:\d{1,2}:\d{1,2}\s[AP]M$/.test(timeStr)) {
+            var parts = timeStr.split(':');
+            var period = parts.pop().substr(-2);
+            resultItem.date = parts.join(':') + '&nbsp;' + period;
+          } else {
+            resultItem.date = timeStr;
           }
-          timeStr = hours + ':' + timeStr.split(':')[1] + which;
-          resultItem.date = timeStr;
           results.push(resultItem);
         }
         // Trigger an event stating that the model has new additions
