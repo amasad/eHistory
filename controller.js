@@ -78,7 +78,7 @@
       // check all results until the next day header
       $(this).parents('tr').nextUntil('.hdr-day')
           .children(':nth-child(1)').children()
-              .attr('checked',  $(this).attr('checked')).trigger('change');
+              .attr('checked',  $(this).is(':checked')).trigger('change');
     });
 
     var shiftDown = false;
