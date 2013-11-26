@@ -4,7 +4,8 @@
   "description": "Enhanced History",
   "permissions": [
     "history",
-    "chrome://favicon/"
+    "chrome://favicon/",
+    "file:///*"
   ],
   "chrome_url_overrides" : {
     "history": "history.html"
