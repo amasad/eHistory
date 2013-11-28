@@ -235,21 +235,22 @@ header .logo {
     cursor: pointer;
 }
 
-.entry td {
-    padding-top:8px;
-    padding-right: 10px;
+#tbl-main td {
+    padding: 8px 10px;
 }
 
 .entry .time {
-    -webkit-margin-end: 5px;
     color: #888;
-    float: left;
     min-width: 56px;
     white-space: nowrap;
 }
 
 .entry {
     border-bottom: 1px #e5e5e5 solid;
+}
+
+.entry:hover {
+    background-color: rgb(252, 252, 252)
 }
 
 .entry a {
@@ -265,12 +266,98 @@ header .logo {
     white-space:nowrap;
     color: rgb(48, 57, 66);
     text-decoration: none;
+    margin-right: 12px;
 }
 
 .entry a:hover {
     text-decoration: underline;
 }
 
+.entry .domain {
+    color: rgb(151, 156, 160);
+    font-size: 13px;
+}
+
+.entry .options .bg {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    background: url(arrow_down.png);
+    -webkit-transform: scale(0.6);
+    margin-left: -1px;
+    margin-top: -1px;
+}
+
+.entry .options {
+    border: 1px solid rgb(192, 195, 198);
+    opacity: 0.5;
+    border-radius: 3px;
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.entry .options:hover {
+    opacity: 1;
+}
+
+.entry .options.open {
+    background: black;
+    opacity: 1;
+}
+
+.entry .options.open .bg {
+    -webkit-filter: invert(100%);
+}
+
+.entry .item-content {
+    display: flex;
+    align-items: center;
+}
+
+.options-menu {
+    display: none;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, .50);
+    background: white;
+    border-radius: 2px;
+    color: black;
+    cursor: default;
+    left: 0;
+    margin: 0;
+    outline: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 8px 0;
+    position: fixed;
+    white-space: nowrap;
+    z-index: 3;
+    line-height: 29px;
+}
+
+.options-menu button {
+    line-height: 29px;
+    box-sizing: border-box;
+    display: block;
+    margin: 0;
+    text-align: start;
+    width: 100%;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 0;
+    color: black;
+    font: inherit;
+    font-size: 13px;
+    outline: none;
+    overflow: hidden;
+    padding: 0 19px;
+    text-overflow: ellipsis;
+}
+
+.options-menu button:hover {
+    background: #eee;
+}
 .bttn.delete {
     background: white;
     color: black;

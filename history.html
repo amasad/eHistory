@@ -55,11 +55,20 @@
    <img src="http://ehistory.herokuapp.com/p.gif" />
    <div class="feedback"><a href="mailto:amjad.masad@gmail.com">Send Feedback</a></div>
 
+   <menu class="options-menu">
+    <button class="more">More from this site</button>
+    <button class="delete">Delete visit</button>
+   </menu>
+
     <script type="x-template" id="tmpl-entry-row">
        <tr class="entry">
         <td><input type="checkbox" class="chk-entry"/></td>
         <td class="time">{{{date}}}</td>
-        <td><a href="{{url}}" style="background-image:url(chrome://favicon/{{url}})">{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a></td>
+        <td class="item-content">
+        <a href="{{url}}" style="background-image:url('chrome://favicon/{{url}}')">{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a>
+        <span class="domain">{{domain}}</span>
+          <span class="options"><span class="bg"></span></span>
+        </td>
       </tr>
     </script>
 
@@ -73,6 +82,7 @@
     <script type="text/javascript" src="vendor/jquery.js"></script>
     <script type="text/javascript" src="vendor/mustache.js"></script>
     <script type="text/javascript" src="vendor/spin.js"></script>
+    <script type="text/javascript" src="lib/util.js"></script>
     <script type="text/javascript" src="lib/visitsbyday.js"></script>
     <script type="text/javascript" src="lib/ehistory.js"></script>
     <script type="text/javascript" src="lib/model.js"></script>
