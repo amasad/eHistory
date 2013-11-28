@@ -36,8 +36,13 @@
     <section class="content">
 
      <nav class="top-bar">
-      <button class="bttn delete results">Delete Results</button>
-      <button class="bttn delete selected">Delete Selected</button>
+      <button class="bttn delete dropdown">
+        <span class="trash"></span><span class="dwn-arrow"></span>
+      </button>
+      <menu class="delete-menu">
+        <button class="results">Delete Results</button>
+        <button class="selected">Delete Selected</button>
+      </menu>
       <div class="page-buttons">
         <button class="prev-page bttn"><div class="img"></div></button>
         <span class="page-no">1</span>
@@ -67,7 +72,7 @@
         <td class="item-content">
         <a href="{{url}}" style="background-image:url('chrome://favicon/{{url}}')">{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a>
         <span class="domain">{{domain}}</span>
-          <span class="options"><span class="bg"></span></span>
+          <span class="options"><span class="dwn-arrow"></span></span>
         </td>
       </tr>
     </script>

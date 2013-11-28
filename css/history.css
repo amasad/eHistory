@@ -143,9 +143,12 @@ header .logo {
 .top-bar {
     margin: 0;
     padding-right: 30px;
-    height:45px;
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,.1);
+    height: 38px;
     padding-left: 30px;
+    position: fixed;
+    right: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.56);
 }
 
 .top-bar > * {
@@ -301,7 +304,7 @@ header .logo {
     -webkit-user-select: initial;
 }
 
-.entry .options .bg {
+.dwn-arrow {
     width: 16px;
     height: 16px;
     display: inline-block;
@@ -333,7 +336,7 @@ header .logo {
     opacity: 1;
 }
 
-.entry .options.open .bg {
+.entry .options.open .dwn-arrow {
     -webkit-filter: invert(100%);
 }
 
@@ -342,24 +345,24 @@ header .logo {
     align-items: center;
 }
 
-.options-menu {
+menu {
+    background: white;
     display: none;
     -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, .50);
     background: white;
     border-radius: 2px;
     color: black;
     cursor: default;
-    left: 0;
     margin: 0;
     outline: 1px solid rgba(0, 0, 0, 0.2);
     padding: 8px 0;
     position: fixed;
     white-space: nowrap;
-    z-index: 3;
+    z-index: 99;
     line-height: 29px;
 }
 
-.options-menu button {
+menu button {
     line-height: 29px;
     box-sizing: border-box;
     display: block;
@@ -378,9 +381,10 @@ header .logo {
     text-overflow: ellipsis;
 }
 
-.options-menu button:hover {
+menu button:hover {
     background: #eee;
 }
+
 .bttn.delete {
     background: white;
     color: black;
@@ -433,4 +437,51 @@ header .logo {
 
 #throbber.active {
     display: block;
+}
+
+.dropdown.delete {
+    width: 51px;
+    opacity: 0.6;
+    transition: opacity 0.25s linear;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+    cursor: inherit;
+}
+
+.dropdown.delete:hover {
+    opacity: 1;
+}
+
+.dropdown.delete:focus {
+    outline: none;
+}
+
+.dropdown.delete .trash {
+    background-image: url(trash.png);
+    background-repeat: no-repeat;
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+}
+
+.dropdown.delete .dwn-arrow {
+    margin-top: 7px;
+    align-items: flex-start;
+    text-align: center;
+    margin-left: -4px;
+}
+
+
+.dropdown.delete.open {
+    background-color: #eee;
+    opacity: 1;
+}
+
+.delete-menu {
+    display: none;
+    position: absolute;
+    right: 36px;
+    top: 37px;
 }
