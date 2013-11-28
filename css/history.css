@@ -8,6 +8,7 @@ body {
     font-size: 1.5rem;
     height: 100%;
     overflow: hidden;
+    -webkit-user-select: none;
 }
 
 * { box-sizing: border-box; }
@@ -64,6 +65,7 @@ header {
     border: 1px solid #7590f5!important;
     outline:none;
 }
+
 .query {
     border: 0;
     width: calc(100% - 16px);
@@ -229,6 +231,7 @@ header .logo {
     font-size: 1.2em;
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
     font-weight: 300;
+    -webkit-user-select: initial;
 }
 
 .hdr-day, .entry {
@@ -253,6 +256,24 @@ header .logo {
     background-color: rgb(252, 252, 252)
 }
 
+#tbl-main input[type="checkbox"]{
+    -webkit-appearance: none;
+    height: 13px;
+    width: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    border-radius: 2px;
+    color: #444;
+    text-shadow: 0 1px 0 rgb(240, 240, 240);
+}
+#tbl-main input[type="checkbox"]:checked {
+    background-image:-webkit-image-set(url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAcklEQVQY02NgwA/YoJgoEA/Es4DYgJBCJSBeD8SboRinBiYg7kZS2IosyQ/Eakh8LySFq4FYHFlxGRBvBOJYqMRqJMU+yApNkSRAeC0Sux3dfSCTetE0wKyXxOWhMKhTYIr9CAUXyJMzgLgBagBBgDPGAI2LGdNt0T1AAAAAAElFTkSuQmCC') 1x, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAA60lEQVQ4y2P4//8/Ay0wA00NpgC4AXEksgA1DNYA4vVAvBnZcEoNFgLihVBDNyMbTonBLEDchWYo3HBKDM7BYSgIZ5JrsBseQxuBmIkcg5EjCx1PBmJufGHsBMQFQMxORGTB8BIglsCXKmSBeA1U8RQgliMistYBsTq+dAxy4TQ0TSBLnPFE1iYgdkAPL3SDC/BECi4cjS0i0A12RgoGYnAxEDMSYzAIyGMJDmy4B4jZcCUdXKmCnUCwzAVifnxpklA6xhY0K4BYgVBiJyaDgIJmKtTQjUBsTEwuIjbnwYLGi9jsSZ8aZEgZDACI3DQYaeTU0AAAAABJRU5ErkJggg==') 2x);
+}
+#tbl-main input[type="checkbox"]:focus {
+    -webkit-transition: border-color 200ms;
+    border-color: rgb(77, 144, 254);
+    outline: none;
+}
+
 .entry a {
     background-position: 0px 1px;
     background-repeat: no-repeat;
@@ -267,6 +288,7 @@ header .logo {
     color: rgb(48, 57, 66);
     text-decoration: none;
     margin-right: 12px;
+    -webkit-user-select: initial;
 }
 
 .entry a:hover {
@@ -276,6 +298,7 @@ header .logo {
 .entry .domain {
     color: rgb(151, 156, 160);
     font-size: 13px;
+    -webkit-user-select: initial;
 }
 
 .entry .options .bg {
