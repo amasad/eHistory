@@ -19,13 +19,10 @@
     var $table, $olderPage, $newerPage, $allNav, $throbber, $pageNo;
     // Current page in the history view
     var currentPage = 0;
+
     var templates = {
-      'row': Mustache.compile('<tr class="entry">'+
-                                '<td><input type="checkbox" class="chk-entry"/></td>'+
-                                '<td class="time">{{{date}}}</td>'+
-                                '<td><a href="{{url}}" style="background-image:url(chrome://favicon/{{url}})">{{#title}}{{title}}{{/title}}{{^title}}{{url}}{{/title}}</a></td>'+
-                              '</tr>'),
-      'day-row': Mustache.compile('<tr class="hdr-day"><td><input type="checkbox" class="chk-day"/></td><td class="date" colspan="2">{{date}}</td></tr>')
+      'row': Mustache.compile($('#tmpl-entry-row').html().trim()),
+      'day-row': Mustache.compile($('#tmpl-day-row').html().trim())
     };
 
     var spinner = new Spinner({
