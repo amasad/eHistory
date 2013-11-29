@@ -218,7 +218,7 @@ header .logo {
 .prev-page:hover .img, .next-page:hover .img {
     opacity: 1;
 }
-.prev-page:hover,.next-page:hover {
+.prev-page:hover:not([disabled]),.next-page:hover:not([disabled]) {
     border: 1px solid black;
 }
 .page-no {
