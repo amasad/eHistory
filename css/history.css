@@ -39,6 +39,12 @@ header {
     border: 1px solid;
     border-radius: 3px;
 }
+
+.bttn:active {
+    background-color: #eee;
+    opacity: 1;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
 .bttn.search {
     background: #3261c3;
     border: 1px solid #3b2eca;
@@ -145,10 +151,7 @@ header .logo {
     padding-right: 30px;
     height: 38px;
     padding-left: 30px;
-    position: fixed;
-    right: 0;
-    z-index: 1;
-    background: rgba(255, 255, 255, 0.56);
+    float: right;
 }
 
 .top-bar > * {
@@ -177,20 +180,33 @@ header .logo {
     height: 32px;
     display: inline-block;
     border: 1px solid #ceced6;
-    background-color: #eee;
     cursor: pointer;
     transition: border 0.25s linear;
     padding: 0;
     position: relative;
-    background: #fff;
+    opacity: 0.9;
 }
+
+.bttn {
+    background: #F3F3F3;
+}
+
+.bttn[disabled], .bttn[disabled]:hover {
+    opacity: 0.4;
+}
+
+.bttn:focus {
+    outline: none;
+    -webkit-transition: border-color 200ms;
+    border-color: rgb(77, 144, 254);
+}
+
 .prev-page .img, .next-page .img {
     position: absolute;
     top:0;
     left:0;
     right:0;
     bottom:0;
-    opacity: 0.6;
     transition: opacity 0.25s linear;
 }
 .prev-page .img {
@@ -386,7 +402,6 @@ menu button:hover {
 }
 
 .bttn.delete {
-    background: white;
     color: black;
     height: 32px;
     font-size: 0.9em;
@@ -441,7 +456,7 @@ menu button:hover {
 
 .dropdown.delete {
     width: 51px;
-    opacity: 0.6;
+    opacity: 0.9;
     transition: opacity 0.25s linear;
     padding: 0;
     display: flex;
@@ -477,11 +492,12 @@ menu button:hover {
 .dropdown.delete.open {
     background-color: #eee;
     opacity: 1;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .delete-menu {
     display: none;
     position: absolute;
-    right: 36px;
-    top: 37px;
+    right: 124px;
+    top: 59px;
 }
