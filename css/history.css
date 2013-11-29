@@ -479,6 +479,8 @@ menu button:hover {
     width: 32px;
     height: 32px;
     display: inline-block;
+    /* Laziness */
+    -webkit-transform: scale(0.7);
 }
 
 .dropdown.delete .dwn-arrow {
