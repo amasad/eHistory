@@ -126,6 +126,22 @@ header {
     }
 }
 
+@media all and (max-width:632px) {
+    .top-bar {
+        display: none;
+    }
+}
+
+@media all and (max-width:460px) {
+    .query-wrapper, .advanced-search  {
+        width: 150px;
+    }
+}
+@media all and (max-width:365) {
+    .query-wrapper, .advanced-search  {
+        width: 80px;
+    }
+}
 section.content {
     position: relative;
 }
