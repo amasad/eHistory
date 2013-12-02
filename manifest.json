@@ -1,6 +1,6 @@
 {
   "name": "eHistory",
-  "version": "1.8",
+  "version": "1.9",
   "description": "Enhanced History",
   "permissions": [
     "history",
