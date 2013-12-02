@@ -17,14 +17,7 @@ header {
     background: #eee;
     padding: 22px 20px 0px 20px;
     height: 85px;
-    overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-@media all and (max-width:764px) {
-    .bttn.clear {
-        display: none;
-    }
 }
 
 .logo {
@@ -121,15 +114,15 @@ header {
     outline: none;
 }
 
-@media all and (max-width: 620px) {
+@media all and (max-width:805px) {
     .query-wrapper, .advanced-search {
-        width: 250px;
+        width: 300px;
     }
 }
 
-@media all and (max-width: 462px) {
+@media all and (max-width: 710px) {
     .query-wrapper, .advanced-search  {
-        width: 180px;
+        width: 230px;
     }
 }
 
@@ -143,10 +136,10 @@ header .logo {
 
 .top-bar {
     margin: 0;
-    padding-right: 30px;
     height: 38px;
     padding-left: 30px;
     float: left;
+    position: relative;
 }
 
 .top-bar > * {
@@ -496,6 +489,6 @@ menu button:hover {
 .delete-menu {
     display: none;
     position: absolute;
-    right: 504px;
-    top: 59px;
+    right: 6px;
+    top: 38px;
 }
