@@ -50,12 +50,6 @@ header {
     background: #3261c3;
     border: 1px solid #3b2eca;
 }
-.bttn.clear {
-    background: #d84938;
-    border: 1px solid rgb(177, 61, 47);
-    float: right;
-    margin-right: 20px;
-}
 
 .query-wrapper {
     background: #fff;
@@ -152,7 +146,7 @@ header .logo {
     padding-right: 30px;
     height: 38px;
     padding-left: 30px;
-    float: right;
+    float: left;
 }
 
 .top-bar > * {
@@ -399,7 +393,8 @@ menu button {
 }
 
 menu button:hover {
-    background: #eee;
+    background: #d84938;
+    color: white;
 }
 
 .bttn.delete {
@@ -501,6 +496,6 @@ menu button:hover {
 .delete-menu {
     display: none;
     position: absolute;
-    right: 124px;
+    right: 504px;
     top: 59px;
 }
