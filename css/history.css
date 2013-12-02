@@ -156,6 +156,7 @@ header .logo {
     padding-left: 30px;
     float: left;
     position: relative;
+    width: 200px;
 }
 
 .top-bar > * {
